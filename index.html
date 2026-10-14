@@ -261,25 +261,33 @@ table.plan textarea{min-height:70px;border-color:var(--rule)}
 .leaf.page{min-height:842pt;display:flex;flex-direction:column;position:relative;padding-bottom:60pt}
 .leaf.page .grow{flex:1;min-height:120pt}
 .leaf.page .sigs.bottom{margin-top:auto;padding-top:14pt}
-.leaf.cot{padding-bottom:60pt}
+.leaf.cot{padding-bottom:96pt}
+.leaf.cot table{margin-bottom:0}
+/* Other Comments grows to fill the page; the NO note sits 0.5 in above the names */
+.leaf .cbox{flex:1;min-height:40pt;border:.75pt solid var(--sheet-rule);border-top:0;padding:3pt 4pt;white-space:pre-wrap;font-size:9pt}
+.leaf .nonote{font-size:8pt;margin:3pt 0 0}
+.leaf .sigs.csig{margin-top:36pt}
 .leaf .cfoot{position:absolute;left:0;right:24pt;bottom:8pt;height:44pt;display:flex;align-items:center;gap:9pt}
 .leaf .cfoot .lab{height:100%;border-radius:0 12pt 12pt 0;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:0 10pt 0 24pt;min-width:190pt;font-size:8pt;line-height:1.25;color:#000;text-align:right}
 .leaf .cfoot .rt{font-size:5.3pt;line-height:1.5;width:150pt;color:#000}
 .leaf .cfoot img{height:30pt;width:auto;margin-left:auto}
 /* school letterhead page, 13 x 8.5 in landscape, same margins as the CANHS letterhead file */
-.leaf.folio{width:936pt;min-height:612pt;position:relative;padding:186pt 54pt 98pt}
-.leaf table.plantbl{table-layout:fixed;width:828pt}
+.leaf.folio{width:936pt;min-height:612pt;position:relative;padding:186pt 72pt 98pt}
+.leaf table.pmcftbl{table-layout:fixed;width:770pt}
+.leaf table.pmcftbl th,.leaf table.pmcftbl td{overflow-wrap:anywhere}
+.leaf table.plantbl{table-layout:fixed;width:792pt}
 .leaf table.plantbl th,.leaf table.plantbl td{overflow-wrap:anywhere}
 .leaf .psig{display:grid;grid-template-columns:1fr 1fr;gap:0 36pt;margin-top:20pt}
 .leaf .psig>div>div:first-child{margin-bottom:30pt}
 .leaf .psig b{display:block;text-transform:uppercase;font-weight:700}
 .leaf .lh-top{position:absolute;top:0;left:0;width:100%;height:auto}
 .leaf .lh-bot{position:absolute;bottom:0;left:0;width:100%;height:auto}
-.leaf .sigs.pmcf{margin-top:14pt}
-.leaf .sigs.pmcf .nm{padding-top:80pt}
+/* names stay 1.5 in below the last row; the labels sit two lines above the names */
+.leaf .sigs.pmcf{margin-top:68pt}
+.leaf .sigs.pmcf .nm{padding-top:26pt}
 .leaf .notes{white-space:pre-wrap;border:.75pt solid var(--sheet-rule);min-height:200pt;padding:6pt}
-@media (max-width:1000px){.leafwrap{padding:10px}.leaf{zoom:.72}}
-@media (max-width:760px){.leaf{zoom:.48}}
+@media (max-width:1000px){.leafwrap{padding:10px}}
+
 
 /* ---------- home ---------- */
 .tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:16px}
@@ -939,7 +947,7 @@ function fillPMCF(sheetXml,d){
   byNum[10]=byNum[10].replace(/<c r="C10"[^>]*?(?:\/>|>[\s\S]*?<\/c>)/,'<c r="C10" s="36"/>').replace(/<c r="D10" s="\d+"/,'<c r="D10" s="36"').replace(/<c r="([EF])10" s="\d+"/g,'<c r="$110" s="36"');
   // entries: rows 14..16 are replaced by N rows built on row 14's styles
   var tpl=byNum[15], N=Math.max(1,d.rows.length), delta=N-3;
-  var widths={C:30,D:35,E:39,F:37,G:65,I:31};
+  var widths={C:30,D:31,E:39,F:33,G:65,I:38};
   var entryRows=[];
   for(var i=0;i<N;i++){
     var e=d.rows[i]||{}, rn=14+i, rx=tpl.replace(/<row r="15"/,'<row r="'+rn+'"');
@@ -979,6 +987,8 @@ function fillPMCF(sheetXml,d){
   var merges=['H11:I11','C2:I2','C4:I4','C5:I5','C6:I6','I7:I10','D7:F7','D8:F8','D9:F9','G13:H13','F'+sh(19)+':G'+sh(19),'F'+sh(20)+':G'+sh(20),'F'+sh(21)+':G'+sh(21)];
   for(var j=0;j<N;j++) merges.push('G'+(14+j)+':H'+(14+j));
   tail=tail.replace(/<mergeCells[\s\S]*?<\/mergeCells>/,'<mergeCells count="'+merges.length+'">'+merges.map(function(m){return '<mergeCell ref="'+m+'"/>'}).join('')+'</mergeCells>');
+  // column widths: Significant Incidents and Coaching Mechanisms 0.25 in narrower, the space goes to Progress to Date
+  head=head.replace('<col min="4" max="4" width="34.7265625"','<col min="4" max="4" width="31.3"').replace('<col min="6" max="6" width="36.7265625"','<col min="6" max="6" width="33.3"').replace('<col min="9" max="9" width="31"','<col min="9" max="9" width="37.8"');
   head=head.replace(/<dimension ref="[^"]*"\/>/,'<dimension ref="B1:L'+(958+delta)+'"/>').replace(/<selection [^>]*\/>/,'<selection activeCell="D7" sqref="D7"/>').replace(/topLeftCell="[A-Z]+\d+"/,'topLeftCell="A1"');
   return {xml:head+body+tail, lastRow:23+delta};
 }
@@ -1310,7 +1320,7 @@ function armDelete(btn,fn){
 function byDateDesc(a,b){ return (b.date||'').localeCompare(a.date||'')||(b.savedAt||'').localeCompare(a.savedAt||''); }
 
 /* ================================================================== IS PLAN */
-var PCOL_IN=[1.25,1.25,1.5,1.5,1.5,1,2,1.5];
+var PCOL_IN=[1.25,1.25,1.5,1.25,1.5,1,1.75,1.5];
 var PCOLS=[['kra','Key Result Areas'],['obj','Objectives'],['act','Enabling Projects and/or Activities'],['ind','Success Indicators'],['mov','Means of Verification'],['time','Time Frame'],['status','Accomplishment / Status'],['rem','Remarks']];
 var plan={id:'',rows:[]};
 function blankRow(){ var r={}; PCOLS.forEach(function(c){r[c[0]]=''}); return r; }
@@ -1371,8 +1381,8 @@ $('#pl-dl').addEventListener('click',async function(){
   var W=PCOL_IN.map(function(w){return Math.round(w*1440)});
   var body=DX.p('MONTHLY INSTRUCTIONAL SUPERVISORY PLAN',{align:'center',b:true,sz:12,after:0})+DX.p((MONTHS[d.month-1]||'')+' '+d.year+(d.dept?' \u00b7 '+d.dept+' Department':''),{align:'center',sz:11,after:160})+
     DX.table([{header:true,cells:PCOLS.map(function(c){return {t:c[1],b:true,shade:'D9D9D9',align:'center',v:'center'}})}].concat(rows.map(function(r){return PCOLS.map(function(c){return {t:r[c[0]]}})})),W,{sz:9})+
-    DX.p('',{after:240})+DX.table([[{paras:['Prepared by:','','',[[d.prep||' ',{b:true}]],d.prepPos||'',longDate(d.date)]},{paras:['Approved by:','','',[[d.appr||' ',{b:true}]],d.apprPos||'']}]],[8280,8280],{noBorder:true,sz:10});
-  try{ var blob=await DX.letterhead(body,'School-Letterhead-Landscape.docx',{left:1080,right:1080}); await offerFile(safeName('Annex B IS Plan '+(MONTHS[d.month-1]||'')+' '+d.year+' '+(d.dept||''))+'.docx',blob); }catch(e){ toast('Could not build the file. Reload and try again.'); }
+    DX.p('',{after:240})+DX.table([[{paras:['Prepared by:','','',[[d.prep||' ',{b:true}]],d.prepPos||'',longDate(d.date)]},{paras:['Approved by:','','',[[d.appr||' ',{b:true}]],d.apprPos||'']}]],[7920,7920],{noBorder:true,sz:10});
+  try{ var blob=await DX.letterhead(body,'School-Letterhead-Landscape.docx',{left:1440,right:1440}); await offerFile(safeName('Annex B IS Plan '+(MONTHS[d.month-1]||'')+' '+d.year+' '+(d.dept||''))+'.docx',blob); }catch(e){ toast('Could not build the file. Reload and try again.'); }
 });
 function renderPlanList(){
   var list=S.plans.slice().sort(function(a,b){return (b.year-a.year)||(b.month-a.month)||String(a.dept).localeCompare(b.dept)});
@@ -1402,7 +1412,11 @@ function drawRate(){
   while(obs.ratings.length<ind.length) obs.ratings.push(''); obs.ratings.length=ind.length;
   while(obs.finds.length<ind.length) obs.finds.push([]); obs.finds.length=ind.length;
   $('#o-formtag').textContent=ioa?'Inter-Observer Agreement Form \u00b7 E-3':'Rating Sheet \u00b7 E-2';
-  if(!st){ $('#o-ratehint').textContent='Choose the teacher\u2019s career stage in Step 1 to show the rating scale.'; $('#o-rate').innerHTML=''; obsSummary(); return; }
+  if(!st){
+    $('#o-ratehint').innerHTML='<b>Choose the teacher (Step 1) or the career stage below</b> to show the rating dropdowns and the rubric <b>Guide</b> for each indicator.';
+    $('#o-rate').innerHTML='<tbody><tr><td style="padding:14px"><label class="f" style="max-width:420px">Career stage (COT scale)<select id="o-stage2">'+$('#o-stage').innerHTML+'</select></label></td></tr></tbody>';
+    $('#o-stage2').value=''; $('#o-stage2').addEventListener('change',function(){ $('#o-stage').value=this.value; drawRate(); obsLeafSoon(); });
+    obsSummary(); return; }
   $('#o-ratehint').innerHTML='SY '+esc(obsSy())+' indicators, rated on levels '+st.scale[0]+'\u2013'+st.scale[4]+' for '+esc(st.label)+'. Open <b>Guide</b> on any indicator to read the Annex E-1 rubric and tick what you saw; the rating follows. Not Observed counts as '+st.scale[0]+'.'+(ioa?' Record the final rating the observers agreed on, not an average.':'');
   var h='<thead><tr><th>#</th><th>Indicator</th><th>Rating</th></tr></thead><tbody>';
   ind.forEach(function(txt,i){
@@ -1499,15 +1513,15 @@ function notesSheetHTML(d){
 }
 function cotSheetHTML(d){
   var st=STAGES[d.stage]||{scale:['','','','',''],short:'',label:''}, ind=cotSet(d.sy), ioa=d.observers.length>1;
-  var col=st.col||'#00B050';
-  var h='<div class="leaf page cot"><div class="hd"><img src="'+SEAL+'" alt="" style="width:40pt;height:40pt"></div><h4>PERFORMANCE MANAGEMENT AND EVALUATION SYSTEM (PMES)<br>FOR TEACHERS<br><i style="font-weight:700">(SY '+esc(d.sy)+')</i></h4><div style="background:'+col+';color:#fff;font-weight:700;text-align:center;width:150pt;margin:4pt auto;padding:3pt">'+esc(st.short)+'</div><h4>CLASSROOM OBSERVATION TOOL (COT) &ndash;<br>'+(ioa?'INTER-OBSERVER AGREEMENT FORM':'RATING SHEET')+'</h4><div class="fl">';
+  var col=st.col||'#BFBFBF';
+  var h='<div class="leaf page cot"><div class="hd"><img src="'+SEAL+'" alt="" style="width:40pt;height:40pt"></div><h4>PERFORMANCE MANAGEMENT AND EVALUATION SYSTEM (PMES)<br>FOR TEACHERS<br><i style="font-weight:700">(SY '+esc(d.sy)+')</i></h4><div style="background:'+(st.short?col:'#BFBFBF')+';color:#fff;font-weight:700;text-align:center;width:150pt;min-height:16pt;line-height:16pt;margin:4pt auto;padding:2pt 3pt;font-size:10pt">'+(st.short?esc(st.short):'CHOOSE CAREER STAGE')+'</div><h4>CLASSROOM OBSERVATION TOOL (COT) &ndash;<br>'+(ioa?'INTER-OBSERVER AGREEMENT FORM':'RATING SHEET')+'</h4><div class="fl">';
   var left=ioa?d.observers.map(function(o,i){return ['OBSERVER '+(i+1)+':',o.n]}):[['OBSERVER:',(d.observers[0]||{}).n||'']];
   left.push(['TEACHER OBSERVED:',d.teacher]);
   h+='<div>'+fcol(left)+frow('SUBJECT &amp; GRADE LEVEL TAUGHT:',d.subject)+'</div><div>'+fcol([['DATE:',longDate(d.date)],['TERM:',d.quarter]])+'</div></div>'+obsLine(d);
   h+='<table><tr><th style="text-align:left;background:'+col+';color:#fff">INDICATORS</th>'+(ioa?'<th style="width:70pt;background:'+col+';color:#fff">FINAL RATING</th>':st.scale.map(function(l){return '<th style="width:24pt;background:'+col+';color:#fff">'+l+'</th>'}).join('')+'<th style="width:26pt;background:'+col+';color:#fff">NO*</th>')+'</tr>';
   ind.forEach(function(t,i){ var r=String(d.ratings[i]||'');
-    h+='<tr><td>'+(i+1)+'. '+esc(t)+'</td>'+(ioa?'<td class="c"><b>'+(r==='NA'?'N/A':r==='NO'?'NO ('+st.scale[0]+')':esc(r))+'</b></td>':st.scale.map(function(l){return '<td class="c">'+(r===String(l)?'&#10003;':'')+'</td>'}).join('')+'<td class="c">'+(r==='NO'?'&#10003;':r==='NA'?'N/A':'')+'</td>')+'</tr>'; });
-  h+='<tr><td colspan="'+(ioa?2:7)+'" style="white-space:pre-wrap;height:40pt"><b>OTHER COMMENTS:</b><br>'+esc(d.comments)+'</td></tr></table><p style="font-size:8pt">* <b>NO</b> stands for <b>Not Observed</b> which automatically gets a rating of '+esc(st.scale[0])+'.</p><div class="sigs bottom">';
+    h+='<tr><td>'+(i+1)+'. '+esc(t)+'</td>'+(ioa?'<td class="c"><b>'+(r==='NA'?'N/A':r==='NO'?'NO ('+st.scale[0]+')':esc(r))+'</b></td>':st.scale.map(function(l){return '<td class="c">'+(r&&r===String(l)?'&#10003;':'')+'</td>'}).join('')+'<td class="c">'+(r==='NO'?'&#10003;':r==='NA'?'N/A':'')+'</td>')+'</tr>'; });
+  h+='</table><div class="cbox"><b>OTHER COMMENTS:</b><br>'+esc(d.comments)+'</div><p class="nonote">* <b>NO</b> stands for <b>Not Observed</b> which automatically gets a rating of '+esc(st.scale[0])+'.</p><div class="sigs csig">';
   if(ioa){ h+='<div class="sig"><div class="nm">'+esc(d.teacher||'\u00a0')+'</div><div class="lb">Signature over Printed Name of the Teacher</div></div></div><div class="sigs">'+d.observers.map(function(o,i){return '<div class="sig"><div class="nm">'+esc(o.n)+'</div><div class="lb">Signature over Printed Name of the Observer '+(i+1)+'</div></div>'}).join(''); }
   else h+='<div class="sig"><div class="nm">'+esc((d.observers[0]||{}).n||'\u00a0')+'</div><div class="lb">Signature over Printed Name of the Observer</div></div><div class="sig"><div class="nm">'+esc(d.teacher||'\u00a0')+'</div><div class="lb">Signature over Printed Name of the Teacher</div></div>';
   h+='</div>';
@@ -1714,7 +1728,7 @@ function cval(c,k){ return k==='date'?longDate(c.date):k==='mech'?(c.mech||[]).j
 function coachLeaf(){
   var d=readCoach(), list=coachEntries(), mk2=monthKey();
   $('#c-leaf').innerHTML='<div class="hd"><img src="'+SEAL+'" alt="" style="width:40pt;height:40pt"><div>Republika ng Pilipinas</div><div class="sch" style="font-size:11pt;font-weight:400">Department of Education</div></div><h4>PERFORMANCE MONITORING AND COACHING FORM</h4><p style="text-align:center;margin:0">School Year '+esc(syOfMonth(mk2))+'</p><p style="text-align:center;margin:0 0 4pt">FOR THE MONTH OF '+esc(monthLabel(mk2).toUpperCase())+'</p><div style="width:62%;margin:8pt 0 10pt">'+fcol([['Name of Ratee:',d.ratee],['Position:',d.rateePos],['Designation (if applicable):',d.desig]])+'</div>'+
-    '<table><tr>'+CCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+(list.length?list.map(function(c){return '<tr>'+CCOLS.map(function(k){return '<td style="white-space:pre-wrap">'+esc(cval(c,k[0]))+'</td>'}).join('')+'</tr>'}).join(''):'<tr>'+CCOLS.map(function(){return '<td style="height:40pt"></td>'}).join('')+'</tr>')+'</table>'+
+    '<table class="pmcftbl"><colgroup>'+[1.35,1.32,1.76,1.41,2.95,1.90].map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+CCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+(list.length?list.map(function(c){return '<tr>'+CCOLS.map(function(k){return '<td style="white-space:pre-wrap">'+esc(cval(c,k[0]))+'</td>'}).join('')+'</tr>'}).join(''):'<tr>'+CCOLS.map(function(){return '<td style="height:40pt"></td>'}).join('')+'</tr>')+'</table>'+
     '<div class="sigs pmcf"><div class="sig"><div class="lb" style="text-align:left">Conducted by:</div><div class="nm">'+esc(d.rater||'\u00a0')+'</div><div class="lb">(Signature Over Printed Name of Rater)</div><div class="lb">'+esc(d.raterPos)+'</div></div><div class="sig"><div class="lb" style="text-align:left">Concurred by:</div><div class="nm">'+esc(d.ratee||'\u00a0')+'</div><div class="lb">(Signature Over Printed Name of Ratee)</div><div class="lb">'+esc(d.rateePos)+'</div></div><div class="sig"><div class="lb" style="text-align:left">Approved by:</div><div class="nm">'+esc(d.appr||'\u00a0')+'</div><div class="lb">(Signature Over Printed Name of Approving Authority)</div><div class="lb">'+esc(d.apprPos)+'</div></div></div>';
 }
 $('#c-dl').addEventListener('click',async function(){
@@ -1901,6 +1915,19 @@ $('#o-print').addEventListener('click',function(){
   $('#printarea').innerHTML=cotSheetHTML(d); setTimeout(function(){ window.print(); },60);
 });
 window.addEventListener('afterprint',function(){ $('#printarea').innerHTML=''; });
+
+/* ---------- previews: shrink each sheet to fit its frame so no part is hidden ---------- */
+function fitLeaves(){
+  $$('.leafwrap').forEach(function(w){
+    if(!w.offsetParent) return;
+    var room=w.clientWidth-40;
+    $$('.leaf',w).forEach(function(l){ l.style.zoom=''; var full=l.offsetWidth; if(full>room&&room>0) l.style.zoom=(room/full).toFixed(3); });
+  });
+}
+var fitT; function fitSoon(){ clearTimeout(fitT); fitT=setTimeout(fitLeaves,60); }
+window.addEventListener('resize',fitSoon);
+if(window.MutationObserver) $$('.leafwrap').forEach(function(w){ new MutationObserver(fitSoon).observe(w,{childList:true,subtree:true}); });
+$$('.nav button[role=tab]').forEach(function(b){ b.addEventListener('click',fitSoon); });
 
 /* ================================================================== boot */
 function renderAll(){ renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
