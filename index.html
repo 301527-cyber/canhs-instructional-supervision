@@ -91,6 +91,9 @@ a{color:var(--seal)}
   border-left:3px solid transparent;color:var(--side-fg);cursor:pointer;font-family:var(--sans);font-size:13.5px;line-height:1.3}
 .nav button span{width:19px;height:19px;flex:none;border-radius:2px;display:grid;place-items:center;font-family:var(--mono);
   font-size:10.5px;background:rgba(255,255,255,.08);color:var(--side-dim)}
+.nav button.subnav{padding:6px 20px 6px 36px;font-size:12.8px}
+.nav button.subpar[aria-selected="true"]{background:none;font-weight:600;border-left-color:transparent}
+.nav button.subpar[aria-selected="true"] span{background:rgba(255,255,255,.08);color:var(--side-dim)}
 .nav button:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav button[aria-selected="true"]{background:rgba(255,255,255,.12);color:#fff;font-weight:600;border-left-color:var(--gold-mark)}
 .nav button[aria-selected="true"] span{background:var(--gold-mark);color:#1b1405}
@@ -105,6 +108,8 @@ a{color:var(--seal)}
 .topbar h2{font-size:23px;font-weight:600;color:#fff}
 .topbar .lede{color:var(--side-lede);font-size:13.5px;margin:5px 0 0;max-width:66ch;line-height:1.55}
 .topbar .spacer{flex:1}
+.topbar.compact{min-height:58px;padding:6px 30px}
+.topbar.compact .lede{display:none}
 .ctxchip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:#E4ECF6;border-radius:2px;padding:7px 12px;line-height:1.25}
 .ctxchip .k{font-size:10.5px;color:#5b6b80;letter-spacing:.05em;text-transform:uppercase}
 .ctxchip select{background:transparent;border:0;color:#14497B;font-weight:600;font-size:14px;padding:0;cursor:pointer}
@@ -123,6 +128,7 @@ main.wrap>.inner{max-width:1180px;margin:0 auto;padding:22px 26px 0}
   .sidefoot{display:none}
   .topbar{position:static;padding:14px 16px;min-height:0}
   .topbar h2{font-size:20px}
+  .topbar.compact{padding:8px 16px}
   main.wrap>.inner{padding:16px 16px 0}
 }
 .nav button:focus-visible{outline:2px solid var(--gold-mark);outline-offset:-2px}
@@ -153,6 +159,23 @@ label.f .row select,label.f .row input{text-transform:none;letter-spacing:normal
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 16px;margin-top:14px}
 .other{margin-top:4px}
+/* one line per piece of information: label on the left, field on the right */
+.lines{display:flex;flex-direction:column;gap:10px;margin-top:16px;max-width:760px}
+.fline{display:grid;grid-template-columns:190px minmax(0,1fr);gap:14px;align-items:center}
+.fline .lk{font-size:12px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+.fline .lv{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fline .lv>input,.fline .lv>select,.fline .lv>textarea,.fline .lv .dfield{font-size:14.5px;width:100%}
+.fline.top{align-items:start}.fline.top .lk{padding-top:8px}
+@media (max-width:640px){.fline{grid-template-columns:1fr;gap:4px}}
+.prow{border:1px solid var(--rule);border-radius:2px;padding:14px 16px;margin-top:14px;background:var(--surface-2)}
+.prow .ph{display:flex;justify-content:space-between;align-items:center}
+.prow .ph b{font-family:var(--geo);font-weight:600;font-size:14.5px}
+.prow .lines{margin-top:10px;max-width:none}
+.prow textarea{min-height:44px}
+/* step-by-step forms */
+.wiz [data-step]:not(.cur){display:none}
+.wiznav{display:flex;align-items:center;gap:10px;margin-top:20px;padding-top:14px;border-top:1px solid var(--rule-soft)}
+.wiznav .of{flex:1;text-align:center;font-size:12.5px;color:var(--ink-3)}
 
 /* date field: shows "October 14, 2026" */
 .dfield{display:flex;min-width:0}
@@ -298,6 +321,49 @@ table.plan textarea{min-height:70px;border-color:var(--rule)}
 
 
 /* ---------- home ---------- */
+/* ---------- dashboard ---------- */
+.dbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:18px;background:var(--surface);border:1px solid var(--rule);border-radius:2px;padding:10px 14px;box-shadow:var(--shadow)}
+.dbar label{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.dbar select,.dbar input{font-size:13.5px;padding:5px 8px;text-transform:none;letter-spacing:normal}
+.dbar #h-year{width:78px}
+.dbar .dsearch{margin-left:auto}.dbar .dsearch input{width:210px}
+@media (max-width:760px){.dbar .dsearch{margin-left:0}.dbar .dsearch input{width:100%}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.kpi{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--teal);border-radius:2px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .kl{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.kpi .kv{font-family:var(--geo);font-size:28px;font-weight:600;line-height:1.15;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .kv small{font-size:15px;color:var(--ink-3);font-weight:400}
+.kpi .kp{float:right;font-size:13px;font-weight:600;color:var(--good);margin-top:12px}
+.pbar{height:7px;background:var(--rule-soft);border-radius:999px;overflow:hidden;margin-top:10px}
+.pbar i{display:block;height:100%;background:var(--good);border-radius:999px}
+details.dsec{background:var(--surface);border:1px solid var(--rule);border-radius:2px;box-shadow:var(--shadow);margin-top:14px;overflow:hidden}
+details.dsec>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 260px 26px;gap:18px;align-items:center;padding:14px 18px;background:var(--surface-2);border-bottom:1px solid var(--rule-soft)}
+details.dsec>summary::-webkit-details-marker{display:none}
+details.dsec>summary:hover{background:var(--seal-soft)}
+details.dsec:not([open])>summary{border-bottom:0}
+.dsec .dn{font-family:var(--geo);font-size:16px;font-weight:600}
+.dsec .dn small{display:block;font-family:var(--sans);font-size:12.5px;font-weight:400;color:var(--ink-3);margin-top:2px}
+.dsec .dp{font-size:12px;color:var(--ink-3)}
+.dsec .dp .pbar{margin-top:5px}
+.dsec .chev{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--ink-3);transition:transform .2s}
+details.dsec[open] .chev{transform:rotate(180deg)}
+@media (max-width:700px){details.dsec>summary{grid-template-columns:1fr 26px}.dsec .dp{grid-column:1/2}}
+table.chk{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed;min-width:640px}
+table.chk th{font:600 10.5px/1.3 var(--geo);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule)}
+table.chk th.c,table.chk td.c{text-align:center;width:96px}
+table.chk td{padding:8px 12px;border-bottom:1px solid var(--rule-soft);vertical-align:middle}
+table.chk tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--surface-2) 55%,transparent)}
+table.chk tbody tr:hover td{background:var(--seal-soft)}
+table.chk tr:last-child td{border-bottom:0}
+table.chk .tn{font-weight:600}
+table.chk .tp{font-size:12.5px;color:var(--ink-3)}
+.dot{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:13px;font-weight:700;line-height:1}
+.dot.no{border:1.5px solid var(--rule-strong)}
+button.dot.ok{all:unset;display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--good);color:#fff;font-size:13px;font-weight:700;cursor:pointer}
+button.dot.ok:hover,button.dot.ok:focus-visible{box-shadow:0 0 0 3px var(--good-soft);outline:none}
+.st{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.st.ok{background:var(--good-soft);color:var(--good)}
+.st.wait{background:var(--gold-soft);color:var(--gold)}
 .tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:16px}
 .tool{background:var(--surface);border:1px solid var(--rule);border-radius:2px;padding:18px;display:flex;flex-direction:column;gap:8px;border-top:3px solid var(--gold-mark)}
 .tool .code{font-family:var(--mono);font-size:11px;color:var(--seal);letter-spacing:.06em}
@@ -321,8 +387,18 @@ dl.help dd{margin:0;color:var(--ink-2)}
 .file .fx{font-family:var(--mono);font-size:10.5px;color:var(--seal);background:var(--seal-soft);padding:1px 6px;border-radius:2px;margin-right:6px}
 .file .sz{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
 /* ---------- rating table + guide drawer ---------- */
-table.rate select.rsel{width:100%;min-width:170px;font-size:13.5px}
-table.rate select.rsel.set{border-color:var(--seal);background:var(--seal-soft);font-weight:600;color:var(--seal)}
+.rsel{width:100%;font-size:14px}
+.ichips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.ichips button{min-width:34px;height:32px;border:1px solid var(--rule-strong);background:var(--surface);color:var(--ink-2);border-radius:2px;cursor:pointer;font-family:var(--mono);font-size:12.5px}
+.ichips button.set{background:var(--good-soft);border-color:var(--good);color:var(--good);font-weight:600}
+.ichips button.on{outline:2px solid var(--seal);outline-offset:1px;color:var(--seal);font-weight:700}
+.ichips button.set.on{color:var(--good)}
+.iitem{border:1px solid var(--rule);border-radius:2px;background:var(--surface-2);padding:16px 18px;margin-top:12px}
+.iitem .ih{font-family:var(--geo);font-size:15px;font-weight:600}
+.iitem .itx{font-size:15px;line-height:1.5}
+.iitem .finds{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+.iitem .finds li{margin:3px 0}
+.rsel.set{border-color:var(--seal);background:var(--seal-soft);font-weight:600;color:var(--seal)}
 table.rate td.act{width:210px}
 table.rate .finds{margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--ink-2)}
 table.rate .finds li{margin:2px 0}
@@ -387,16 +463,22 @@ table.rate .finds li{margin:2px 0}
 <div class="shell">
 <aside class="side">
   <div class="brand">
-    <h1>CANHS INSTRUCTIONAL SUPERVISION</h1>
-    <p>Office of the School Head &middot; Centralized supervision record of the department heads</p>
+    <h1>Instructional Supervision</h1>
   </div>
   <nav class="nav" role="tablist" aria-label="Sections">
-    <button role="tab" aria-selected="true" data-panel="home"><span>&#8962;</span>Supervision Home</button>
+    <button role="tab" aria-selected="true" data-panel="home"><span>&#8962;</span>Dashboard</button>
     <div class="navhead">Supervision forms</div>
     <button role="tab" aria-selected="false" data-panel="plan"><span>B</span>IS Plan</button>
     <button role="tab" aria-selected="false" data-panel="obs"><span>E</span>Classroom Observation</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="notes"><span>1</span>Classroom Observation Notes Form</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="cot"><span>2</span>COT Rating</button>
     <button role="tab" aria-selected="false" data-panel="coach"><span>D</span>Monitoring &amp; Coaching</button>
     <div class="navhead">Records</div>
+    <button role="tab" aria-selected="false" data-panel="reports"><span>R</span>Supervisory Reports</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="plans"><span>1</span>Supervisory Plans</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="notes"><span>2</span>Classroom Observation Notes Form</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="cot"><span>3</span>Classroom Observation&ndash;COT Rating</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="pmcf"><span>4</span>Performance Monitoring and Coaching Forms</button>
     <button role="tab" aria-selected="false" data-panel="records"><span>&#8801;</span>Supervision Records</button>
     <button role="tab" aria-selected="false" data-panel="people"><span>&#9823;</span>Personnel &amp; Departments</button>
     <div class="navhead">Reference</div>
@@ -408,10 +490,10 @@ table.rate .finds li{margin:2px 0}
 </aside>
 
 <main class="wrap">
-<div class="topbar">
+<div class="topbar compact">
   <div>
-    <h2 id="secname">Supervision Home</h2>
-    <p class="lede" id="seclede">Where the school stands on classroom observation, coaching and the monthly supervisory plans, department by department.</p>
+    <h2 id="secname">Dashboard</h2>
+    <p class="lede" id="seclede"></p>
   </div>
   <div class="spacer"></div>
   <label class="ctxchip"><span class="k">School year</span><select id="g-sy"></select></label>
@@ -421,72 +503,48 @@ table.rate .finds li{margin:2px 0}
 
 <!-- ============ HOME ============ -->
 <section class="panel on" id="p-home">
-  <div class="tiles" id="h-tiles"></div>
-  <div class="card">
-    <h2>Department progress</h2>
-    <p class="hint">Teachers are counted under the department set in Personnel &amp; Departments. Each teacher is observed twice a school year using the COT for their career stage.</p>
-    <div class="scroll"><table class="ind" id="h-depts" style="min-width:720px"></table></div>
+  <div class="dbar">
+    <label>PMCF month <select id="h-month"></select><input type="number" id="h-year" min="2024" max="2035"></label>
+    <label>Department <select id="h-dept"></select></label>
+    <label>Show <select id="h-show"><option value="all">All teachers</option><option value="pending">Pending only</option><option value="done">Complete only</option></select></label>
+    <label class="dsearch"><input type="search" id="h-q" placeholder="Search a teacher"></label>
   </div>
-  <div class="card">
-    <h2>Latest entries</h2>
-    <div id="h-recent"></div>
-  </div>
-  <div class="card">
-    <h2>Supervision forms</h2>
-    <div class="tools">
-      <div class="tool">
-        <div class="code">ANNEX B &middot; MONTHLY</div>
-        <h3>Instructional Supervisory Plan</h3>
-        <p>Each department head writes the month&rsquo;s plan: key result areas, objectives, activities, success indicators, means of verification and time frame. The School Head approves it.</p>
-        <div class="act"><button class="btn" data-go="plan">Open IS Plan</button></div>
-      </div>
-      <div class="tool">
-        <div class="code">ANNEX E &middot; TWICE A YEAR</div>
-        <h3>Classroom Observation</h3>
-        <p>Rate the COT indicators of the school year on the scale of the teacher&rsquo;s career stage, add observation notes, and download the filled Rating Sheet or Inter-Observer Agreement Form.</p>
-        <div class="act"><button class="btn" data-go="obs">Open Classroom Observation</button></div>
-      </div>
-      <div class="tool">
-        <div class="code">ANNEX D &middot; ALL YEAR</div>
-        <h3>Monitoring &amp; Coaching</h3>
-        <p>Log each coaching and feedback session with a teacher. The entries build that teacher&rsquo;s Performance Monitoring and Coaching Form for the school year.</p>
-        <div class="act"><button class="btn" data-go="coach">Open Monitoring &amp; Coaching</button></div>
-      </div>
-    </div>
-  </div>
+  <div class="kpis" id="h-kpis"></div>
+  <div id="h-depts"></div>
 </section>
 
 <!-- ============ IS PLAN (Annex B) ============ -->
-<section class="panel" id="p-plan">
+<section class="panel wiz" id="p-plan">
   <div class="card">
     <h2>Saved plans</h2>
     <div id="pl-list"></div>
     <div class="row" style="margin-top:12px"><button class="btn ghost small" id="pl-new" type="button">Start a new plan</button></div>
   </div>
-  <div class="card">
+  <div class="card" data-step="1">
     <h2><span class="step">STEP 1</span> Month, department and signatories</h2>
-    <div class="grid3">
-      <label class="f">Month<select id="pl-month"></select></label>
-      <label class="f">Year<input type="number" id="pl-year" min="2024" max="2035"></label>
-      <label class="f">Department<select id="pl-dept"></select></label>
-      <label class="f">Prepared by<select id="pl-prep" data-people="sup" data-pos="pl-prep-pos" data-other="pl-prep-other"></select><input type="text" id="pl-prep-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="pl-prep-pos" readonly></label>
-      <label class="f">Date prepared<span class="dfield"><input type="text" class="date" id="pl-date" placeholder="October 14, 2026" autocomplete="off"></span></label>
-      <label class="f">Approved by<select id="pl-appr" data-people="sup" data-pos="pl-appr-pos" data-other="pl-appr-other"></select><input type="text" id="pl-appr-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="pl-appr-pos" readonly></label>
+    <div class="lines">
+      <label class="fline"><span class="lk">Month</span><span class="lv"><select id="pl-month"></select></span></label>
+      <label class="fline"><span class="lk">Year</span><span class="lv"><input type="number" id="pl-year" min="2024" max="2035"></span></label>
+      <label class="fline"><span class="lk">Department</span><span class="lv"><select id="pl-dept"></select></span></label>
+      <label class="fline"><span class="lk">Prepared by</span><span class="lv"><select id="pl-prep" data-people="sup" data-pos="pl-prep-pos" data-other="pl-prep-other"></select><input type="text" id="pl-prep-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="pl-prep-pos" readonly></span></label>
+      <label class="fline"><span class="lk">Date prepared</span><span class="lv"><span class="dfield"><input type="text" class="date" id="pl-date" placeholder="October 14, 2026" autocomplete="off"></span></span></label>
+      <label class="fline"><span class="lk">Approved by</span><span class="lv"><select id="pl-appr" data-people="sup" data-pos="pl-appr-pos" data-other="pl-appr-other"></select><input type="text" id="pl-appr-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="pl-appr-pos" readonly></span></label>
     </div>
   </div>
-  <div class="card">
+  <div class="card" data-step="2">
     <h2><span class="step">STEP 2</span> Plan rows</h2>
     <p class="hint">One row per key result area or activity. Write the time frame with full dates, for example &ldquo;October 14, 2026 &ndash; October 18, 2026&rdquo;.</p>
-    <div class="scroll"><table class="ind plan" id="pl-rows"></table></div>
+    <div id="pl-rows"></div>
     <div class="row" style="margin-top:10px"><button class="btn ghost small" id="pl-add" type="button">Add a row</button></div>
   </div>
-  <div class="card">
+  <div class="card" data-step="3">
     <h2><span class="step">STEP 3</span> Save and download</h2>
     <div class="row" style="margin-top:12px">
       <button class="btn gold" id="pl-save" type="button">Save plan to the shared record</button>
-      <button class="btn" id="pl-dl" type="button">Download filled Annex B (.docx)</button>
+      <button class="btn" id="pl-pdf" type="button">Download PDF</button>
+      <button class="btn ghost" id="pl-dl" type="button">Download Word (.docx)</button>
       <button class="btn danger" id="pl-del" type="button" hidden>Delete this plan</button>
       <span class="mini" id="pl-state"></span>
     </div>
@@ -495,63 +553,84 @@ table.rate .finds li{margin:2px 0}
 </section>
 
 <!-- ============ CLASSROOM OBSERVATION (Annex E) ============ -->
-<section class="panel" id="p-obs">
-  <div class="card">
+<section class="panel wiz" id="p-obs">
+  <div class="card" data-ov="notes cot" data-step="1">
     <h2><span class="step">STEP 1</span> Teacher and observation</h2>
-    <div class="grid3">
-      <label class="f">Teacher observed<select id="o-teacher" data-people="teach" data-pos="o-teacher-pos" data-other="o-teacher-other"></select><input type="text" id="o-teacher-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="o-teacher-pos" readonly></label>
-      <label class="f">Career stage (COT scale)<select id="o-stage"></select></label>
-      <label class="f">Department<select id="o-dept"></select></label>
-      <label class="f">Subject &amp; grade level taught<input type="text" id="o-subject" placeholder="Mathematics 8 &ndash; Adorable"></label>
-      <label class="f">Date of observation<span class="dfield"><input type="text" class="date" id="o-date" placeholder="October 14, 2026" autocomplete="off"></span></label>
-      <label class="f">Observation<span class="seg"><label><input type="radio" name="o-no" value="1" id="o-no1" checked>1st</label><label><input type="radio" name="o-no" value="2" id="o-no2">2nd</label></span><input type="text" id="o-noother" hidden></label>
-      <label class="f">Term<select id="o-q"><option value="Term 1">Term 1</option><option value="Term 2">Term 2</option><option value="Term 3">Term 3</option></select></label>
-      <label class="f">Time started<input type="text" id="o-t1" placeholder="8:00 AM"></label>
-      <label class="f">Time ended<input type="text" id="o-t2" placeholder="9:00 AM"></label>
+    <div class="lines">
+      <label class="fline"><span class="lk">Teacher observed</span><span class="lv"><select id="o-teacher" data-people="teach" data-pos="o-teacher-pos" data-other="o-teacher-other"></select><input type="text" id="o-teacher-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="o-teacher-pos" readonly></span></label>
+      <label class="fline"><span class="lk">Career stage (COT scale)</span><span class="lv"><select id="o-stage"></select></span></label>
+      <label class="fline"><span class="lk">Department</span><span class="lv"><select id="o-dept"></select></span></label>
+      <label class="fline"><span class="lk">Subject &amp; grade level taught</span><span class="lv"><select id="o-subj"></select><input type="text" id="o-subj-other" class="other" placeholder="Type the subject and grade, e.g. Research 10" hidden></span></label>
+      <label class="fline"><span class="lk">Section</span><span class="lv"><input type="text" id="o-section" placeholder="Adorable" list="o-section-list" autocomplete="off"><datalist id="o-section-list"></datalist></span></label>
+      <label class="fline"><span class="lk">Date of observation</span><span class="lv"><span class="dfield"><input type="text" class="date" id="o-date" placeholder="October 14, 2026" autocomplete="off"></span></span></label>
+      <div class="fline"><span class="lk">Observation</span><span class="lv"><span class="seg" style="align-self:flex-start"><label><input type="radio" name="o-no" value="1" id="o-no1" checked>1st</label><label><input type="radio" name="o-no" value="2" id="o-no2">2nd</label></span><input type="text" id="o-noother" hidden></span></div>
+      <label class="fline"><span class="lk">Term</span><span class="lv"><select id="o-q"><option value="Term 1">Term 1</option><option value="Term 2">Term 2</option><option value="Term 3">Term 3</option></select></span></label>
+      <label class="fline"><span class="lk">Time started</span><span class="lv"><input type="text" id="o-t1" placeholder="8:00 AM"></span></label>
+      <label class="fline"><span class="lk">Time ended</span><span class="lv"><input type="text" id="o-t2" placeholder="9:00 AM"></span></label>
     </div>
   </div>
-  <div class="card">
+  <div class="card" data-ov="notes cot" data-step="2">
     <h2><span class="step">STEP 2</span> Observers</h2>
-    <p class="hint">With one observer this is the COT Rating Sheet (Annex E-2). Add a second or third observer and the ratings below become the agreed final ratings of the Inter-Observer Agreement Form (Annex E-3).</p>
-    <div class="grid3">
-      <label class="f">Observer 1<select id="o-ob1" data-people="sup" data-pos="o-ob1-pos" data-other="o-ob1-other"></select><input type="text" id="o-ob1-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="o-ob1-pos" readonly></label>
-    </div>
-    <div class="grid3">
-      <label class="f">Observer 2 (optional)<select id="o-ob2" data-people="sup" data-pos="o-ob2-pos" data-other="o-ob2-other" data-optional="1"></select><input type="text" id="o-ob2-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="o-ob2-pos" readonly></label>
-    </div>
-    <div class="grid3">
-      <label class="f">Observer 3 (optional)<select id="o-ob3" data-people="sup" data-pos="o-ob3-pos" data-other="o-ob3-other" data-optional="1"></select><input type="text" id="o-ob3-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="o-ob3-pos" readonly></label>
+    <p class="hint">With one observer this is the COT Rating Sheet (Annex E-2). Add a second or third observer and the ratings become the agreed final ratings of the Inter-Observer Agreement Form (Annex E-3).</p>
+    <div class="lines">
+      <label class="fline"><span class="lk">Observer 1</span><span class="lv"><select id="o-ob1" data-people="sup" data-pos="o-ob1-pos" data-other="o-ob1-other"></select><input type="text" id="o-ob1-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="o-ob1-pos" readonly></span></label>
+      <label class="fline"><span class="lk">Observer 2 (optional)</span><span class="lv"><select id="o-ob2" data-people="sup" data-pos="o-ob2-pos" data-other="o-ob2-other" data-optional="1"></select><input type="text" id="o-ob2-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="o-ob2-pos" readonly></span></label>
+      <label class="fline"><span class="lk">Observer 3 (optional)</span><span class="lv"><select id="o-ob3" data-people="sup" data-pos="o-ob3-pos" data-other="o-ob3-other" data-optional="1"></select><input type="text" id="o-ob3-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="o-ob3-pos" readonly></span></label>
     </div>
   </div>
-  <div class="card">
+  <div class="card" data-ov="notes" data-step="3">
     <h2><span class="step">STEP 3</span> Observation notes <span class="tag">Annex E-4</span></h2>
     <p class="hint">Type what you see while the lesson runs: what the teacher and the learners do, with the time. The notes print on the Classroom Observation Notes Form.</p>
     <label class="f" style="margin-top:12px">Observation notes<textarea id="o-notes" rows="12" placeholder="8:00 Teacher greets the class and checks attendance.&#10;8:04 Review: learners answer three questions on the board.&#10;8:10 Motivation: picture of the barangay market; teacher asks what they notice about prices&hellip;"></textarea></label>
     <div class="row" style="margin-top:12px">
-      <button class="btn" id="o-notes-pdf" type="button">Download Notes Form (PDF)</button>
-      <button class="btn ghost" id="o-notes-docx" type="button">Download Notes Form (Word)</button>
+      <button class="btn" id="o-notes-pdf" type="button">Download PDF</button>
+      <button class="btn ghost" id="o-notes-doc" type="button">Download Word (.docx)</button>
+      <button class="btn ghost" id="o-notes-docx" type="button">Official Annex template (.docx)</button>
       <button class="btn ghost" id="o-notes-print" type="button">Print Notes Form</button>
+      <button class="btn gold" id="o-notes-save" type="button">Save observation</button>
       <span class="mini" id="o-notes-count"></span>
     </div>
     <div class="leafwrap" id="o-notesleaf"></div>
   </div>
-  <div class="card">
-    <h2><span class="step">STEP 4</span> COT ratings <span class="tag" id="o-formtag">Rating Sheet &middot; E-2</span></h2>
-    <p class="hint" id="o-ratehint"></p>
-    <div class="scroll"><table class="ind rate" id="o-rate"></table></div>
-    <div class="tiles" id="o-tiles"></div>
-    <label class="f" style="margin-top:14px">Other comments<textarea id="o-comments" rows="4"></textarea></label>
+  <div class="card" data-ov="notes" data-step="4">
+    <h2><span class="step">STEP 4</span> Notes summary and interpretation <span class="tag">Guide for the COT rating</span></h2>
+    <p class="hint">The system reads the observation notes, matches each entry to the COT indicators it gives evidence for, and writes an interpretation with a suggested starting rating. Check and edit every interpretation; the final rating stays with the observer, against the Annex E-1 rubric.</p>
+    <div class="row" style="margin-top:12px">
+      <button class="btn gold" id="sm-gen" type="button">Generate summary from the notes</button>
+      <button class="btn" id="sm-pdf" type="button">Download Summary (PDF)</button>
+      <button class="btn ghost" id="sm-doc" type="button">Download Summary (Word)</button>
+      <button class="btn ghost" id="sm-print" type="button">Print Summary</button>
+      <button class="btn gold" id="sm-save" type="button">Save observation</button>
+      <span class="mini" id="sm-state"></span>
+    </div>
+    <div id="sm-out"></div>
+    <div class="leafwrap" id="sm-leaf"></div>
   </div>
-  <div class="card">
+  <div class="card" data-ov="cot" data-step="3">
+    <h2><span class="step">STEP 3</span> COT ratings <span class="tag" id="o-formtag">Rating Sheet &middot; E-2</span></h2>
+    <p class="hint" id="o-ratehint"></p>
+    <div class="ichips" id="o-chips"></div>
+    <div id="o-rate"></div>
+  </div>
+  <div class="card" data-ov="cot" data-step="4">
+    <h2><span class="step">STEP 4</span> Other comments and summary</h2>
+    <div class="lines" style="max-width:none">
+      <label class="fline top"><span class="lk">Other comments</span><span class="lv"><textarea id="o-comments" rows="5"></textarea></span></label>
+    </div>
+    <div class="tiles" id="o-tiles"></div>
+  </div>
+  <div class="card" data-ov="cot" data-step="5">
     <h2><span class="step">STEP 5</span> Save and download the rating sheet</h2>
     <p class="hint">The download is the Annex E-2 template for the teacher&rsquo;s career stage and the school year, filled in. With two or three observers it is the Annex E-3 Inter-Observer Agreement Form.</p>
     <div class="row" style="margin-top:12px">
       <button class="btn gold" id="o-save" type="button">Save observation to the shared record</button>
-      <button class="btn" id="o-dl" type="button">Download filled COT form (Word)</button>
+      <button class="btn" id="o-pdf" type="button">Download PDF</button>
+      <button class="btn ghost" id="o-doc" type="button">Download Word (.docx)</button>
+      <button class="btn ghost" id="o-dl" type="button">Official Annex template (.docx)</button>
       <button class="btn ghost" id="o-print" type="button">Print COT Rating Sheet</button>
       <button class="btn ghost" id="o-new" type="button">Start a new observation</button>
       <button class="btn danger" id="o-del" type="button" hidden>Delete this observation</button>
@@ -562,41 +641,40 @@ table.rate .finds li{margin:2px 0}
 </section>
 
 <!-- ============ COACHING (Annex D) ============ -->
-<section class="panel" id="p-coach">
+<section class="panel wiz" id="p-coach">
   <div class="card">
-    <h2><span class="step">OPTIONAL</span> Import previous supervisory reports</h2>
-    <p class="hint">Upload one or more past supervisory reports (Word .docx with a table of teachers, dates, activities, findings and recommendations). Each row becomes a coaching entry on that teacher&rsquo;s PMCF for the month of the visit: findings go to Significant Incidents, the recommendation to Feedback/Recommendation, the activity to Coaching Mechanisms, and the supervisor to Conducted by. Check the rows below before adding them.</p>
-    <div class="row" style="margin-top:12px"><label class="btn ghost" style="cursor:pointer">Choose report files (.docx)<input type="file" id="imp-file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden></label><span class="mini" id="imp-msg"></span></div>
+    <h2><span class="step">OPTIONAL</span> Import PMCFs and supervisory reports</h2>
+    <p class="hint">Upload copies of filled PMCFs or past supervisory reports as Word (.docx), PDF, or a picture (PNG or JPG, e.g. a photo or scan). The system reads the table, and each row becomes a coaching entry on that teacher&rsquo;s PMCF for the month of the date. Pictures and scanned PDFs are read by text recognition, which can make mistakes, so check and correct each row before adding it.</p>
+    <div class="row" style="margin-top:12px"><label class="btn ghost" style="cursor:pointer">Choose files (Word, PDF or picture)<input type="file" id="imp-file" accept=".docx,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden></label><span class="mini" id="imp-msg"></span></div>
     <div id="imp-out"></div>
     <div class="row" style="margin-top:12px"><button class="btn gold" id="imp-go" type="button" hidden>Add entries to the PMCFs</button></div>
   </div>
-  <div class="card">
+  <div class="card" data-step="1">
     <h2><span class="step">STEP 1</span> Teacher (ratee) and rater</h2>
-    <div class="grid3">
-      <label class="f">Name of ratee<select id="c-ratee" data-people="teach" data-pos="c-ratee-pos" data-other="c-ratee-other"></select><input type="text" id="c-ratee-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="c-ratee-pos" readonly></label>
-      <label class="f">Designation (if applicable)<input type="text" id="c-desig" placeholder="Grade 8 Adviser"></label>
-      <label class="f">Rater (conducted by)<select id="c-rater" data-people="sup" data-pos="c-rater-pos" data-other="c-rater-other"></select><input type="text" id="c-rater-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="c-rater-pos" readonly></label>
-      <label class="f">Approving authority<select id="c-appr" data-people="sup" data-pos="c-appr-pos" data-other="c-appr-other"></select><input type="text" id="c-appr-other" class="other" placeholder="Type the full name" hidden></label>
-      <label class="f">Position<input type="text" id="c-appr-pos" readonly></label>
-      <label class="f">PMCF month<span class="row" style="flex-wrap:nowrap;gap:6px"><select id="c-month" style="flex:1"></select><input type="number" id="c-year" min="2024" max="2035" style="width:90px"></span></label>
-    </div>
     <p class="hint">One PMCF per teacher per month. Every entry dated within the month goes on that month&rsquo;s form.</p>
+    <div class="lines">
+      <label class="fline"><span class="lk">Name of ratee</span><span class="lv"><select id="c-ratee" data-people="teach" data-pos="c-ratee-pos" data-other="c-ratee-other"></select><input type="text" id="c-ratee-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="c-ratee-pos" readonly></span></label>
+      <label class="fline"><span class="lk">Designation (if applicable)</span><span class="lv"><input type="text" id="c-desig" placeholder="Grade 8 Adviser"></span></label>
+      <label class="fline"><span class="lk">Rater (conducted by)</span><span class="lv"><select id="c-rater" data-people="sup" data-pos="c-rater-pos" data-other="c-rater-other"></select><input type="text" id="c-rater-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="c-rater-pos" readonly></span></label>
+      <label class="fline"><span class="lk">Approving authority</span><span class="lv"><select id="c-appr" data-people="sup" data-pos="c-appr-pos" data-other="c-appr-other"></select><input type="text" id="c-appr-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="c-appr-pos" readonly></span></label>
+      <label class="fline"><span class="lk">PMCF month</span><span class="lv"><select id="c-month"></select></span></label>
+      <label class="fline"><span class="lk">PMCF year</span><span class="lv"><input type="number" id="c-year" min="2024" max="2035"></span></label>
+    </div>
   </div>
-  <div class="card">
+  <div class="card" data-step="2">
     <h2><span class="step">STEP 2</span> Coaching and feedback entry</h2>
     <div class="row" style="margin-top:10px"><button class="btn ghost" id="c-guide" type="button">Guide: sample entries</button><span class="mini">Pick a sample and edit it to match what you observed.</span></div>
-    <div class="grid2">
-      <label class="f">Date<span class="dfield"><input type="text" class="date" id="c-date" placeholder="October 14, 2026" autocomplete="off"></span></label>
-      <label class="f">Department<select id="c-dept"></select></label>
-      <label class="f wide">Significant incident description<textarea id="c-incident" rows="3" placeholder="The PPST indicator or core competency involved, then what was observed."></textarea></label>
-      <label class="f wide">Impact on job<textarea id="c-impact" rows="2"></textarea></label>
-      <div class="f wide" style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase">Coaching mechanisms
-        <div class="checks" id="c-mech"></div>
-      </div>
-      <label class="f wide">Feedback / recommendation<textarea id="c-feedback" rows="2"></textarea></label>
-      <label class="f wide">Progress to date<textarea id="c-progress" rows="2"></textarea></label>
+    <div class="lines" style="max-width:none">
+      <label class="fline"><span class="lk">Date</span><span class="lv"><span class="dfield"><input type="text" class="date" id="c-date" placeholder="October 14, 2026" autocomplete="off"></span></span></label>
+      <label class="fline"><span class="lk">Department</span><span class="lv"><select id="c-dept"></select></span></label>
+      <label class="fline top"><span class="lk">Significant incident description</span><span class="lv"><textarea id="c-incident" rows="3" placeholder="The PPST indicator or core competency involved, then what was observed."></textarea></span></label>
+      <label class="fline top"><span class="lk">Impact on job</span><span class="lv"><textarea id="c-impact" rows="2"></textarea></span></label>
+      <div class="fline top"><span class="lk">Coaching mechanisms</span><span class="lv"><span class="checks" id="c-mech"></span></span></div>
+      <label class="fline top"><span class="lk">Feedback / recommendation</span><span class="lv"><textarea id="c-feedback" rows="2"></textarea></span></label>
+      <label class="fline top"><span class="lk">Progress to date</span><span class="lv"><textarea id="c-progress" rows="2"></textarea></span></label>
     </div>
     <div class="row" style="margin-top:14px">
       <button class="btn gold" id="c-save" type="button">Save entry to the shared record</button>
@@ -605,12 +683,29 @@ table.rate .finds li{margin:2px 0}
       <span class="mini" id="c-state"></span>
     </div>
   </div>
-  <div class="card">
+  <div class="card" data-step="3">
     <h2><span class="step">STEP 3</span> Performance Monitoring and Coaching Form <span class="tag" id="c-count">0 entries</span></h2>
     <p class="hint" id="c-loghint">All saved entries for this teacher in the chosen month, oldest first. Open an entry to change it.</p>
     <div id="c-log"></div>
-    <div class="row" style="margin-top:12px"><button class="btn" id="c-dl" type="button">Download filled Annex D PMCF (Excel)</button></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="c-pdf" type="button">Download PDF</button><button class="btn ghost" id="c-doc" type="button">Download Word (.docx)</button><button class="btn ghost" id="c-dl" type="button">Download Excel (Annex D)</button></div>
     <div class="leafwrap"><div class="leaf a4land" id="c-leaf"></div></div>
+  </div>
+</section>
+
+<!-- ============ SUPERVISORY REPORTS ============ -->
+<section class="panel" id="p-reports">
+  <div class="card">
+    <h2>Filter</h2>
+    <div class="filters">
+      <label class="f">Month<select id="rp-month"></select></label>
+      <label class="f">Year<select id="rp-year"></select></label>
+      <label class="f">Department<select id="rp-dept"></select></label>
+      <label class="f">Search name<input type="text" id="rp-q" placeholder="Teacher, observer or rater"></label>
+    </div>
+  </div>
+  <div class="card">
+    <h2 id="rp-title">Accomplished reports <span class="tag" id="rp-count">0</span></h2>
+    <div class="scroll"><table class="ind" id="rp-table" style="min-width:760px"></table></div>
   </div>
 </section>
 
@@ -733,6 +828,7 @@ table.rate .finds li{margin:2px 0}
 <script src="config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 /* Template fillers for the DepEd COT forms (Annex E-2, E-3, E-4) and the PMCF workbook (Annex D).
    Pure functions over XML strings; DOMParser/XMLSerializer are passed in so the same code runs in the page and in tests. */
@@ -1246,7 +1342,7 @@ function connUI(){
   else if(S.mode==='offline') banner('<b>The shared record could not be reached.</b> Check the internet connection, then reload the page.','warn');
   else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for the department heads&rsquo; access code.','ask');
   else banner('');
-  $$('#pl-save,#o-save,#c-save,#pl-del,#o-del,#c-del').forEach(function(b){ b.disabled=!S.canWrite; });
+  $$('#pl-save,#o-save,#o-notes-save,#sm-save,#c-save,#pl-del,#o-del,#c-del').forEach(function(b){ b.disabled=!S.canWrite; });
   var st=$('#set-state'); if(st) st.textContent=$('#conntext').textContent;
   renderPeople();
 }
@@ -1315,24 +1411,34 @@ function sheetHead(){ return '<div class="hd"><div>Republic of the Philippines</
 
 /* ------------------------------------------------------------------ nav */
 var LEDES={
-  home:['Supervision Home','Where the school stands on classroom observation, coaching and the monthly supervisory plans, department by department.'],
+  home:['Dashboard',''],
   plan:['Instructional Supervisory Plan','Annex B. The department head\u2019s plan for the month, saved to the shared record and downloadable as the filled template.'],
   obs:['Classroom Observation','Annex E. Rate the COT indicators of the school year on the teacher\u2019s career-stage scale and file the Rating Sheet or Inter-Observer Agreement Form.'],
   coach:['Monitoring & Coaching','Annex D. Log each coaching and feedback session; the entries make up the teacher\u2019s Performance Monitoring and Coaching Form.'],
+  reports:['Supervisory Reports',''],
   records:['Supervision Records','Every plan, observation and coaching entry saved by the department heads, in one place.'],
   people:['Personnel & Departments','The PSIPOP roster of the school, each teacher\u2019s department, and the department head designates.'],
   library:['Annex Files A\u2013F','The original templates and tools of the instructional supervision package.'],
   help:['How It Works','How the shared record works and how the forms are filled.'],
   settings:['Connection','The shared Google Sheet record, your access code, and backups.']
 };
-function go(p){
+var SUBS={obs:{notes:'Classroom Observation Notes Form',cot:'COT Rating'},
+  reports:{plans:'Supervisory Plans',notes:'Classroom Observation Notes Form',cot:'Classroom Observation\u2013COT Rating',pmcf:'Performance Monitoring and Coaching Forms'}};
+var curSub={obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
+function go(p,sub){
+  if(String(p).indexOf(':')>0){ sub=p.split(':')[1]; p=p.split(':')[0]; }
   if(!LEDES[p]) p='home';
-  $$('.nav button[role=tab]').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.panel===p))});
+  var prevSub=curSub[p];
+  if(SUBS[p]){ if(sub&&SUBS[p][sub]) curSub[p]=sub; ls('sub-'+p,curSub[p]); }
+  obsSub=curSub.obs;
+  if(p==='obs'){ $$('#p-obs [data-ov]').forEach(function(c){ c.hidden=c.dataset.ov.split(' ').indexOf(obsSub)<0; }); var ob=$('#p-obs'); wizGo(ob,prevSub!==obsSub?1:+ob.dataset.cur); }
+  if(p==='reports') renderReports();
+  $$('.nav button[role=tab]').forEach(function(b){ b.setAttribute('aria-selected',String(b.dataset.panel===p&&(!b.dataset.sub||b.dataset.sub===curSub[p]))); b.classList.toggle('subpar',!!SUBS[b.dataset.panel]&&!b.dataset.sub); });
   $$('.panel').forEach(function(s){s.classList.toggle('on',s.id==='p-'+p)});
-  $('#secname').textContent=LEDES[p][0]; $('#seclede').textContent=LEDES[p][1];
-  ls('tab',p); window.scrollTo(0,0);
+  $('#secname').textContent=SUBS[p]?SUBS[p][curSub[p]]:LEDES[p][0]; $('#seclede').textContent=''; $('.topbar').classList.add('compact');
+  ls('tab',p); window.scrollTo(0,0); if(typeof fitSoon==='function') fitSoon();
 }
-$$('.nav button[role=tab]').forEach(function(b){b.addEventListener('click',function(){go(b.dataset.panel)})});
+$$('.nav button[role=tab]').forEach(function(b){b.addEventListener('click',function(){go(b.dataset.panel,b.dataset.sub)})});
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-go]'); if(b) go(b.dataset.go); });
 
 /* ------------------------------------------------------------------ helpers */
@@ -1350,18 +1456,52 @@ var PCOL_IN=[1.25,1.25,1.5,1.25,1.5,1,1.75,1.5];
 var PCOLS=[['kra','Key Result Areas'],['obj','Objectives'],['act','Enabling Projects and/or Activities'],['ind','Success Indicators'],['mov','Means of Verification'],['time','Time Frame'],['status','Accomplishment / Status'],['rem','Remarks']];
 var plan={id:'',rows:[]};
 function blankRow(){ var r={}; PCOLS.forEach(function(c){r[c[0]]=''}); return r; }
+
+/* ---------- step-by-step forms: one step at a time, with Back and Next ---------- */
+function wizSteps(panel){
+  var key=panel.id.slice(2), view=(typeof curSub!=='undefined'&&curSub[key])||'';
+  return $$('[data-step]',panel).filter(function(c){ return !c.dataset.ov||c.dataset.ov.split(' ').indexOf(view)>=0; });
+}
+function wizGo(panel,n){
+  var steps=wizSteps(panel), max=steps.length; n=Math.max(1,Math.min(max,n||1)); panel.dataset.cur=n;
+  $$('[data-step]',panel).forEach(function(c){ c.classList.remove('cur'); });
+  steps.forEach(function(c,i){ c.classList.toggle('cur',i===n-1);
+    var nav=$('.wiznav',c); if(!nav) return;
+    $('[data-wiz="-1"]',nav).style.visibility=i===0?'hidden':'visible';
+    $('[data-wiz="1"]',nav).style.visibility=i===max-1?'hidden':'visible';
+    $('.of',nav).textContent='Step '+(i+1)+' of '+max;
+    var lab=$('h2 .step',c); if(lab) lab.textContent='STEP '+(i+1); });
+  if(panel.classList.contains('on')) window.scrollTo(0,0);
+  if(panel.id==='p-obs'&&typeof drawRate==='function'&&$('#o-rate').closest('[data-step]').classList.contains('cur')) drawRate();
+  if(panel.id==='p-obs'&&typeof obsPageUI==='function') obsPageUI();
+  if(panel.id==='p-obs'&&typeof renderSummary==='function'&&$('#sm-out').closest('[data-step]').classList.contains('cur')){ if(!obs.sum&&String($('#o-notes').value||'').trim()) genSummary(); else renderSummary(); }
+  if(typeof fitSoon==='function') fitSoon();
+}
+function initWizard(panel){
+  $$('[data-step]',panel).forEach(function(c){ var nav=document.createElement('div'); nav.className='wiznav';
+    nav.innerHTML='<button class="btn ghost" type="button" data-wiz="-1">&lsaquo; Back</button><span class="of"></span><button class="btn" type="button" data-wiz="1">Next &rsaquo;</button>';
+    c.appendChild(nav); });
+  panel.addEventListener('click',function(e){ var b=e.target.closest('[data-wiz]'); if(!b) return; if(panel.wizHook&&panel.wizHook(+b.dataset.wiz,b.closest('[data-step]'))) return; wizGo(panel,(+panel.dataset.cur||1)+(+b.dataset.wiz)); });
+}
+$('#p-obs').wizHook=function(dir,card){
+  if(!card||!card.contains($('#o-rate'))||!STAGES[$('#o-stage').value]) return false;
+  var n=cotSet(obsSy()).length;
+  if(dir>0&&obsPage<n-1){ obsPage++; drawRate(); return true; }
+  if(dir<0&&obsPage>0){ obsPage--; drawRate(); return true; }
+  return false;
+};
+$$('.panel.wiz').forEach(function(p){ initWizard(p); wizGo(p,1); });
 function newPlan(){
   var now=new Date(); plan={id:'',rows:[blankRow(),blankRow(),blankRow()]};
   $('#pl-month').value=String(now.getMonth()+1); $('#pl-year').value=now.getFullYear();
   $('#pl-dept').value=''; setPerson('pl-prep',''); setPerson('pl-appr',PRINCIPAL.n,PRINCIPAL.p); setDate('pl-date',TODAY);
-  $('#pl-del').hidden=true; $('#pl-state').textContent='New plan, not yet saved.'; drawPlanRows(); planLeaf();
+  $('#pl-del').hidden=true; $('#pl-state').textContent='New plan, not yet saved.'; drawPlanRows(); planLeaf(); wizGo($('#p-plan'),1);
 }
 function drawPlanRows(){
-  var h='<thead><tr><th>#</th>'+PCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'<th></th></tr></thead><tbody>';
-  plan.rows.forEach(function(r,i){
-    h+='<tr><td class="num">'+(i+1)+'</td>'+PCOLS.map(function(c){return '<td><textarea data-r="'+i+'" data-k="'+c[0]+'" id="pl-'+c[0]+'-'+i+'" aria-label="'+c[1]+' row '+(i+1)+'">'+esc(r[c[0]])+'</textarea></td>'}).join('')+'<td><button class="xbtn" type="button" data-rm="'+i+'" aria-label="Remove row '+(i+1)+'">&times;</button></td></tr>';
-  });
-  $('#pl-rows').innerHTML=h+'</tbody>';
+  $('#pl-rows').innerHTML=plan.rows.map(function(r,i){
+    return '<div class="prow"><div class="ph"><b>Row '+(i+1)+'</b><button class="btn danger small" type="button" data-rm="'+i+'">Remove row</button></div><div class="lines">'+
+      PCOLS.map(function(c){ return '<label class="fline top"><span class="lk">'+c[1]+'</span><span class="lv"><textarea rows="2" data-r="'+i+'" data-k="'+c[0]+'" id="pl-'+c[0]+'-'+i+'">'+esc(r[c[0]])+'</textarea></span></label>'; }).join('')+'</div></div>';
+  }).join('');
 }
 $('#pl-rows').addEventListener('input',function(e){ var t=e.target; if(t.dataset.k){ plan.rows[+t.dataset.r][t.dataset.k]=t.value; planLeafSoon(); } });
 $('#pl-rows').addEventListener('click',function(e){ var b=e.target.closest('[data-rm]'); if(!b) return; plan.rows.splice(+b.dataset.rm,1); if(!plan.rows.length) plan.rows.push(blankRow()); drawPlanRows(); planLeaf(); });
@@ -1384,9 +1524,9 @@ function planLeaf(){
 }
 $('#pl-save').addEventListener('click',async function(){
   var d=readPlan();
-  if(!d.dept){ toast('Choose the department first.'); $('#pl-dept').focus(); return; }
-  if(!d.prep){ toast('Choose who prepared the plan.'); $('#pl-prep').focus(); return; }
-  if(!d.rows.length){ toast('Write at least one plan row.'); return; }
+  if(!d.dept){ toast('Choose the department first.'); wizGo($('#p-plan'),1); $('#pl-dept').focus(); return; }
+  if(!d.prep){ toast('Choose who prepared the plan.'); wizGo($('#p-plan'),1); $('#pl-prep').focus(); return; }
+  if(!d.rows.length){ toast('Write at least one plan row.'); wizGo($('#p-plan'),2); return; }
   var id=plan.id||uid('p'); d.savedAt=new Date().toISOString(); d.sy=S.sy;
   this.disabled=true;
   try{ await Store.put('plans',id,d); plan.id=id; $('#pl-del').hidden=false; $('#pl-state').textContent='Saved '+longDate(TODAY)+'.'; toast('Plan saved to the '+(S.mode==='shared'?'shared record':'this browser')); }
@@ -1394,22 +1534,15 @@ $('#pl-save').addEventListener('click',async function(){
   this.disabled=!S.canWrite;
 });
 $('#pl-del').addEventListener('click',function(){ var b=this; armDelete(b,async function(){ try{ await Store.del('plans',plan.id); toast('Plan deleted'); newPlan(); }catch(e){ saveErr(e); } }); });
-function openPlan(id){
+function openPlan(id,step){
   var p=S.plans.filter(function(x){return x.id===id})[0]; if(!p) return;
   plan={id:id,rows:(p.rows||[]).map(function(r){return Object.assign(blankRow(),r)})}; if(!plan.rows.length) plan.rows=[blankRow()];
   $('#pl-month').value=String(p.month); $('#pl-year').value=p.year; $('#pl-dept').value=p.dept||'';
   setPerson('pl-prep',p.prep,p.prepPos); setPerson('pl-appr',p.appr,p.apprPos); setDate('pl-date',p.date||'');
   $('#pl-del').hidden=false; $('#pl-state').textContent='Opened the saved plan. Save again after changes.';
-  drawPlanRows(); planLeaf(); go('plan');
+  drawPlanRows(); planLeaf(); wizGo($('#p-plan'),step||1); go('plan');
 }
-$('#pl-dl').addEventListener('click',async function(){
-  var d=readPlan(), rows=d.rows.length?d.rows:[blankRow()];
-  var W=PCOL_IN.map(function(w){return Math.round(w*1440)});
-  var body=DX.p('MONTHLY INSTRUCTIONAL SUPERVISORY PLAN',{align:'center',b:true,sz:12,after:0})+DX.p((MONTHS[d.month-1]||'')+' '+d.year+(d.dept?' \u00b7 '+d.dept+' Department':''),{align:'center',sz:11,after:160})+
-    DX.table([{header:true,cells:PCOLS.map(function(c){return {t:c[1],b:true,shade:'D9D9D9',align:'center',v:'center'}})}].concat(rows.map(function(r){return PCOLS.map(function(c){return {t:r[c[0]]}})})),W,{sz:9})+
-    DX.p('',{after:240})+DX.table([[{paras:['Prepared by:','','',[[d.prep||' ',{b:true}]],d.prepPos||'',longDate(d.date)]},{paras:['Approved by:','','',[[d.appr||' ',{b:true}]],d.apprPos||'']}]],[7920,7920],{noBorder:true,sz:10});
-  try{ var blob=await DX.letterhead(body,'School-Letterhead-Landscape.docx',{left:1440,right:1440}); await offerFile(safeName('Annex B IS Plan '+(MONTHS[d.month-1]||'')+' '+d.year+' '+(d.dept||''))+'.docx',blob); }catch(e){ toast('Could not build the file. Reload and try again.'); }
-});
+$('#pl-dl').addEventListener('click',function(){ var d=readPlan(); planLeaf(); EXP.word($('#pl-leaf').outerHTML,'Annex B IS Plan '+(MONTHS[d.month-1]||'')+' '+d.year+' '+(d.dept||'')); });
 function renderPlanList(){
   var list=S.plans.slice().sort(function(a,b){return (b.year-a.year)||(b.month-a.month)||String(a.dept).localeCompare(b.dept)});
   if(!list.length){ $('#pl-list').innerHTML='<div class="empty">No plans saved yet. Fill in the form below and save it; it will be listed here for every department head.</div>'; return; }
@@ -1428,42 +1561,224 @@ function findText(i,key){ var r=rubricFor(i); if(!r) return ''; var a=key.split(
 function readObs(){
   var t=getPerson('o-teacher'), o1=getPerson('o-ob1'), o2=getPerson('o-ob2'), o3=getPerson('o-ob3');
   var observers=[o1,o2,o3].filter(function(p){return p.n});
-  return {sy:obsSy(),teacher:t.n,teacherPos:t.p,stage:$('#o-stage').value,dept:$('#o-dept').value,subject:$('#o-subject').value.trim(),date:getDate('o-date'),
+  return {sy:obsSy(),teacher:t.n,teacherPos:t.p,stage:$('#o-stage').value,dept:$('#o-dept').value,subject:subjectValue(),date:getDate('o-date'),
     no:+($('input[name=o-no]:checked')||{value:1}).value,noOther:$('#o-noother').value.trim(),quarter:$('#o-q').value,t1:$('#o-t1').value.trim(),t2:$('#o-t2').value.trim(),
-    observers:observers,ratings:obs.ratings.slice(),finds:obs.finds.map(function(a){return (a||[]).slice()}),comments:$('#o-comments').value,notes:$('#o-notes').value};
+    observers:observers,ratings:obs.ratings.slice(),finds:obs.finds.map(function(a){return (a||[]).slice()}),comments:$('#o-comments').value,notes:$('#o-notes').value,sum:obs.sum?JSON.parse(JSON.stringify(obs.sum)):null};
 }
 function shortLevel(r,L){ if(!r) return ''; var s=r.l[L-1]||''; s=s.replace(/^The teacher\s+/,''); return s.length>72?s.slice(0,70).replace(/\s+\S*$/,'')+'\u2026':s; }
+var obsPage=0;
 function drawRate(){
   var st=STAGES[$('#o-stage').value], ind=cotSet(obsSy()), ioa=readObs().observers.length>1;
   while(obs.ratings.length<ind.length) obs.ratings.push(''); obs.ratings.length=ind.length;
   while(obs.finds.length<ind.length) obs.finds.push([]); obs.finds.length=ind.length;
-  $('#o-formtag').textContent=ioa?'Inter-Observer Agreement Form \u00b7 E-3':'Rating Sheet \u00b7 E-2';
+  $('#o-formtag').textContent=ioa?'Inter-Observer Agreement Form · E-3':'Rating Sheet · E-2';
   if(!st){
-    $('#o-ratehint').innerHTML='<b>Choose the teacher (Step 1) or the career stage below</b> to show the rating dropdowns and the rubric <b>Guide</b> for each indicator.';
-    $('#o-rate').innerHTML='<tbody><tr><td style="padding:14px"><label class="f" style="max-width:420px">Career stage (COT scale)<select id="o-stage2">'+$('#o-stage').innerHTML+'</select></label></td></tr></tbody>';
+    $('#o-ratehint').innerHTML='<b>Choose the career stage</b> to show the rating choices and the rubric <b>Guide</b> for each indicator.';
+    $('#o-chips').innerHTML='';
+    $('#o-rate').innerHTML='<div class="lines"><label class="fline"><span class="lk">Career stage (COT scale)</span><span class="lv"><select id="o-stage2">'+$('#o-stage').innerHTML+'</select></span></label></div>';
     $('#o-stage2').value=''; $('#o-stage2').addEventListener('change',function(){ $('#o-stage').value=this.value; drawRate(); obsLeafSoon(); });
-    obsSummary(); return; }
-  $('#o-ratehint').innerHTML='SY '+esc(obsSy())+' indicators, rated on levels '+st.scale[0]+'\u2013'+st.scale[4]+' for '+esc(st.label)+'. Open <b>Guide</b> on any indicator to read the Annex E-1 rubric and tick what you saw; the rating follows. Not Observed counts as '+st.scale[0]+'.'+(ioa?' Record the final rating the observers agreed on, not an average.':'');
-  var h='<thead><tr><th>#</th><th>Indicator</th><th>Rating</th></tr></thead><tbody>';
-  ind.forEach(function(txt,i){
-    var p=splitInd(txt), r=rubricFor(i), cur=String(obs.ratings[i]||''), fs=obs.finds[i]||[];
-    var opts='<option value="">Choose a rating\u2026</option>'+st.scale.map(function(L){ return '<option value="'+L+'"'+(cur===String(L)?' selected':'')+'>'+L+' \u00b7 '+esc(shortLevel(r,L))+'</option>'; }).join('')+
-      '<option value="NO"'+(cur==='NO'?' selected':'')+'>NO \u00b7 Not observed (counts as '+st.scale[0]+')</option><option value="NA"'+(cur==='NA'?' selected':'')+'>N/A \u00b7 Not applicable to this lesson</option>';
-    h+='<tr class="'+(cur===''?'unset':'')+'"><td class="num">'+(i+1)+'</td><td>'+esc(p.body)+(p.code?' <span class="code">PPST '+p.code+'</span>':'')+
-      (fs.length?'<ul class="finds">'+fs.map(function(k){return '<li>Level '+k.split('.')[0]+': '+esc(findText(i,k))+'</li>'}).join('')+'</ul>':'')+
-      '<div class="guidebtn"><button class="btn ghost small" type="button" data-guide="'+i+'">Guide'+(fs.length?' \u00b7 '+fs.length+' finding'+(fs.length===1?'':'s'):'')+'</button></div></td>'+
-      '<td class="act"><select class="rsel'+(cur?' set':'')+'" id="o-r'+i+'" data-i="'+i+'" aria-label="Rating for indicator '+(i+1)+'">'+opts+'</select></td></tr>';
-  });
-  $('#o-rate').innerHTML=h+'</tbody>';
-  obsSummary();
+    obsSummary(); obsPageUI(); return; }
+  obsPage=Math.max(0,Math.min(ind.length-1,obsPage));
+  $('#o-ratehint').innerHTML='SY '+esc(obsSy())+' indicators, levels '+st.scale[0]+'–'+st.scale[4]+' ('+esc(st.label)+'). Not Observed counts as '+st.scale[0]+'.'+(ioa?' Record the final rating the observers agreed on.':'');
+  $('#o-chips').innerHTML=ind.map(function(t,k){ var r=String(obs.ratings[k]||''); return '<button type="button" data-ip="'+k+'" class="'+(r?'set ':'')+(k===obsPage?'on':'')+'" title="Indicator '+(k+1)+(r?' · rated '+r:' · not rated')+'" aria-label="Indicator '+(k+1)+'">'+(k+1)+'</button>'; }).join('');
+  var i=obsPage, p=splitInd(ind[i]), r=rubricFor(i), cur=String(obs.ratings[i]||''), fs=obs.finds[i]||[];
+  var opts='<option value="">Choose a rating…</option>'+st.scale.map(function(L){ return '<option value="'+L+'"'+(cur===String(L)?' selected':'')+'>'+L+' · '+esc(shortLevel(r,L))+'</option>'; }).join('')+
+    '<option value="NO"'+(cur==='NO'?' selected':'')+'>NO · Not observed (counts as '+st.scale[0]+')</option><option value="NA"'+(cur==='NA'?' selected':'')+'>N/A · Not applicable to this lesson</option>';
+  var line=function(k,v,top){ return '<div class="fline'+(top?' top':'')+'"><span class="lk">'+k+'</span><span class="lv">'+v+'</span></div>'; };
+  $('#o-rate').innerHTML='<div class="iitem"><div class="ih">Indicator '+(i+1)+' of '+ind.length+'</div><div class="lines" style="max-width:none">'+
+    line('Indicator','<span class="itx">'+esc(p.body)+'</span>',true)+
+    (p.code?line('PPST','<span class="code" style="font-family:var(--mono);color:var(--seal)">'+p.code+'</span>'):'')+
+    '<label class="fline"><span class="lk">Rating</span><span class="lv"><select class="rsel'+(cur?' set':'')+'" id="o-r'+i+'" data-i="'+i+'">'+opts+'</select></span></label>'+
+    line('Findings',fs.length?'<ul class="finds">'+fs.map(function(k){return '<li>Level '+k.split('.')[0]+': '+esc(findText(i,k))+'</li>'}).join('')+'</ul>':'<span class="mini">None ticked yet. Open the guide to tick what you saw.</span>',true)+
+    line('Rubric guide','<span><button class="btn ghost small" type="button" data-guide="'+i+'">Open the Annex E-1 guide'+(fs.length?' \u00b7 '+fs.length+' finding'+(fs.length===1?'':'s'):'')+'</button></span>')+
+    notesEvidenceLines(i,line)+
+    '</div></div>';
+  obsSummary(); obsPageUI();
 }
-$('#o-rate').addEventListener('change',function(e){ var s=e.target; if(!s.classList.contains('rsel')) return; obs.ratings[+s.dataset.i]=s.value; s.classList.toggle('set',!!s.value); s.closest('tr').classList.toggle('unset',!s.value); obsSummary(); obsLeafSoon(); });
-$('#o-rate').addEventListener('click',function(e){ var b=e.target.closest('[data-guide]'); if(b) openGuide(+b.dataset.guide); });
+/* the step's Back / Next walk through the indicators before leaving the ratings step */
+function obsPageUI(){
+  var card=$('#o-rate').closest('[data-step]'); if(!card||!card.classList.contains('cur')) return;
+  var n=STAGES[$('#o-stage').value]?cotSet(obsSy()).length:0, nav=$('.wiznav',card); if(!nav) return;
+  var of=$('.of',nav); of.textContent=of.textContent.replace(/ · Indicator.*$/,'')+(n?' · Indicator '+(obsPage+1)+' of '+n:'');
+  $('[data-wiz="1"]',nav).innerHTML=n&&obsPage<n-1?'Next indicator &rsaquo;':'Next &rsaquo;';
+  $('[data-wiz="-1"]',nav).innerHTML=n&&obsPage>0?'&lsaquo; Previous indicator':'&lsaquo; Back';
+  $('[data-wiz="-1"]',nav).style.visibility='visible';
+}
+$('#o-chips').addEventListener('click',function(e){ var b=e.target.closest('[data-ip]'); if(b){ obsPage=+b.dataset.ip; drawRate(); } });
+$('#o-rate').addEventListener('change',function(e){ var s=e.target; if(!s.classList.contains('rsel')) return; obs.ratings[+s.dataset.i]=s.value; s.classList.toggle('set',!!s.value); var c=$('#o-chips [data-ip="'+s.dataset.i+'"]'); if(c) c.classList.toggle('set',!!s.value); obsSummary(); obsLeafSoon(); });
+$('#o-rate').addEventListener('click',function(e){ var b=e.target.closest('[data-guide]'); if(b){ openGuide(+b.dataset.guide); return; } b=e.target.closest('[data-usesug]'); if(b){ obs.ratings[+b.dataset.usesug]=b.dataset.lv; drawRate(); obsLeafSoon(); toast('Rating set. Change it if the rubric points to another level.'); } });
 function scoreOf(r,st){ if(r==='NO') return st.scale[0]; if(r===''||r==='NA') return null; return +r; }
 function obsSummary(){
   var st=STAGES[$('#o-stage').value], n=obs.ratings.length, rated=0, no=0, na=0, sum=0, cnt=0;
   obs.ratings.forEach(function(r){ if(r!=='') rated++; if(r==='NO') no++; if(r==='NA') na++; var s=st?scoreOf(r,st):null; if(s!=null){sum+=s;cnt++;} });
   $('#o-tiles').innerHTML='<div class="tile"><b>'+rated+'<small> / '+n+'</small></b><span>Indicators rated</span></div><div class="tile"><b>'+(cnt?(sum/cnt).toFixed(2):'\u2014')+'</b><span>Average level</span></div><div class="tile"><b>'+no+'</b><span>Not observed</span></div><div class="tile"><b>'+na+'</b><span>Not applicable</span></div>';
+}
+
+/* ================================================================== NOTES SUMMARY: evidence per COT indicator, read from the observation notes */
+/* Words that show evidence for each Annex E-1 indicator (numbered as in the rubric). A word ending matches longer forms: "motivat" = motivation, motivated. */
+var EVID={
+ 1:['concept','content','lesson','topic','explain','explained','discuss','definition','define','formula','process','fact','accurate','error','misconception','integrat','connect','real-life','real life','other subject','across'],
+ 2:['ict','powerpoint','ppt','slide','video','projector','tv','television','laptop','computer','online','internet','website','presentation','credit','source','cited','citation','google','canva'],
+ 3:['read','reading','spell','spelling','letter','phonics','arranging the letters','vocabulary','word','write','writing','compute','computation','solve','solving','number','numeracy','literacy','graph','count','pronounc','sentence','paragraph','comprehension','fluency','decod'],
+ 4:['why','how would','how can','how do','how does','how did','how will','how is','how are these','what do you think','do you think','what if','explain why','analy','compare','contrast','evaluate','justify','opinion','create','creative','critical','higher-order','hots','infer','predict','reason','problem solving','solve the problem','in your own words'],
+ 5:['filipino','english','tagalog','mother tongue','code-switch','code switch','translat','language','vernacular','taglish'],
+ 6:['voice','gesture','eye contact','facial','smile','instruction','direction','clarif','nod','tone','pace','loud','clear','body language','called'],
+ 7:['safety','safe','precaution','hazard','procedure','protocol','injur','careful','clean','sanit','first aid','evacuat'],
+ 8:['respect','fair','care','praise','encourag','thank','polite','feeling','feel','kumusta','greet','welcome','all learners','every learner','each learner','acknowledg','appreciat'],
+ 9:['group','pair','seat','arrange','hands-on','hands on','station','movement','set up','setup','transition','floor','space','manipulative','explore','discover'],
+ 10:['cooperat','collaborat','peer','team','share','sharing','groupmate','group work','group activity','participat','volunteer','together','discuss with'],
+ 11:['motivat','game','reward','point','timer','timed','challenge','engag','independent','own','responsib','self','enjoy','excite','interest','competition'],
+ 12:['class rule','rule','behavior','behaviour','discipline','noise','noisy','quiet','reminder','reminded','misbehav','attention','agreement','settle','calm','warn'],
+ 13:['differentiat','level','tier','struggling','advanced','slow','fast learner','needs','choice','different task','individual','remedia','enrich','scaffold'],
+ 14:['culture','cultural','local','community','barangay','family','background','religio','socio','experience','context','tradition','filipino values','home'],
+ 15:['disabilit','special needs','sped','gifted','talented','talent','hearing','visual impair','inclusive','autism','adhd','learning difficult'],
+ 16:['absent','absence','illness','sick','displace','working student','poverty','difficult circumstance','modular','catch-up','catch up','far from school'],
+ 17:['indigenous','ip learner','ips','tribe','tribal','ethnic','katutubo','mangyan','aeta','lumad'],
+ 18:['prayer','attendance','review','recall','motivation','activity','analysis','abstraction','application','generaliz','evaluation','assignment','objective','closing','introduc','lesson proper','transition','next word','proceed','summar'],
+ 19:['material','worksheet','module','book','chart','picture','flashcard','flash card','visual aid','realia','video','slide','board','manila paper','printout','handout','strip','tarpapel','meta card'],
+ 20:['quiz','test','assess','evaluate','evaluation','exit ticket','rubric','check','score','recitation','formative','answer','assignment','output','graded','mastery'],
+ 21:['feedback','correct','corrected','praise','very good','good job','great','comment','clarif','affirm','wrong','right','try again','well done','commend','processed']
+};
+var POS_CUE=/\b(all (the )?(learners|students|pupils|groups)|every (learner|student|group|pupil)|each (learner|student|group|pupil)|everyone|the whole class|consistently|always|most of the (class|learners|students))\b/i;
+var NEG_CUE=/(\bdid not\b|\bdidn't\b|\b(was|were|is|are) not "?(followed|done|given|met|clear|observed|able|completed|checked|clicked|used|set|started|monitored|managed)|\bshout|\bchao|\bunattended\b|\bnot paying attention\b|\bnot listening\b|\bdistract|\bfailed\b|\bwithout\b|\bonly a few\b|\bfew (learners|students)\b|\bnoisy\b|\bconfus|\bunclear\b|\bunable\b|\bnot able\b|\bno one\b|\bnobody\b)/i;
+var EV_RX={}; Object.keys(EVID).forEach(function(n){ EV_RX[n]=EVID[n].map(function(w){ return new RegExp('(^|[^a-z])'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'); }); });
+function noteLines(txt){
+  return String(txt||'').split(/\r?\n/).map(function(l){ return l.trim(); }).filter(Boolean).map(function(l){
+    var m=/^(\d{1,2}:\d{2}(?:\s*[AaPp]\.?[Mm]\.?)?)\s*[-–—:.]?\s*(.*)$/.exec(l);
+    return m?{t:m[1],x:m[2]||''}:{t:'',x:l}; }).filter(function(e){ return /[a-z]/i.test(e.x); });
+}
+function toMin(t){ var m=/^(\d{1,2}):(\d{2})\s*([AaPp])?/.exec(t||''); if(!m) return null; var h=+m[1]; if(m[3]){ var pm=/p/i.test(m[3]); if(pm&&h<12) h+=12; if(!pm&&h===12) h=0; } return h*60+(+m[2]); }
+function shortText(s,n){ s=String(s||'').replace(/\s+/g,' ').trim(); return s.length>n?s.slice(0,n-1).replace(/\s+\S*$/,'')+'…':s; }
+var LESSON_PARTS=[['opening prayer and greetings',/prayer|greet/i],['checking of attendance',/attendance/i],['review or recall',/review|recall/i],['motivation',/motivat/i],['activity',/activit|game|group work/i],['analysis and discussion',/discuss|analy/i],['abstraction or generalization',/generaliz|abstraction|summar/i],['application',/applica/i],['evaluation',/quiz|evaluat|assess|test\b/i],['assignment',/assignment|homework/i]];
+function analyzeNotes(notes,sy,stage){
+  var L=noteLines(notes), ind=cotSet(sy), k=SYS.indexOf(sy), st=STAGES[stage];
+  var items=ind.map(function(txt,i){
+    var n=RUB.M[k<0?1:k][i], rx=EV_RX[n]||[], ev=L.filter(function(l){ var x=l.x.replace(/["\u201c\u2018']([A-Z]{2,})["\u201d\u2019']/g,' '); return rx.some(function(r){return r.test(x)}); });
+    var c=ev.length, joined=ev.map(function(e){return e.x}).join(' '), pos=POS_CUE.test(joined), neg=NEG_CUE.test(joined), raw=null, lv='';
+    if(c){ raw=c===1?3:c===2?4:5; if(pos) raw++; if(neg) raw--; raw=Math.max(1,Math.min(9,raw)); }
+    if(st){ lv=c?String(Math.max(st.scale[0],Math.min(st.scale[4],raw))):'NO'; } else if(c) lv=String(raw);
+    return {n:n,ev:ev,lv:lv,pos:pos,neg:neg};
+  });
+  return {lines:L,items:items,stage:stage};
+}
+function interpText(a,i,stage){
+  var it=a.items[i], st=STAGES[stage], r=RUB.R.filter(function(x){return x.n===it.n})[0];
+  if(!it.ev.length) return 'No entry in the notes points to this indicator. If it was not seen during the lesson, rate it Not Observed'+(st?' (counts as '+st.scale[0]+')':'')+', or N/A if it does not apply to this lesson.';
+  var times=it.ev.filter(function(e){return e.t}).map(function(e){return e.t});
+  var t='The notes record '+it.ev.length+' entr'+(it.ev.length===1?'y':'ies')+' for this indicator'+(times.length?(times.length>1?' ('+times[0]+'–'+times[times.length-1]+')':' ('+times[0]+')'):'')+': '+
+    it.ev.slice(0,3).map(function(e){return shortText(e.x,90).replace(/\.$/,'')}).join('; ')+(it.ev.length>3?'; and '+(it.ev.length-3)+' more':'')+'. ';
+  if(it.pos) t+='The entries describe practice that reaches all or most learners. ';
+  if(it.neg) t+='Some entries note limits or gaps in the practice. ';
+  if(it.ev.length===1) t+='With only one entry, the practice is evident but not yet shown to be frequent or consistent. ';
+  if(it.lv&&it.lv!=='NO'&&r) t+='Closest rubric description, Level '+it.lv+': '+r.l[+it.lv-1]+' ';
+  return t+'Confirm against the features of practice in the Annex E-1 guide before rating.';
+}
+function overallText(a,d){
+  var L=a.lines; if(!L.length) return '';
+  var tl=L.filter(function(l){return l.t}), ts=tl.map(function(l){return toMin(l.t)}).filter(function(v){return v!=null}), dur='';
+  if(ts.length>1){ var span=ts[ts.length-1]-ts[0]; if(span<0) span+=720; if(span>0) dur=' over about '+span+' minutes ('+tl[0].t+' to '+tl[tl.length-1].t+')'; }
+  var parts=LESSON_PARTS.filter(function(p){ return L.some(function(l){return p[1].test(l.x)}); }).map(function(p){return p[0]});
+  var withEv=a.items.map(function(it,i){return it.ev.length?i+1:0}).filter(Boolean), none=a.items.map(function(it,i){return it.ev.length?0:i+1}).filter(Boolean);
+  var cover='', s1=toMin(d&&d.t1), s2=toMin(d&&d.t2), lastT=ts.length?ts[ts.length-1]:null, firstT=ts.length?ts[0]:null;
+  if(s1!=null&&s2!=null&&lastT!=null){ var per=s2-s1; if(per<0) per+=720; var upto=lastT-s1; if(upto<0) upto+=720;
+    if(per>0&&per-upto>=10) cover='The lesson ran from '+d.t1+' to '+d.t2+' ('+per+' minutes), but the notes stop at '+tl[tl.length-1].t+', about '+upto+' minutes into the period. Evidence from the rest of the lesson is not in the notes, so an indicator with no evidence may simply not have been written down. ';
+    else if(per>0) cover='The notes cover the lesson period of '+d.t1+' to '+d.t2+'. '; }
+  return 'The notes have '+L.length+' entr'+(L.length===1?'y':'ies')+dur+'. '+cover+
+    (parts.length?'The lesson moved through '+parts.join(', ')+'. ':'')+
+    'They give evidence for '+withEv.length+' of the '+a.items.length+' COT indicators'+(withEv.length?' (indicators '+withEv.join(', ')+')':'')+'. '+
+    (none.length?'No evidence was noted for indicator'+(none.length>1?'s ':' ')+none.join(', ')+'; check whether these were not observed or not applicable.':'');
+}
+function lvLabel(lv,stage){ var st=STAGES[stage]; if(!lv) return 'Choose the career stage to see a suggested level'; if(lv==='NO') return 'Not Observed'+(st?' (counts as '+st.scale[0]+')':''); return 'Level '+lv; }
+function genSummary(){
+  var d=readObs(), a=analyzeNotes(d.notes,d.sy,d.stage);
+  obs.sum={at:new Date().toISOString(),notes:d.notes,stage:d.stage,overall:overallText(a,d),items:a.items.map(function(it,i){ return {ev:it.ev,lv:it.lv,txt:interpText(a,i,d.stage)}; })};
+  renderSummary(); obsLeafSoon();
+}
+function renderSummary(){
+  var d=readObs(), out=$('#sm-out'), ind=cotSet(d.sy);
+  if(!String(d.notes||'').trim()){ out.innerHTML='<div class="empty">Write the observation notes in Step 3 first. The summary is made from them.</div>'; $('#sm-leaf').innerHTML=''; $('#sm-gen').textContent='Generate summary from the notes'; $('#sm-state').textContent=''; return; }
+  if(!obs.sum){ out.innerHTML='<div class="empty">Click <b>Generate summary from the notes</b>.</div>'; $('#sm-leaf').innerHTML=''; $('#sm-gen').textContent='Generate summary from the notes'; $('#sm-state').textContent=''; return; }
+  var sm=obs.sum, stale=sm.notes!==d.notes||sm.stage!==d.stage;
+  $('#sm-gen').textContent='Regenerate from the notes';
+  $('#sm-state').textContent=stale?'The notes or career stage changed since this summary was made. Regenerate to update it (your edits will be replaced).':'Generated '+longDate(String(sm.at).slice(0,10))+'. You can edit any interpretation.';
+  var line=function(k,v,top){ return '<div class="fline'+(top?' top':'')+'"><span class="lk">'+k+'</span><span class="lv">'+v+'</span></div>'; };
+  out.innerHTML='<div class="lines" style="max-width:none"><label class="fline top"><span class="lk">Lesson summary</span><span class="lv"><textarea id="sm-overall" rows="4">'+esc(sm.overall||'')+'</textarea></span></label></div>'+
+    ind.map(function(t,i){ var it=sm.items[i]||{ev:[],lv:'',txt:''}, p=splitInd(t);
+      return '<div class="iitem"><div class="ih">Indicator '+(i+1)+(p.code?' · PPST '+p.code:'')+'</div><div class="lines" style="max-width:none">'+
+        line('Indicator','<span class="itx">'+esc(p.body)+'</span>',true)+
+        line('Evidence from the notes',it.ev.length?'<ul class="finds">'+it.ev.map(function(e){return '<li>'+(e.t?'<b>'+esc(e.t)+'</b> – ':'')+esc(e.x)+'</li>'}).join('')+'</ul>':'<span class="mini">None found in the notes.</span>',true)+
+        '<label class="fline top"><span class="lk">Interpretation</span><span class="lv"><textarea rows="4" data-si="'+i+'">'+esc(it.txt||'')+'</textarea></span></label>'+
+        line('Suggested rating','<b>'+esc(lvLabel(it.lv,d.stage))+'</b>')+
+      '</div></div>'; }).join('');
+  $('#sm-leaf').innerHTML=summarySheetHTML(d);
+}
+$('#sm-gen').addEventListener('click',function(){
+  if(!String($('#o-notes').value||'').trim()){ toast('Write the observation notes first.'); wizGo($('#p-obs'),3); return; }
+  genSummary(); toast('Summary made from the notes. Check and edit each interpretation.');
+});
+$('#sm-out').addEventListener('input',function(e){ var t=e.target; if(!obs.sum) return;
+  if(t.id==='sm-overall') obs.sum.overall=t.value; else if(t.dataset.si!=null) obs.sum.items[+t.dataset.si].txt=t.value;
+  clearTimeout(renderSummary._t); renderSummary._t=setTimeout(function(){ $('#sm-leaf').innerHTML=summarySheetHTML(readObs()); },400); });
+function summarySheetHTML(d){
+  var sm=obs.sum; if(!sm) return '';
+  var ind=cotSet(d.sy);
+  return '<div class="leaf"><div class="hd"><img src="'+SEAL+'" alt="" style="width:40pt;height:40pt"></div><h4>PERFORMANCE MANAGEMENT AND EVALUATION SYSTEM (PMES)<br>FOR TEACHERS</h4><h4 style="margin-top:6pt">CLASSROOM OBSERVATION TOOL (COT) &ndash;<br>OBSERVATION NOTES SUMMARY AND INTERPRETATION</h4>'+obsFields(d)+
+    '<p class="sec">LESSON SUMMARY</p><p style="white-space:pre-wrap">'+esc(sm.overall||'')+'</p>'+
+    '<p class="sec">EVIDENCE AND INTERPRETATION PER COT INDICATOR (SY '+esc(d.sy)+')</p>'+
+    '<table><tr><th style="width:20pt">#</th><th style="width:120pt">Indicator</th><th>Evidence from the notes</th><th>Interpretation</th><th style="width:58pt">Suggested rating</th></tr>'+
+    ind.map(function(t,i){ var it=sm.items[i]||{ev:[]}, p=splitInd(t);
+      return '<tr><td class="c">'+(i+1)+'</td><td>'+esc(p.body)+(p.code?' ('+p.code+')':'')+'</td><td>'+(it.ev.length?it.ev.map(function(e){return (e.t?'<b>'+esc(e.t)+'</b> ':'')+esc(e.x)}).join('<br>'):'<i>None noted</i>')+'</td><td style="white-space:pre-wrap">'+esc(it.txt||'')+'</td><td class="c">'+esc(lvLabel(it.lv,d.stage))+'</td></tr>'; }).join('')+
+    '</table><p class="nonote">Prepared from the observation notes as a guide for the COT rating. The final rating per indicator is the observer&rsquo;s judgment against the Annex E-1 rubric.</p>'+
+    '<div class="sigs" style="justify-content:center;margin-top:28pt"><div class="sig" style="max-width:220pt"><div class="nm">'+esc((d.observers[0]||{}).n||' ')+'</div><div class="lb">Signature over Printed Name of the Observer</div></div></div></div>';
+}
+$('#sm-print').addEventListener('click',function(){ if(!obs.sum){ toast('Generate the summary first.'); return; } $('#printarea').innerHTML=summarySheetHTML(readObs()); setTimeout(function(){ window.print(); },60); });
+$('#sm-doc').addEventListener('click',async function(){
+  if(!obs.sum){ toast('Generate the summary first.'); return; }
+  var d=readObs(), sm=obs.sum, ind=cotSet(d.sy);
+  var body=DX.head()+DX.p('CLASSROOM OBSERVATION TOOL (COT) – OBSERVATION NOTES SUMMARY AND INTERPRETATION',{align:'center',b:true,sz:11,after:160})+
+    DX.table([[{t:'Observer:',b:true},d.observers.map(function(o){return o.n}).join(', '),{t:'Date:',b:true},longDate(d.date)],[{t:'Teacher observed:',b:true},d.teacher,{t:'Observation:',b:true},obsKind(d)],[{t:'Subject & grade level:',b:true},d.subject,{t:'Time:',b:true},[d.t1,d.t2].filter(Boolean).join(' – ')]],[2200,3500,1500,3200],{noBorder:true,sz:9})+
+    DX.p('LESSON SUMMARY',{b:true,sz:10,before:160})+DX.p(sm.overall||'',{sz:9.5,after:160})+
+    DX.p('EVIDENCE AND INTERPRETATION PER COT INDICATOR (SY '+d.sy+')',{b:true,sz:10})+
+    DX.table([{header:true,cells:['#','Indicator','Evidence from the notes','Interpretation','Suggested rating'].map(function(h){return {t:h,b:true,shade:'D9D9D9',align:'center',v:'center'}})}].concat(ind.map(function(t,i){ var it=sm.items[i]||{ev:[]}, p=splitInd(t);
+      return [{t:String(i+1),align:'center'},p.body+(p.code?' ('+p.code+')':''),{paras:it.ev.length?it.ev.map(function(e){return (e.t?e.t+' ':'')+e.x}):['None noted']},it.txt||'',{t:lvLabel(it.lv,d.stage),align:'center'}]; })),[400,2300,3000,3300,1400],{sz:8.5})+
+    DX.p('Prepared from the observation notes as a guide for the COT rating. The final rating per indicator is the observer’s judgment against the Annex E-1 rubric.',{sz:8,i:true,before:120,after:400})+
+    DX.p([[(d.observers[0]||{}).n||' ',{b:true,u:true}]],{align:'center',after:0})+DX.p('Signature over Printed Name of the Observer',{align:'center',sz:8.5});
+  try{ await offerFile('COT Notes Summary '+obsFileBase(d)+'.docx',await DX.build(body,{w:11906,h:16838,m:720})); }catch(e){ toast('Could not build the Word file. Reload the page and try again.'); }
+});
+$('#sm-pdf').addEventListener('click',async function(){
+  if(!obs.sum){ toast('Generate the summary first.'); return; }
+  var J=window.jspdf&&window.jspdf.jsPDF; if(!J){ toast('The PDF maker did not load. Reload the page and try again.'); return; }
+  var d=readObs(), sm=obs.sum, ind=cotSet(d.sy), doc=new J({unit:'pt',format:'a4'}), W=595.28, H=841.89, M=40, R=W-M, y=0;
+  var T=function(t,x,yy,o){ doc.text(pdfSafe(t),x,yy,o); };
+  var room=function(h){ if(y+h>H-50){ doc.addPage(); y=50; } };
+  var para=function(txt,x,w,sz,bold,lh){ doc.setFont('helvetica',bold?'bold':'normal'); doc.setFontSize(sz); var ls=doc.splitTextToSize(pdfSafe(txt),w); ls.forEach(function(l){ room(lh); T(l,x,y); y+=lh; }); };
+  try{ doc.addImage(SEAL,'PNG',W/2-22,28,44,44); }catch(e){}
+  doc.setFont('helvetica','bold'); doc.setFontSize(11); T('PERFORMANCE MANAGEMENT AND EVALUATION SYSTEM (PMES) FOR TEACHERS',W/2,92,{align:'center'});
+  T('CLASSROOM OBSERVATION TOOL (COT) – OBSERVATION NOTES SUMMARY AND INTERPRETATION',W/2,108,{align:'center'});
+  y=134; doc.setFontSize(9);
+  [['OBSERVER:',d.observers.map(function(o){return o.n}).join(', '),'DATE:',longDate(d.date)],['TEACHER OBSERVED:',d.teacher,'OBSERVATION:',obsKind(d)],['SUBJECT & GRADE LEVEL:',d.subject,'TIME:',[d.t1,d.t2].filter(Boolean).join(' – ')]].forEach(function(r){
+    doc.setFont('helvetica','bold'); T(r[0],M,y); T(r[2],372,y); doc.setFont('helvetica','normal'); T(r[1]||'',M+128,y); T(r[3]||'',372+76,y); y+=15; });
+  y+=6; para('LESSON SUMMARY',M,R-M,10,true,13); para(sm.overall||'',M,R-M,9.5,false,12.5); y+=8;
+  para('EVIDENCE AND INTERPRETATION PER COT INDICATOR (SY '+d.sy+')',M,R-M,10,true,13); y+=2;
+  ind.forEach(function(t,i){ var it=sm.items[i]||{ev:[]}, p=splitInd(t);
+    room(60); doc.setDrawColor(150); doc.setLineWidth(.5); doc.line(M,y-2,R,y-2); y+=10;
+    para((i+1)+'. '+p.body+(p.code?' ('+p.code+')':''),M,R-M,9.5,true,12.5);
+    para('Evidence from the notes:',M+10,R-M-10,9,true,12);
+    if(it.ev.length) it.ev.forEach(function(e){ para('• '+(e.t?e.t+' – ':'')+e.x,M+18,R-M-18,9,false,12); }); else para('None noted.',M+18,R-M-18,9,false,12);
+    para('Interpretation:',M+10,R-M-10,9,true,12); para(it.txt||'',M+18,R-M-18,9,false,12);
+    para('Suggested rating: '+lvLabel(it.lv,d.stage),M+10,R-M-10,9,true,12); y+=6; });
+  room(70); y+=6; para('Prepared from the observation notes as a guide for the COT rating. The final rating per indicator is the observer’s judgment against the Annex E-1 rubric.',M,R-M,8,false,11);
+  y+=34; room(30); var nm=(d.observers[0]||{}).n||''; doc.line(W/2-95,y,W/2+95,y); if(nm){ doc.setFont('helvetica','bold'); doc.setFontSize(9.5); T(nm,W/2,y-3,{align:'center'}); }
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); T('Signature over Printed Name of the Observer',W/2,y+11,{align:'center'});
+  await offerFile('COT Notes Summary '+obsFileBase(d)+'.pdf',doc.output('blob'));
+});
+function notesEvidenceLines(i,line){
+  var d=readObs(); if(!String(d.notes||'').trim()) return line('From the notes','<span class="mini">No observation notes yet. Notes written on the Notes Form show here as evidence.</span>');
+  var a=analyzeNotes(d.notes,d.sy,d.stage), it=a.items[i], saved=obs.sum&&obs.sum.items&&obs.sum.items[i];
+  var txt=saved&&obs.sum.notes===d.notes&&obs.sum.stage===d.stage?saved.txt:interpText(a,i,d.stage);
+  return line('Evidence from the notes',it.ev.length?'<ul class="finds">'+it.ev.map(function(e){return '<li>'+(e.t?'<b>'+esc(e.t)+'</b> – ':'')+esc(e.x)+'</li>'}).join('')+'</ul>':'<span class="mini">None found in the notes.</span>',true)+
+    line('Interpretation','<span style="font-size:13.5px;color:var(--ink-2);line-height:1.5">'+esc(txt)+'</span>',true)+
+    line('Suggested rating','<span class="row" style="gap:10px"><b>'+esc(lvLabel(it.lv,d.stage))+'</b>'+(it.lv?'<button class="btn ghost small" type="button" data-usesug="'+i+'" data-lv="'+esc(it.lv)+'">Use this rating</button>':'')+'</span>');
 }
 
 /* ---------- rubric guide (Annex E-1) ---------- */
@@ -1629,10 +1944,11 @@ function notesPDF(d){
   return doc.output('blob');
 }
 function validObs(d,forNotes){
-  if(!d.teacher){ toast('Choose the teacher observed.'); $('#o-teacher').focus(); return false; }
-  if(!forNotes && !d.stage){ toast('Choose the teacher\u2019s career stage.'); $('#o-stage').focus(); return false; }
-  if(!d.observers.length){ toast('Choose the observer.'); $('#o-ob1').focus(); return false; }
-  if(!d.date){ toast('Enter the date of observation.'); $('#o-date').focus(); return false; }
+  var ob=$('#p-obs');
+  if(!d.teacher){ toast('Choose the teacher observed.'); wizGo(ob,1); $('#o-teacher').focus(); return false; }
+  if(!forNotes && !d.stage){ toast('Choose the teacher\u2019s career stage.'); wizGo(ob,1); $('#o-stage').focus(); return false; }
+  if(!d.date){ toast('Enter the date of observation.'); wizGo(ob,1); $('#o-date').focus(); return false; }
+  if(!d.observers.length){ toast('Choose the observer.'); wizGo(ob,2); $('#o-ob1').focus(); return false; }
   return true;
 }
 function obsFileBase(d){ return safeName([d.teacher||'Blank',obsKind(d)+' Obs',longDate(d.date).replace(',','')].filter(Boolean).join(' ')); }
@@ -1642,7 +1958,7 @@ $('#o-notes-pdf').addEventListener('click',async function(){
 });
 $('#o-notes-docx').addEventListener('click',async function(){
   var d=readObs();
-  try{ await offerFile('COT Observation Notes '+obsFileBase(d)+'.docx',await notesDocx(d)); }catch(e){ toast('Could not build the file. Reload and try again.'); }
+  try{ await offerFile('COT Observation Notes '+obsFileBase(d)+'.docx',await notesDocx(d)); }catch(e){ toast('The official template file was not found on the site; downloading the Word copy made from the preview instead.'); EXP.word(notesSheetHTML(d),'COT Observation Notes '+obsFileBase(d)); }
 });
 $('#o-save').addEventListener('click',async function(){
   var d=readObs(); if(!validObs(d)) return;
@@ -1656,27 +1972,29 @@ $('#o-save').addEventListener('click',async function(){
 $('#o-dl').addEventListener('click',async function(){
   var d=readObs(); if(!validObs(d)) return;
   var miss=d.ratings.filter(function(r){return r===''}).length; if(miss) toast(miss+' indicator'+(miss===1?' is':'s are')+' not rated; '+(miss===1?'its row stays':'their rows stay')+' blank on the form.');
-  try{ await offerFile((d.observers.length>1?'COT IOA Form ':'COT Rating Sheet ')+obsFileBase(d)+'.docx',await cotFile(d)); }catch(e){ toast('Could not build the form. Reload the page and try again.'); }
+  try{ await offerFile((d.observers.length>1?'COT IOA Form ':'COT Rating Sheet ')+obsFileBase(d)+'.docx',await cotFile(d)); }catch(e){ toast('The official template file was not found on the site; downloading the Word copy made from the preview instead.'); EXP.word(cotSheetHTML(d),(d.observers.length>1?'COT IOA Form ':'COT Rating Sheet ')+obsFileBase(d)); }
 });
 $('#o-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ await Store.del('obs',obs.id); toast('Observation deleted'); newObs(); }catch(e){ saveErr(e); } }); });
 $('#o-new').addEventListener('click',newObs);
+$('#o-notes-save').addEventListener('click',function(){ $('#o-save').click(); });
+$('#sm-save').addEventListener('click',function(){ $('#o-save').click(); });
 function newObs(){
-  obs={id:'',ratings:[],finds:[]};
-  setPerson('o-teacher',''); $('#o-stage').value=''; $('#o-dept').value=''; $('#o-subject').value=''; setDate('o-date',TODAY);
+  obs={id:'',ratings:[],finds:[],sum:null}; obsPage=0;
+  setPerson('o-teacher',''); $('#o-stage').value=''; $('#o-dept').value=''; setSubject(''); setDate('o-date',TODAY);
   $('#o-no1').checked=true; $('#o-noother').value=''; $('#o-noother').hidden=true; $('#o-q').value='Term 1'; $('#o-t1').value=''; $('#o-t2').value='';
   var me=ls('observer'); setPerson('o-ob1',me?me.n:'',me?me.p:''); setPerson('o-ob2',''); setPerson('o-ob3','');
-  $('#o-comments').value=''; $('#o-notes').value=''; $('#o-del').hidden=true; $('#o-state').textContent='New observation, not yet saved.';
+  $('#o-comments').value=''; $('#o-notes').value=''; $('#o-del').hidden=true; wizGo($('#p-obs'),1); $('#o-state').textContent='New observation, not yet saved.';
   drawRate(); obsLeafSoon();
 }
-function openObs(id){
+function openObs(id,sub){
   var o=S.obs.filter(function(x){return x.id===id})[0]; if(!o) return;
-  obs={id:id,sy:o.sy,ratings:(o.ratings||[]).map(String),finds:(o.finds||[]).map(function(a){return (a||[]).slice()})};
-  setPerson('o-teacher',o.teacher,o.teacherPos); $('#o-stage').value=o.stage||''; $('#o-dept').value=o.dept||''; $('#o-subject').value=o.subject||''; setDate('o-date',o.date||'');
+  obsPage=0; obs={id:id,sum:o.sum||null,sy:o.sy,ratings:(o.ratings||[]).map(String),finds:(o.finds||[]).map(function(a){return (a||[]).slice()})};
+  setPerson('o-teacher',o.teacher,o.teacherPos); $('#o-stage').value=o.stage||''; $('#o-dept').value=o.dept||''; setSubject(o.subject||''); setDate('o-date',o.date||'');
   $('#o-no'+(o.no===2?2:1)).checked=true; $('#o-noother').value=o.noOther||'';  $('#o-q').value=/^Term/.test(o.quarter||'')?o.quarter:'Term 1'; $('#o-t1').value=o.t1||''; $('#o-t2').value=o.t2||'';
   var ob=o.observers||[]; ['o-ob1','o-ob2','o-ob3'].forEach(function(k,i){ setPerson(k,ob[i]?ob[i].n:'',ob[i]?ob[i].p:''); });
   $('#o-comments').value=o.comments||''; $('#o-notes').value=o.notes||''; $('#o-del').hidden=false;
   $('#o-state').textContent='Opened the saved observation (SY '+(o.sy||'')+'). Save again after changes.';
-  drawRate(); obsLeafSoon(); go('obs');
+  drawRate(); obsLeafSoon(); go('obs',sub||'cot'); wizGo($('#p-obs'),3);
 }
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-open-obs]'); if(b) openObs(b.dataset.openObs); });
 $('#o-teacher').addEventListener('personchange',function(){ var t=getPerson('o-teacher'), s=stageOf(t.p); if(s) $('#o-stage').value=s; var dp=deptOf(t.n); if(dp) $('#o-dept').value=dp; drawRate(); });
@@ -1685,6 +2003,42 @@ $('#o-stage').addEventListener('change',drawRate);
 $$('input[name=o-no]').forEach(function(r){ r.addEventListener('change',function(){  }); });
 $('#p-obs').addEventListener('personchange',function(e){ if(e.target.id==='o-ob1'){ var p=getPerson('o-ob1'); if(p.n) ls('observer',p); } drawRate(); obsLeafSoon(); });
 $('#p-obs').addEventListener('input',obsLeafSoon); $('#p-obs').addEventListener('change',obsLeafSoon); $('#p-obs').addEventListener('datechange',obsLeafSoon);
+
+/* ---------- subject & grade level: dropdown ---------- */
+var GRADES=[7,8,9,10];
+var SUBJ_BY_DEPT={'English':['English'],'Filipino':['Filipino'],'Mathematics':['Mathematics'],'Science':['Science'],'Araling Panlipunan':['Araling Panlipunan'],
+  'MAPEH':['MAPEH','Music','Arts','Physical Education','Health'],'TLE':['TLE'],'Values Education':['Values Education']};
+var SUBJ_ALL=[]; DEPTS.forEach(function(dp){ (SUBJ_BY_DEPT[dp]||[]).forEach(function(sb){ GRADES.forEach(function(g){ SUBJ_ALL.push([sb+' '+g,dp]); }); }); });
+function fillSubjects(){
+  var first=$('#o-dept').value, cur=$('#o-subj').value, order=DEPTS.slice();
+  if(first){ order.splice(order.indexOf(first),1); order.unshift(first); }
+  $('#o-subj').innerHTML='<option value="">Choose a subject and grade&hellip;</option>'+order.map(function(dp){
+    return '<optgroup label="'+esc(dp)+'">'+SUBJ_ALL.filter(function(x){return x[1]===dp}).map(function(x){return '<option>'+esc(x[0])+'</option>'}).join('')+'</optgroup>';
+  }).join('')+'<option value="__other">Not in the list (type it)&hellip;</option>';
+  $('#o-subj').value=cur;
+}
+function subjDept(v){ for(var i=0;i<SUBJ_ALL.length;i++) if(SUBJ_ALL[i][0]===v) return SUBJ_ALL[i][1]; return ''; }
+function subjectValue(){
+  var v=$('#o-subj').value, sec=$('#o-section').value.trim();
+  if(v==='__other') v=$('#o-subj-other').value.trim();
+  return [v,sec].filter(Boolean).join(' – ');
+}
+function setSubject(str){
+  var parts=String(str||'').split(/\s+[–—-]\s+/), main=(parts.shift()||'').trim(), sec=parts.join(' – ').trim();
+  fillSubjects();
+  if(!main){ $('#o-subj').value=''; $('#o-subj-other').value=''; $('#o-subj-other').hidden=true; }
+  else if(subjDept(main)){ $('#o-subj').value=main; $('#o-subj-other').value=''; $('#o-subj-other').hidden=true; }
+  else { $('#o-subj').value='__other'; $('#o-subj-other').value=main; $('#o-subj-other').hidden=false; }
+  $('#o-section').value=sec;
+  var seen={}; S.obs.forEach(function(o){ var x=String(o.subject||'').split(/\s+[–—-]\s+/); if(x[1]) seen[x.slice(1).join(' – ').trim()]=1; });
+  $('#o-section-list').innerHTML=Object.keys(seen).sort().map(function(k){return '<option value="'+esc(k)+'">'}).join('');
+}
+$('#o-subj').addEventListener('change',function(){
+  var other=this.value==='__other'; $('#o-subj-other').hidden=!other; if(other) $('#o-subj-other').focus();
+  var dp=subjDept(this.value); if(dp && !$('#o-dept').value) $('#o-dept').value=dp;
+  obsLeafSoon();
+});
+$('#o-dept').addEventListener('change',fillSubjects);
 
 /* ================================================================== COACHING (PMCF: one teacher, one month) */
 var coach={id:''};
@@ -1700,6 +2054,7 @@ function readCoach(){
 }
 function clearEntry(){ ['c-incident','c-impact','c-feedback','c-progress'].forEach(function(k){$('#'+k).value=''}); $$('#c-mech input').forEach(function(i){i.checked=false}); }
 function newCoach(keepPeople){
+  wizGo($('#p-coach'),keepPeople?2:1);
   coach={id:''};
   if(!keepPeople){ setPerson('c-ratee',''); $('#c-desig').value=''; var me=ls('observer'); setPerson('c-rater',me?me.n:'',me?me.p:''); setPerson('c-appr',PRINCIPAL.n,PRINCIPAL.p); $('#c-dept').value=''; setMonth(TODAY.slice(0,7)); }
   var mk2=monthKey(); setDate('c-date',TODAY.slice(0,7)===mk2?TODAY:mk2+'-01');
@@ -1709,7 +2064,7 @@ $('#c-new').addEventListener('click',function(){ newCoach(true); });
 ['c-month','c-year'].forEach(function(id){ $('#'+id).addEventListener('change',function(){ if(!coach.id){ var mk2=monthKey(); setDate('c-date',TODAY.slice(0,7)===mk2?TODAY:mk2+'-01'); } renderCoachLog(); }); });
 $('#c-save').addEventListener('click',async function(){
   var d=readCoach();
-  if(!d.ratee){ toast('Choose the ratee.'); $('#c-ratee').focus(); return; }
+  if(!d.ratee){ toast('Choose the ratee.'); wizGo($('#p-coach'),1); $('#c-ratee').focus(); return; }
   if(!d.date){ toast('Enter the date of the coaching session.'); $('#c-date').focus(); return; }
   if(!d.incident.trim()){ toast('Describe the significant incident.'); $('#c-incident').focus(); return; }
   d.month=d.date.slice(0,7); d.sy=syOfMonth(d.month);
@@ -1723,6 +2078,7 @@ $('#c-save').addEventListener('click',async function(){
 });
 $('#c-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ await Store.del('coach',coach.id); toast('Entry deleted'); newCoach(true); }catch(e){ saveErr(e); } }); });
 function openCoach(id){
+  wizGo($('#p-coach'),2);
   var c=S.coach.filter(function(x){return x.id===id})[0]; if(!c) return;
   coach={id:id};
   setPerson('c-ratee',c.ratee,c.rateePos); $('#c-desig').value=c.desig||''; setPerson('c-rater',c.rater,c.raterPos); setPerson('c-appr',c.appr,c.apprPos);
@@ -1775,72 +2131,239 @@ function impMech(a){
   if(!out.length&&String(a||'').trim()) out.push(String(a).replace(/\s+/g,' ').trim());
   return out;
 }
-async function impParse(file){
+/* ---------- reading uploaded PMCFs and supervisory reports: Word, PDF and pictures ---------- */
+var LIB={pdf:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',pdfWorker:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+  ocr:'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',ocrWorker:'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
+  ocrCore:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',ocrLang:'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int'};
+var _libs={};
+function loadLib(src){ return _libs[src]||(_libs[src]=new Promise(function(ok,no){ var s=document.createElement('script'); s.src=src; s.onload=ok; s.onerror=function(){ delete _libs[src]; no(new Error('lib')); }; document.head.appendChild(s); })); }
+function impMsg(t){ $('#imp-msg').textContent=t; }
+/* which form column a heading belongs to */
+function impKey(h){ h=String(h||'').toUpperCase();
+  if(/SUPERVIS|OBSERVER|CONDUCTED|RATER\b/.test(h)) return 'sup';
+  if(/TEACHER|RATEE|^NAME\b|NAME OF/.test(h)) return 'teacher';
+  if(/PROGRESS|STATUS/.test(h)) return 'progress';
+  if(/SUBJECT|GRADE|SECTION/.test(h)) return 'subject';
+  if(/\bDATES?\b/.test(h)) return 'date';
+  if(/IMPACT/.test(h)) return 'impact';
+  if(/MECHANISM|ACTIVIT|TYPE OF/.test(h)) return 'activity';
+  if(/SIGNIFICANT|INCIDENT|RESULT|FINDING|OBSERVATION/.test(h)) return 'findings';
+  if(/RECOMMEND|FEEDBACK|PLAN OF ACTION|INTERVENTION/.test(h)) return 'rec';
+  if(/PROGRESS|STATUS/.test(h)) return 'progress';
+  return ''; }
+var IMP_STOP=/CONDUCTED BY|PREPARED BY|NOTED BY|APPROVED BY|CONCURRED BY|SUBMITTED BY|SIGNATURE OVER/i;
+function impMonthFrom(text){ var U=String(text||'').toUpperCase(), m=/REPORT FOR (?:THE MONTH OF )?([A-Z]+)\s*,?\s*(\d{4})/.exec(U);
+  if(!m){ var re=new RegExp('\\b('+IMP_MON.join('|')+')\\s*,?\\s*(\\d{4})\\b'); m=re.exec(U); }
+  return m&&IMP_MON.indexOf(m[1])>=0?m[2]+'-'+('0'+(IMP_MON.indexOf(m[1])+1)).slice(-2)+'-01':''; }
+function findPersonIn(seg){ var N=' '+impNorm(seg)+' ', hit=null, at=1e9;
+  PEOPLE.forEach(function(p){ var n=impNorm(p.n), i=N.indexOf(' '+n+' ');
+    if(i<0){ var w=n.split(' '); i=N.indexOf(' '+w[0]+' '); if(i>=0){ var j=N.indexOf(' '+w[w.length-1]+' ',i); if(j<0||j-i>40) i=-1; } }
+    if(i>=0&&i<at){ at=i; hit=p; } });
+  return hit; }
+function impContext(text,file){
+  var T=String(text||''), U=T.toUpperCase(), ctx={file:file,fb:impMonthFrom(T),ratee:'',rater:''}, i=U.indexOf('NAME OF RATEE'), c=U.indexOf('CONDUCTED BY');
+  if(i>=0){ var p=findPersonIn(T.slice(i+13,i+120)); if(p) ctx.ratee=p.n; else { var m=/NAME OF RATEE\s*:?\s*([A-Za-zÑñ .,'-]{4,60}?)(?:\s{2,}|POSITION|DESIGNATION|\n|$)/i.exec(T); if(m) ctx.ratee=m[1].trim().toUpperCase(); } }
+  if(c<0){ var m2=/(PREPARED BY|SUBMITTED BY|NOTED BY)\s*:?|\b(SUPERVISOR|OBSERVER|RATER)\s*:/.exec(U); if(m2) c=m2.index+m2[0].length-12; }
+  if(c>=0){ var q=findPersonIn(T.slice(c+12,c+400)); if(q) ctx.rater=q.n; }
+  return ctx; }
+/* a table (first row = headings) becomes coaching rows */
+function tableToRecords(rows,ctx){
+  var out=[], col=null;
+  rows.forEach(function(cells){
+    if(!col){ var k={}, n=0; cells.forEach(function(h,i){ var key=impKey(h); if(key&&k[key]==null){ k[key]=i; n++; } });
+      if(n>=3&&(k.findings!=null||k.rec!=null)&&(k.teacher!=null||k.date!=null||ctx.ratee)) col=k; return; }
+    var line=cells.join(' '); if(IMP_STOP.test(line)) { col=col; return; }
+    var g=function(key){ return col[key]!=null?String(cells[col[key]]||'').trim():''; };
+    var teacher=g('teacher').split('\n')[0].trim()||ctx.ratee;
+    if(!teacher||!(g('findings')||g('rec')||g('impact'))) return;
+    out.push({file:ctx.file,kind:col.teacher!=null?'report':'pmcf',teacher:teacher,subject:g('subject').replace(/\s*\n\s*/g,' '),dateRaw:g('date').replace(/\s*\n\s*/g,' '),date:impDate(g('date'),ctx.fb),
+      activity:g('activity').replace(/\s*\n\s*/g,' '),findings:g('findings'),rec:g('rec'),impact:g('impact'),progress:g('progress'),sup:g('sup').split('\n')[0].trim()||ctx.rater});
+  });
+  return out; }
+/* Word: tables are read cell by cell */
+async function impWord(file){
   var z=await JSZip.loadAsync(await file.arrayBuffer()), f=z.file('word/document.xml'); if(!f) throw new Error('not a Word file');
   var doc=new DOMParser().parseFromString(await f.async('string'),'application/xml'), WN='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
   var q=function(el,t){ return Array.prototype.slice.call(el.getElementsByTagNameNS(WN,t)); };
   var kidsOf=function(el,t){ return Array.prototype.filter.call(el.childNodes,function(n){ return n.localName===t; }); };
   var cellText=function(tc){ return q(tc,'p').map(function(p){ return q(p,'t').map(function(t){return t.textContent}).join(''); }).join('\n').replace(/\n{3,}/g,'\n\n').trim(); };
-  var all=q(doc,'t').map(function(t){return t.textContent}).join(' ').toUpperCase(), mm=/REPORT FOR (?:THE MONTH OF )?([A-Z]+)\s+(\d{4})/.exec(all), fb='';
-  if(mm&&IMP_MON.indexOf(mm[1])>=0) fb=mm[2]+'-'+('0'+(IMP_MON.indexOf(mm[1])+1)).slice(-2)+'-01';
-  var rows=[];
-  q(doc,'tbl').forEach(function(tbl){
-    var trs=kidsOf(tbl,'tr'), col=null;
-    trs.forEach(function(tr){
-      var cells=kidsOf(tr,'tc').map(cellText);
-      if(!col){ var H=cells.map(function(c){return c.toUpperCase().replace(/\s+/g,' ')}), k={};
-        H.forEach(function(h,i){
-          if(k.teacher==null&&/TEACHER|NAME/.test(h)&&!/SUPERVIS/.test(h)) k.teacher=i;
-          else if(k.subject==null&&/SUBJECT|GRADE|SECTION/.test(h)) k.subject=i;
-          else if(k.date==null&&/DATE/.test(h)) k.date=i;
-          else if(k.activity==null&&/ACTIVITY|MECHANISM|TYPE/.test(h)) k.activity=i;
-          else if(k.findings==null&&/RESULT|FINDING|OBSERVATION|INCIDENT/.test(h)) k.findings=i;
-          else if(k.rec==null&&/RECOMMEND|PLAN OF ACTION|FEEDBACK/.test(h)) k.rec=i;
-          else if(k.sup==null&&/SUPERVIS|OBSERVER|CONDUCTED/.test(h)) k.sup=i;
-          else if(k.impact==null&&/IMPACT/.test(h)) k.impact=i;
-          else if(k.progress==null&&/PROGRESS|STATUS/.test(h)) k.progress=i; });
-        if(k.teacher!=null&&(k.findings!=null||k.rec!=null)) col=k; return; }
-      var g=function(key){ return col[key]!=null?(cells[col[key]]||''):''; };
-      if(!g('teacher').trim()) return;
-      rows.push({file:file.name,teacher:g('teacher').split('\n')[0].trim(),subject:g('subject').replace(/\s*\n\s*/g,' ').trim(),dateRaw:g('date'),date:impDate(g('date'),fb),activity:g('activity').replace(/\s*\n\s*/g,' ').trim(),
-        findings:g('findings'),rec:g('rec'),impact:g('impact'),progress:g('progress'),sup:g('sup').split('\n')[0].trim()});
-    });
+  var text=q(doc,'p').map(function(p){ return q(p,'t').map(function(t){return t.textContent}).join(''); }).join('\n'), ctx=impContext(text,file.name), out=[];
+  q(doc,'tbl').forEach(function(tbl){ out=out.concat(tableToRecords(kidsOf(tbl,'tr').map(function(tr){ return kidsOf(tr,'tc').map(cellText); }),ctx)); });
+  return out; }
+/* PDF text and recognized words: rebuild the table from where each word sits on the page */
+var DATE_RX=new RegExp('\\b('+IMP_MON.map(function(m){return m.slice(0,3)}).join('|')+')[a-z]*\\.?\\s+\\d{1,2}|\\b\\d{1,2}[\\/\\-]\\d{1,2}[\\/\\-]\\d{2,4}\\b|\\b\\d{4}-\\d{2}-\\d{2}\\b','i');
+/* a tilted scan: measure the tilt from the column headings, which sit on one line, and level the words */
+function deskew(items){
+  var top={}; items.forEach(function(it){ var k=impKey(it.s); if(k&&it.s===it.s.toUpperCase()&&/[A-Z]{3}/.test(it.s)&&(!top[k]||it.y<top[k].y)) top[k]=it; });
+  var pts=Object.keys(top).map(function(k){ var it=top[k]; return [it.x+(it.w||0)/2, it.y+it.h/2]; });
+  if(pts.length<3) return items;
+  var n=pts.length, mx=pts.reduce(function(a,p){return a+p[0]},0)/n, my=pts.reduce(function(a,p){return a+p[1]},0)/n, sxy=0, sxx=0;
+  pts.forEach(function(p){ sxy+=(p[0]-mx)*(p[1]-my); sxx+=(p[0]-mx)*(p[0]-mx); });
+  var slope=sxx?sxy/sxx:0; if(Math.abs(slope)<0.002||Math.abs(slope)>0.06) return items;
+  return items.map(function(it){ return {s:it.s,x:it.x,y:it.y-slope*(it.x+(it.w||0)/2),w:it.w,h:it.h}; });
+}
+function posLines(items){
+  items=items.filter(function(it){return it.s&&/[A-Za-z0-9]/.test(it.s)}).map(function(it){ var t=it.s.replace(/^[|\[\]{}]+|[|\[\]{}]+$/g,'').trim(); return t===it.s?it:{s:t,x:it.x,y:it.y,w:it.w,h:it.h}; }).filter(function(it){return it.s}).sort(function(a,b){ return (a.y-b.y)||(a.x-b.x); });
+  var lines=[];
+  items.forEach(function(it){ var L=lines[lines.length-1]; if(L&&Math.abs((it.y+it.h/2)-(L.y+L.h/2))<Math.max(3,Math.min(it.h,L.h)*0.55)) L.items.push(it); else lines.push({y:it.y,h:it.h,items:[it]}); });
+  lines.forEach(function(L){ L.items.sort(function(a,b){return a.x-b.x}); L.text=L.items.map(function(i){return i.s}).join(' '); });
+  return lines; }
+function posRecords(pages,ctx){
+  var out=[], cols=null;
+  pages.forEach(function(items){
+    var lines=posLines(deskew(items)), start=0;
+    for(var i=0;i<lines.length;i++){
+      var found={}, last=i, own={}; lines[i].items.forEach(function(it){ var k=impKey(it.s); if(k) own[k]=1; });
+      if(Object.keys(own).length<2&&/[a-z]/.test(lines[i].text.replace(/[a-z]{1,3}\b/g,''))) continue;
+      for(var j=i;j<Math.min(lines.length,i+4);j++){ var isHead=j===i||/^[^a-z]*$/.test(lines[j].text.replace(/[a-z]{1,3}\b/g,'')); if(!isHead) break;
+        lines[j].items.forEach(function(it){ var k=impKey(it.s); if(k&&(found[k]==null||it.x<found[k])) found[k]=it.x; }); last=j; }
+      var keys=Object.keys(found);
+      if(keys.length>=3&&(found.findings!=null||found.rec!=null)&&(found.date!=null||found.teacher!=null)){
+        cols=keys.map(function(k){return {k:k,x:found[k]}}).sort(function(a,b){return a.x-b.x});
+        cols.forEach(function(c,n){ c.b=n?c.x-0.3*(c.x-cols[n-1].x):-1e9; });
+        start=last+1; break; }
+    }
+    if(!cols) return;
+    (function(){ var hs=[], iv=[];
+      for(var q=start;q<lines.length&&!IMP_STOP.test(lines[q].text);q++) lines[q].items.forEach(function(it){ iv.push([it.x,it.x+(it.w||it.s.length*it.h*0.5)]); hs.push(it.h); });
+      if(iv.length<4) return;
+      iv.sort(function(a,b){return a[0]-b[0]}); var m=[iv[0].slice()];
+      iv.slice(1).forEach(function(v){ var L=m[m.length-1]; if(v[0]<=L[1]) L[1]=Math.max(L[1],v[1]); else m.push(v.slice()); });
+      hs.sort(function(a,b){return a-b}); var minGap=hs[Math.floor(hs.length/2)]*0.35, gaps=[];
+      for(var g=1;g<m.length;g++) if(m[g][0]-m[g-1][1]>=minGap) gaps.push((m[g][0]+m[g-1][1])/2);
+      var used=[];
+      cols.forEach(function(c,n){ if(!n) return; var lo=cols[n-1].x, hi=c.x+0.25*(c.x-lo), best=null;
+        gaps.forEach(function(gx){ if(gx>lo&&gx<=hi&&(best==null||Math.abs(gx-c.x)<Math.abs(best-c.x))) best=gx; });
+        if(best!=null){ c.b=best; used.push(best); } });
+      // a column the headings did not name (a heading the reader missed): keep it apart and sort it out per row
+      var extra=0, span=(cols[cols.length-1].x-cols[0].x)||1;
+      gaps.forEach(function(gx){ if(gx<=cols[0].x||used.some(function(u){return Math.abs(u-gx)<span*0.03})) return;
+        var inCol=cols.filter(function(c){return c.b<gx}).pop(); if(!inCol) return;
+        var nextB=cols.filter(function(c){return c.b>gx}).map(function(c){return c.b}).sort(function(a,b){return a-b})[0];
+        if(gx-inCol.b<span*0.06||(nextB!=null&&nextB-gx<span*0.06)) return;
+        cols.push({k:'x'+(extra++),x:gx,b:gx}); });
+      cols.sort(function(a,b){return a.b-b.b});
+    })();
+    var rows=[], cur=null, colOf=function(x){ var k=cols[0].k; cols.forEach(function(c){ if(x>=c.b) k=c.k; }); return k; };
+    for(var r=start;r<lines.length;r++){
+      var L=lines[r]; if(IMP_STOP.test(L.text)) break;
+      var cell={}; L.items.forEach(function(it){ var k=colOf(it.x); cell[k]=(cell[k]?cell[k]+' ':'')+it.s; });
+      var anchor=(cell.date&&DATE_RX.test(cell.date))||(!found_date(cols)&&cell.teacher);
+      if(anchor){ cur={}; rows.push(cur); }
+      if(!cur) continue;
+      Object.keys(cell).forEach(function(k){ cur[k]=(cur[k]?cur[k]+(k==='teacher'||k==='sup'?' ':'\n'):'')+cell[k]; });
+    }
+    var MECH_RX=/one[- ]on[- ]one|walk[- ]?through|observation|\blac\b|learning action|meeting|workshop|\bfgd\b|focus group|\bdll\b|on[- ]the[- ]spot|conference|coaching|mentoring/i;
+    var named=cols.filter(function(x){return x.k.charAt(0)!=='x'});
+    rows.forEach(function(c){
+      cols.forEach(function(x,n){ if(x.k.charAt(0)!=='x'||!c[x.k]) return; var v=c[x.k]; delete c[x.k];
+        if(!c.activity&&!named.some(function(y){return y.k==='activity'})&&MECH_RX.test(v)){ c.activity=v.replace(/\s*\n\s*/g,' '); return; }
+        var left=cols.slice(0,n).filter(function(y){return y.k.charAt(0)!=='x'}).pop(); if(left) c[left.k]=(c[left.k]?c[left.k]+'\n':'')+v; });
+      var useCols=named.concat(c.activity&&!named.some(function(y){return y.k==='activity'})?[{k:'activity'}]:[]);
+      var cells=useCols.map(function(x){ return (c[x.k]||'').replace(/\n(?=[a-z])/g,' '); });
+      out=out.concat(tableToRecords([useCols.map(function(x){return HDR[x.k]})].concat([cells]),ctx)); });
   });
-  return rows;
+  return out; }
+function found_date(cols){ return cols.some(function(c){return c.k==='date'}); }
+var HDR={teacher:'TEACHER',subject:'SUBJECT',date:'DATE',activity:'ACTIVITY',findings:'FINDINGS',rec:'RECOMMENDATION',sup:'SUPERVISOR',impact:'IMPACT',progress:'PROGRESS'};
+var _ocr=null;
+async function ocrWorker(){
+  if(_ocr) return _ocr;
+  await loadLib(LIB.ocr);
+  _ocr=await Tesseract.createWorker('eng',1,{workerPath:LIB.ocrWorker,corePath:LIB.ocrCore,langPath:LIB.ocrLang,
+    logger:function(m){ if(m.status==='recognizing text') impMsg('Recognizing text… '+Math.round((m.progress||0)*100)+'%'); }});
+  return _ocr; }
+async function ocrItems(img){
+  var w=await ocrWorker(), res=await w.recognize(img), words=(res.data&&res.data.words)||[];
+  return {items:words.filter(function(x){return x.confidence>20}).map(function(x){ return {s:x.text,x:x.bbox.x0,y:x.bbox.y0,w:x.bbox.x1-x.bbox.x0,h:x.bbox.y1-x.bbox.y0}; }),text:(res.data&&res.data.text)||''}; }
+async function impPdf(file){
+  await loadLib(LIB.pdf); pdfjsLib.GlobalWorkerOptions.workerSrc=LIB.pdfWorker;
+  var pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise, pages=[], text='';
+  for(var p=1;p<=pdf.numPages;p++){
+    impMsg('Reading '+file.name+', page '+p+' of '+pdf.numPages+'…');
+    var page=await pdf.getPage(p), vp=page.getViewport({scale:1}), tc=await page.getTextContent();
+    var items=tc.items.map(function(it){ var t=it.transform, h=Math.abs(t[3])||it.height||8; return {s:it.str,x:t[4],y:vp.height-t[5]-h,w:it.width,h:h}; }).filter(function(it){return it.s.trim()});
+    var chars=items.reduce(function(a,b){return a+b.s.length},0);
+    if(chars<30){ // a scanned page: read it as a picture
+      var v2=page.getViewport({scale:2.2}), cv=document.createElement('canvas'); cv.width=v2.width; cv.height=v2.height;
+      await page.render({canvasContext:cv.getContext('2d'),viewport:v2}).promise;
+      impMsg('Page '+p+' is a scanned image; recognizing text…');
+      var o=await ocrItems(cv); items=o.items; text+=o.text+'\n';
+    } else text+=posLines(items).map(function(l){return l.text}).join('\n')+'\n';
+    pages.push(items);
+  }
+  return posRecords(pages,impContext(text,file.name)); }
+async function impImage(file){
+  impMsg('Recognizing text in '+file.name+'…');
+  var o=await ocrItems(file); return posRecords([o.items],impContext(o.text,file.name)); }
+async function impParse(file){
+  var n=file.name.toLowerCase();
+  if(/\.docx$/.test(n)) return impWord(file);
+  if(/\.pdf$/.test(n)||file.type==='application/pdf') return impPdf(file);
+  if(/\.(png|jpe?g|webp|bmp)$/.test(n)||/^image\//.test(file.type)) return impImage(file);
+  if(/\.doc$/.test(n)) throw new Error('doc');
+  throw new Error('type');
 }
 function impEntry(r){
   var t=impPerson(r.teacher), s=impPerson(r.sup);
-  var head=[r.activity,r.subject].filter(Boolean).join(' \u2013 ');
-  return {ratee:t?t.n:r.teacher.toUpperCase(),rateePos:t?t.p:'',desig:'',rater:s?s.n:r.sup.toUpperCase(),raterPos:s?s.p:'',appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:r.date,dept:deptOf(t?t.n:''),
-    incident:(head?head+':\n':'')+r.findings,impact:r.impact||'',mech:impMech(r.activity),feedback:r.rec,progress:r.progress||'',month:r.date.slice(0,7),sy:r.date?syOfMonth(r.date.slice(0,7)):'',source:r.file};
+  var head=r.kind==='pmcf'?'':[r.activity,r.subject].filter(Boolean).join(' – ');
+  return {ratee:t?t.n:String(r.teacher||'').toUpperCase(),rateePos:t?t.p:'',desig:'',rater:s?s.n:String(r.sup||'').toUpperCase(),raterPos:s?s.p:'',appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:r.date,dept:deptOf(t?t.n:''),
+    incident:(head?head+':\n':'')+(r.findings||''),impact:r.impact||'',mech:impMech(r.activity),feedback:r.rec||'',progress:r.progress||'',month:String(r.date||'').slice(0,7),sy:r.date?syOfMonth(r.date.slice(0,7)):'',source:r.file};
 }
-function impDup(e){ return S.coach.some(function(c){ return c.ratee===e.ratee&&c.date===e.date&&String(c.incident||'').trim()===String(e.incident||'').trim(); }); }
+function impSame(a,b){ var n=function(t){return String(t||'').replace(/\s+/g,' ').trim().toLowerCase()}; return a.ratee===b.ratee&&a.date===b.date&&n(a.incident).replace(/^.*?:\s*/,'')===n(b.incident).replace(/^.*?:\s*/,''); }
+function impDup(e,upto){ return S.coach.some(function(c){ return impSame(c,e); })||IMP.slice(0,upto==null?IMP.length:upto).some(function(x){ return x.e!==e&&impSame(x.e,e); }); }
 function impRender(){
   var box=$('#imp-out');
   if(!IMP.length){ box.innerHTML=''; $('#imp-go').hidden=true; return; }
-  box.innerHTML='<div style="overflow-x:auto"><table class="ind"><tr><th class="c"><input type="checkbox" id="imp-all" checked aria-label="Select all"></th><th>Teacher</th><th>Date</th><th>Mechanism</th><th>Findings &rarr; Significant incident</th><th>Recommendation &rarr; Feedback</th><th>Rater</th></tr>'+
+  var L=function(k,v,top){ return '<label class="fline'+(top?' top':'')+'"><span class="lk">'+k+'</span><span class="lv">'+v+'</span></label>'; };
+  box.innerHTML='<datalist id="imp-people">'+PEOPLE.map(function(p){return '<option value="'+esc(p.n)+'">'+esc(p.p)+'</option>'}).join('')+'</datalist>'+
+    '<div class="row" style="margin-top:12px"><label class="row" style="gap:6px;font-size:13.5px"><input type="checkbox" id="imp-all"'+(IMP.every(function(x){return x.on||!x.e.date})?' checked':'')+'> Select all rows</label></div>'+
     IMP.map(function(x,i){ var e=x.e, warn=[];
-      if(!x.t) warn.push('not in the PSIPOP list; saved as typed'); if(!e.date) warn.push('no date found'); if(x.dup) warn.push('already in the record');
-      return '<tr><td class="c"><input type="checkbox" data-imp="'+i+'"'+(x.on?' checked':'')+(e.date?'':' disabled')+'></td><td><b>'+esc(e.ratee)+'</b><div class="mini">'+esc(e.rateePos||'')+'</div>'+(warn.length?'<div class="mini" style="color:var(--danger,#b42318)">'+esc(warn.join('; '))+'</div>':'')+'</td><td class="mono">'+esc(e.date?longDate(e.date):x.r.dateRaw)+'</td><td>'+esc(e.mech.join(', '))+'</td><td style="white-space:pre-wrap">'+esc(e.incident.slice(0,260))+(e.incident.length>260?'\u2026':'')+'</td><td style="white-space:pre-wrap">'+esc(e.feedback.slice(0,200))+(e.feedback.length>200?'\u2026':'')+'</td><td>'+esc(e.rater||'\u2014')+'</td></tr>'; }).join('')+'</table></div>';
-  var n=IMP.filter(function(x){return x.on}).length; $('#imp-go').hidden=false; $('#imp-go').disabled=!n||!S.canWrite; $('#imp-go').textContent='Add '+n+' entr'+(n===1?'y':'ies')+' to the PMCFs';
+      if(!impPerson(e.ratee)) warn.push('teacher not in the PSIPOP list; it will be saved as typed'); if(!e.date) warn.push('no date found; type the date to include this row'); if(x.dup) warn.push('same entry as one already saved or listed above; left unticked');
+      return '<div class="prow"><div class="ph"><label class="row" style="gap:8px;font-weight:600"><input type="checkbox" data-imp="'+i+'"'+(x.on?' checked':'')+(e.date?'':' disabled')+'> Row '+(i+1)+'</label><span class="mini">'+esc(x.r.kind==='pmcf'?'PMCF':'Supervisory report')+' · '+esc(x.r.file)+'</span></div>'+
+        (warn.length?'<div class="mini" style="color:var(--stamp);margin-top:6px">'+esc(warn.join(' · '))+'</div>':'')+
+        '<div class="lines" style="max-width:none">'+
+        L('Teacher (ratee)','<input type="text" list="imp-people" data-ie="'+i+'" data-f="ratee" value="'+esc(e.ratee)+'">')+
+        L('Date','<input type="text" data-ie="'+i+'" data-f="date" value="'+esc(e.date?longDate(e.date):x.r.dateRaw)+'" placeholder="October 14, 2026">')+
+        L('Significant incident','<textarea rows="3" data-ie="'+i+'" data-f="incident">'+esc(e.incident)+'</textarea>',true)+
+        L('Impact on job','<textarea rows="2" data-ie="'+i+'" data-f="impact">'+esc(e.impact)+'</textarea>',true)+
+        L('Coaching mechanisms','<input type="text" data-ie="'+i+'" data-f="mech" value="'+esc(e.mech.join(', '))+'" placeholder="One-on-One, Walk-through Observation">')+
+        L('Feedback / recommendation','<textarea rows="2" data-ie="'+i+'" data-f="feedback">'+esc(e.feedback)+'</textarea>',true)+
+        L('Progress to date','<textarea rows="2" data-ie="'+i+'" data-f="progress">'+esc(e.progress)+'</textarea>',true)+
+        L('Conducted by (rater)','<input type="text" list="imp-people" data-ie="'+i+'" data-f="rater" value="'+esc(e.rater)+'">')+
+        '</div></div>'; }).join('');
+  impCount();
 }
+function impCount(){ var n=IMP.filter(function(x){return x.on}).length; $('#imp-go').hidden=false; $('#imp-go').disabled=!n||!S.canWrite; $('#imp-go').textContent='Add '+n+' entr'+(n===1?'y':'ies')+' to the PMCFs'; }
 $('#imp-file').addEventListener('change',async function(){
-  var files=Array.prototype.slice.call(this.files||[]); if(!files.length) return; IMP=[]; var bad=[];
-  for(var i=0;i<files.length;i++){ try{ (await impParse(files[i])).forEach(function(r){ var e=impEntry(r); IMP.push({r:r,e:e,t:impPerson(r.teacher),dup:impDup(e),on:!!e.date&&!impDup(e)}); }); }catch(err){ bad.push(files[i].name); } }
-  $('#imp-msg').textContent=IMP.length?IMP.length+' row'+(IMP.length===1?'':'s')+' found in '+files.length+' file'+(files.length===1?'':'s')+'. Untick any row you do not want, then add them.'+(bad.length?' Could not read: '+bad.join(', ')+'.':''):'No supervisory report table was found'+(bad.length?' (could not read '+bad.join(', ')+')':'')+'. The table needs a teacher column and a findings or recommendation column.';
-  impRender(); this.value='';
+  var files=Array.prototype.slice.call(this.files||[]); if(!files.length) return; IMP=[]; var bad=[], none=[]; this.disabled=true;
+  for(var i=0;i<files.length;i++){
+    try{ var rs=await impParse(files[i]); if(!rs.length) none.push(files[i].name);
+      rs.forEach(function(r){ var e=impEntry(r), dup=impDup(e,IMP.length); IMP.push({r:r,e:e,dup:dup,on:!!e.date&&!dup}); }); }
+    catch(err){ bad.push(files[i].name+(err&&err.message==='doc'?' (old .doc format: save it as .docx or PDF first)':err&&err.message==='lib'?' (the reader did not load; check the internet connection)':'')); }
+  }
+  this.disabled=false; this.value='';
+  impMsg(IMP.length?IMP.length+' row'+(IMP.length===1?'':'s')+' found in '+files.length+' file'+(files.length===1?'':'s')+'. Check each row below, correct anything read wrongly, then add them.'+(none.length?' No coaching table found in: '+none.join(', ')+'.':'')+(bad.length?' Could not read: '+bad.join(', ')+'.':'')
+    :'No coaching rows were found'+(none.length?' in '+none.join(', '):'')+(bad.length?'. Could not read: '+bad.join(', '):'')+'. The file needs a table with a date or teacher column and a findings, incident or recommendation column.');
+  impRender();
 });
 $('#imp-out').addEventListener('change',function(e){
   if(e.target.id==='imp-all'){ IMP.forEach(function(x){ if(x.e.date) x.on=e.target.checked; }); impRender(); return; }
-  var i=e.target.dataset.imp; if(i!=null){ IMP[+i].on=e.target.checked; impRender(); }
+  var i=e.target.dataset.imp; if(i!=null){ IMP[+i].on=e.target.checked; impCount(); return; }
+  var t=e.target, k=t.dataset.ie; if(k==null) return; var x=IMP[+k], f=t.dataset.f, v=t.value.trim();
+  if(f==='ratee'||f==='rater'){ var p=impPerson(v); x.e[f]=p?p.n:v.toUpperCase(); x.e[f+'Pos']=p?p.p:''; if(f==='ratee') x.e.dept=deptOf(x.e.ratee); }
+  else if(f==='date'){ var iso=parseDate(v)||impDate(v,''); x.e.date=iso||''; x.e.month=x.e.date.slice(0,7); x.e.sy=x.e.date?syOfMonth(x.e.month):''; if(x.e.date&&!x.on&&!x.dup) x.on=true; }
+  else if(f==='mech'){ x.e.mech=v?v.split(/\s*,\s*/).map(function(m){ var hit=impMech(m); return hit[0]||m; }).filter(Boolean):[]; }
+  else x.e[f]=t.value;
+  x.dup=impDup(x.e,+k); impRender();
 });
 $('#imp-go').addEventListener('click',async function(){
-  var todo=IMP.filter(function(x){return x.on}); if(!todo.length) return; this.disabled=true; var ok=0, months={};
+  var todo=IMP.filter(function(x){return x.on&&x.e.date}); if(!todo.length) return; this.disabled=true; var ok=0, months={};
   try{ for(var i=0;i<todo.length;i++){ var d=JSON.parse(JSON.stringify(todo[i].e)); d.savedAt=new Date().toISOString(); await Store.put('coach',uid('c'),d); todo[i].on=false; todo[i].dup=true; ok++; months[monthLabel(d.month)]=1; } }
   catch(err){ saveErr(err); }
   if(ok){ toast(ok+' entr'+(ok===1?'y':'ies')+' added to the '+Object.keys(months).join(', ')+' PMCF'+(Object.keys(months).length>1?'s':''));
-    $('#imp-msg').textContent=ok+' entr'+(ok===1?'y was':'ies were')+' added. Choose a teacher and month in Step 1 to see each PMCF.';
-    var f=todo[0].e; setPerson('c-ratee',f.ratee,f.rateePos); setMonth(f.month); renderCoachLog(); }
+    impMsg(ok+' entr'+(ok===1?'y was':'ies were')+' added. The PMCF of '+todo[0].e.ratee+' for '+monthLabel(todo[0].e.month)+' is shown below; pick another teacher or month in Step 1 to see the others.');
+    var f=todo[0].e; setPerson('c-ratee',f.ratee,f.rateePos); if(f.rater) setPerson('c-rater',f.rater,f.raterPos); setMonth(f.month); renderCoachLog(); wizGo($('#p-coach'),3); }
   impRender();
 });
 var coT; function coachLeafSoon(){ clearTimeout(coT); coT=setTimeout(coachLeaf,250); }
@@ -1863,7 +2386,7 @@ $('#c-dl').addEventListener('click',async function(){
       rater:d.rater,raterPos:d.raterPos,appr:d.appr,apprPos:d.apprPos});
     var blob=await z.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     await offerFile(safeName('PMCF '+d.ratee+' '+monthLabel(mk2))+'.xlsx',blob);
-  }catch(e){ toast('Could not build the PMCF. Reload the page and try again.'); }
+  }catch(e){ toast('The Annex D template file was not found on the site. Use Download PDF or Download Word instead.'); }
 });
 
 /* ---------- PMCF guide: sample entries ---------- */
@@ -1901,6 +2424,76 @@ $('#m-body').addEventListener('click',function(e){
 $('#m-body').addEventListener('input',function(e){ if(modalKind==='samples' && e.target.id==='s-q'){ sampQ=e.target.value; var pos=e.target.selectionStart; renderSamples(); var q=$('#s-q'); q.focus(); try{q.setSelectionRange(pos,pos);}catch(x){} } });
 $('#m-foot').addEventListener('click',function(e){ if(modalKind==='samples' && e.target.closest('#s-done')) closeModal(); });
 
+
+/* ================================================================== SUPERVISORY REPORTS (saved, accomplished forms by month and year) */
+function ymOf(iso){ var a=String(iso||'').split('-'); return {y:+a[0]||0,m:+a[1]||0}; }
+function rpYears(){
+  var ys={}; ys[+TODAY.slice(0,4)]=1;
+  S.plans.forEach(function(p){ if(p.year) ys[p.year]=1; });
+  S.obs.forEach(function(o){ var t=ymOf(o.date); if(t.y) ys[t.y]=1; });
+  S.coach.forEach(function(c){ var t=ymOf(c.date); if(t.y) ys[t.y]=1; });
+  return Object.keys(ys).map(Number).sort(function(a,b){return b-a});
+}
+function initReports(){
+  $('#rp-month').innerHTML='<option value="">All months</option>'+MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join('');
+  $('#rp-dept').innerHTML=optList(DEPTS,'All departments');
+  ['rp-month','rp-year','rp-dept'].forEach(function(id){ $('#'+id).addEventListener('change',renderReports); });
+  $('#rp-q').addEventListener('input',renderReports);
+  $('#rp-table').addEventListener('click',function(e){
+    var b=e.target.closest('[data-rp]'); if(!b) return; var a=b.dataset.rp.split('|');
+    if(a[0]==='plan') openPlan(a[1],3);
+    else if(a[0]==='notes') openObs(a[1],'notes');
+    else if(a[0]==='cot') openObs(a[1],'cot');
+    else if(a[0]==='pmcf') openPMCF(a[1],a[2]);
+  });
+}
+function openPMCF(ratee,month){
+  var list=S.coach.filter(function(c){return c.ratee===ratee && entryMonth(c)===month}).sort(function(a,b){return (b.date||'').localeCompare(a.date||'')});
+  var last=list[0]||{};
+  newCoach(false);
+  setPerson('c-ratee',ratee,last.rateePos); $('#c-desig').value=last.desig||'';
+  if(last.rater) setPerson('c-rater',last.rater,last.raterPos); if(last.appr) setPerson('c-appr',last.appr,last.apprPos);
+  if(last.dept) $('#c-dept').value=last.dept;
+  setMonth(month); renderCoachLog(); wizGo($('#p-coach'),3); go('coach');
+}
+function renderReports(){
+  var ysel=$('#rp-year'), keep=ysel.value, ys=rpYears();
+  ysel.innerHTML='<option value="">All years</option>'+ys.map(function(y){return '<option>'+y+'</option>'}).join('');
+  ysel.value=keep===undefined||keep===null?'':keep; if(ysel.dataset.init!=='1'){ ysel.value=String(+TODAY.slice(0,4)); ysel.dataset.init='1'; }
+  var sub=curSub.reports, fm=+$('#rp-month').value||0, fy=+ysel.value||0, fd=$('#rp-dept').value, q=$('#rp-q').value.trim().toUpperCase();
+  var okYM=function(y,m){ return (!fy||y===fy)&&(!fm||m===fm); };
+  var okQ=function(){ if(!q) return true; for(var i=0;i<arguments.length;i++) if(String(arguments[i]||'').toUpperCase().indexOf(q)>=0) return true; return false; };
+  var head, rows=[];
+  if(sub==='plans'){
+    head=['Month','Department','Prepared by','Date prepared','Rows',''];
+    rows=S.plans.filter(function(p){ return okYM(+p.year,+p.month)&&(!fd||p.dept===fd)&&okQ(p.prep,p.appr,p.dept); })
+      .sort(function(a,b){return (b.year-a.year)||(b.month-a.month)||String(a.dept).localeCompare(b.dept)})
+      .map(function(p){ return [MONTHS[p.month-1]+' '+p.year,p.dept||'—',p.prep||'—',longDate(p.date),(p.rows||[]).length,'plan|'+p.id]; });
+  } else if(sub==='notes'||sub==='cot'){
+    head=['Date','Teacher','Observation',sub==='notes'?'Subject':'Rated','Observer',''];
+    rows=S.obs.filter(function(o){ var t=ymOf(o.date); var has=sub==='notes'?String(o.notes||'').trim():(o.ratings||[]).some(function(r){return r!==''&&r!=null});
+        return has&&okYM(t.y,t.m)&&(!fd||(o.dept||deptOf(o.teacher))===fd)&&okQ(o.teacher,(o.observers||[]).map(function(x){return x.n}).join(' ')); })
+      .sort(byDateDesc)
+      .map(function(o){ var n=(o.ratings||[]).filter(function(r){return r!==''&&r!=null}).length;
+        return [longDate(o.date),o.teacher,obsKind(o)+((o.observers||[]).length>1?' (IOA)':''),sub==='notes'?(o.subject||'—'):n+' of '+(o.ratings||[]).length+' indicators',(o.observers||[]).map(function(x){return x.n}).join(', ')||'—',sub+'|'+o.id]; });
+  } else {
+    head=['Month','Teacher','Entries','Latest entry','Rater',''];
+    var g={};
+    S.coach.forEach(function(c){ var mk2=entryMonth(c), t=ymOf(mk2+'-01');
+      if(!okYM(t.y,t.m)||(fd&&(c.dept||deptOf(c.ratee))!==fd)||!okQ(c.ratee,c.rater)) return;
+      var k=c.ratee+'|'+mk2; (g[k]=g[k]||{ratee:c.ratee,month:mk2,list:[]}).list.push(c); });
+    rows=Object.keys(g).map(function(k){return g[k]}).sort(function(a,b){return b.month.localeCompare(a.month)||a.ratee.localeCompare(b.ratee)})
+      .map(function(x){ var l=x.list.slice().sort(byDateDesc); return [monthLabel(x.month),x.ratee,x.list.length,longDate(l[0].date),l[0].rater||'—','pmcf|'+x.ratee+'|'+x.month]; });
+  }
+  $('#rp-title').firstChild.textContent=SUBS.reports[sub]+' ';
+  $('#rp-count').textContent=rows.length+' found';
+  var when=(fm?MONTHS[fm-1]+' ':'')+(fy||'');
+  $('#rp-table').innerHTML='<thead><tr>'+head.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr></thead><tbody>'+
+    (rows.length?rows.map(function(r){ return '<tr>'+r.slice(0,5).map(function(c,i){return '<td'+(i===0?' class="mono"':'')+'>'+esc(c)+'</td>'}).join('')+'<td><button class="btn ghost small" type="button" data-rp="'+esc(r[5])+'">Open</button></td></tr>'; }).join('')
+      :'<tr><td colspan="6" class="c mini" style="padding:18px">No '+esc(SUBS.reports[sub].toLowerCase())+' saved'+(when?' for '+esc(when):'')+(fd?' in '+esc(fd):'')+'.</td></tr>')+'</tbody>';
+}
+initReports();
+
 /* ================================================================== HOME + RECORDS */
 function teachers(){ return PEOPLE.filter(function(p){return p.g==='t'||p.g==='mt'}); }
 function coverage(){
@@ -1911,22 +2504,56 @@ function coverage(){
   S.coach.forEach(function(c){ if(c.sy!==sy) return; var m=map[c.ratee]; if(m) m.coach++; });
   return Object.keys(map).map(function(k){return map[k]});
 }
+function lastFirst(name){ var p=byName(name); if(p&&p.s) return p.s; var n=String(name||'').trim().split(/\s+/); if(n.length<2) return name; var last=n.pop(); return last+', '+n.join(' '); }
+function hasCOT(o){ return (o.ratings||[]).some(function(r){return r!==''&&r!=null}); }
+var dashOpen=ls('dash-open')||{};
 function renderHome(){
-  var cov=coverage(), sy=S.sy, obsN=S.obs.filter(function(o){return o.sy===sy}).length, coachN=S.coach.filter(function(c){return c.sy===sy}).length, planN=S.plans.filter(function(p){return p.sy===sy}).length;
-  var tot=cov.filter(function(c){return !c.extra}).length, one=cov.filter(function(c){return !c.extra&&(c.o1||c.o2)}).length, both=cov.filter(function(c){return !c.extra&&c.o1&&c.o2}).length;
-  $('#h-tiles').innerHTML='<div class="tile"><b>'+one+'<small> / '+tot+'</small></b><span>Teachers observed</span></div><div class="tile good"><b>'+both+'<small> / '+tot+'</small></b><span>Both observations done</span></div><div class="tile"><b>'+obsN+'</b><span>COT observations</span></div><div class="tile"><b>'+coachN+'</b><span>Coaching entries</span></div><div class="tile"><b>'+planN+'</b><span>IS plans saved</span></div>';
-  var rows=DEPTS.concat(['']).map(function(dp){
-    var mine=cov.filter(function(c){return !c.extra && c.dept===dp});
-    if(dp===''&&!mine.length) return '';
-    var o1=mine.filter(function(c){return c.o1}).length, o2=mine.filter(function(c){return c.o2}).length, co=mine.reduce(function(a,c){return a+c.coach},0);
-    var pl=S.plans.filter(function(p){return p.sy===sy && p.dept===dp}).length, head=(S.cfg.heads||{})[dp];
-    var pct=mine.length?Math.round(100*(o1+o2)/(2*mine.length)):0;
-    return '<tr><td><b>'+(dp||'No department yet')+'</b></td><td>'+(dp?esc(head||'\u2014'):'<button class="link btn ghost small" type="button" data-go="people">Assign departments</button>')+'</td><td class="c">'+mine.length+'</td><td class="c">'+o1+'</td><td class="c">'+o2+'</td><td><div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><i style="width:'+pct+'%"></i></div><span class="mini">'+pct+'%</span></div></td><td class="c">'+co+'</td><td class="c">'+pl+'</td></tr>';
+  if(!$('#h-month').options.length){
+    $('#h-month').innerHTML=MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join('');
+    $('#h-month').value=String(+TODAY.slice(5,7)); $('#h-year').value=+TODAY.slice(0,4);
+    $('#h-dept').innerHTML=optList(DEPTS,'All departments');
+    ['h-month','h-year','h-dept','h-show'].forEach(function(id){ $('#'+id).addEventListener('change',renderHome); });
+    $('#h-q').addEventListener('input',renderHome);
+    $('#h-depts').addEventListener('toggle',function(e){ var d=e.target; if(d.dataset&&d.dataset.dk!=null){ dashOpen[d.dataset.dk]=d.open; ls('dash-open',dashOpen); } },true);
+  }
+  var mk2=($('#h-year').value||TODAY.slice(0,4))+'-'+pad($('#h-month').value), fd=$('#h-dept').value, show=$('#h-show').value, q=$('#h-q').value.trim().toUpperCase(), sy=S.sy, map={};
+  var mon=MONTHS[+$('#h-month').value-1];
+  PEOPLE.filter(function(p){return p.g==='t'||p.g==='mt'}).forEach(function(p){ map[p.n]={n:p.n,p:p.p,dept:deptOf(p.n),pm:0,o1:null,o2:null}; });
+  var get=function(n,dp,pos){ return map[n]||(map[n]={n:n,p:pos||'',dept:dp||deptOf(n),pm:0,o1:null,o2:null}); };
+  S.obs.forEach(function(o){ if(o.sy!==sy||!hasCOT(o)) return; var m=get(o.teacher,o.dept,o.teacherPos); if(o.no===2) m.o2=o; else m.o1=o; });
+  S.coach.forEach(function(c){ if(entryMonth(c)!==mk2) return; get(c.ratee,c.dept,c.rateePos).pm++; });
+  var all=Object.keys(map).map(function(k){return map[k]}).filter(function(t){return !fd||t.dept===fd});
+  var done=function(t){return t.pm&&t.o1&&t.o2};
+  var N=all.length, cPm=all.filter(function(t){return t.pm}).length, c1=all.filter(function(t){return t.o1}).length, c2=all.filter(function(t){return t.o2}).length;
+  var pct=function(a,b){return b?Math.round(100*a/b):0};
+  var kpi=function(lab,a){ return '<div class="kpi"><div class="kl">'+lab+'</div><span class="kp">'+pct(a,N)+'%</span><div class="kv">'+a+'<small> / '+N+'</small></div><div class="pbar"><i style="width:'+pct(a,N)+'%"></i></div></div>'; };
+  $('#h-kpis').innerHTML=kpi('PMCF · '+mon+' '+$('#h-year').value,cPm)+kpi('1st Classroom Observation',c1)+kpi('2nd Classroom Observation',c2)+kpi('Complete (all three)',all.filter(done).length);
+  var dot=function(o,lab){ return o?'<button class="dot ok" type="button" data-open-cot="'+esc(o.id)+'" title="'+lab+' · '+esc(longDate(o.date))+'" aria-label="'+lab+' done, '+esc(longDate(o.date))+'">&#10003;</button>':'<span class="dot no" title="Not yet" aria-label="Not yet"></span>'; };
+  var html=DEPTS.concat(['']).map(function(dp){
+    var mine=all.filter(function(t){return t.dept===dp});
+    if(!mine.length) return '';
+    var dDone=mine.filter(done).length, dp1=mine.filter(function(t){return t.pm}).length, dc=mine.filter(function(t){return t.o1&&t.o2}).length;
+    var rows=mine.filter(function(t){ return (show==='all'||(show==='done')===!!done(t)) && (!q||lastFirst(t.n).toUpperCase().indexOf(q)>=0); })
+      .sort(function(a,b){return lastFirst(a.n).localeCompare(lastFirst(b.n))});
+    if((q||show!=='all')&&!rows.length) return '';
+    var head=dp?(S.cfg.heads||{})[dp]:'', key=dp||'_none', open=(q||show!=='all')?true:(dashOpen[key]!==undefined?dashOpen[key]:!!dp||!fd);
+    return '<details class="dsec" data-dk="'+esc(key)+'"'+(open?' open':'')+'><summary>'+
+      '<div class="dn">'+(dp?esc(dp):'Unassigned teachers')+'<small>'+(dp?(head?'Department head: '+esc(head):'No department head set'):'Assign each teacher a department in Personnel &amp; Departments')+' · '+mine.length+' teacher'+(mine.length===1?'':'s')+'</small></div>'+
+      '<div class="dp">PMCF '+dp1+'/'+mine.length+' · Both COs '+dc+'/'+mine.length+' · <b>'+pct(dDone,mine.length)+'% complete</b><div class="pbar"><i style="width:'+pct(dDone,mine.length)+'%"></i></div></div>'+
+      '<span class="chev" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5l4 4 4-4"/></svg></span></summary>'+
+      '<div class="scroll"><table class="chk"><colgroup><col><col style="width:24%"><col style="width:96px"><col style="width:96px"><col style="width:96px"><col style="width:110px"></colgroup><thead><tr><th>Teacher</th><th>Position</th><th class="c">PMCF<br>'+esc(mon.slice(0,3))+'</th><th class="c">1st CO<br>(COT)</th><th class="c">2nd CO<br>(COT)</th><th class="c">Status</th></tr></thead><tbody>'+
+      (rows.length?rows.map(function(t){ return '<tr><td class="tn">'+esc(lastFirst(t.n))+'</td><td class="tp">'+esc(t.p||'')+'</td>'+
+        '<td class="c">'+(t.pm?'<button class="dot ok" type="button" data-open-pmcf="'+esc(t.n)+'" title="'+t.pm+' entr'+(t.pm===1?'y':'ies')+' in '+esc(mon)+'" aria-label="PMCF done">&#10003;</button>':'<span class="dot no" title="Not yet" aria-label="Not yet"></span>')+'</td>'+
+        '<td class="c">'+dot(t.o1,'1st CO')+'</td><td class="c">'+dot(t.o2,'2nd CO')+'</td>'+
+        '<td class="c">'+(done(t)?'<span class="st ok">Complete</span>':'<span class="st wait">Pending</span>')+'</td></tr>'; }).join(''):'<tr><td colspan="6" class="c mini" style="padding:16px">No teacher matches.</td></tr>')+
+      '</tbody></table></div></details>';
   }).join('');
-  $('#h-depts').innerHTML='<thead><tr><th>Department</th><th>Head designate</th><th class="c">Teachers</th><th class="c">1st obs</th><th class="c">2nd obs</th><th>Observation progress</th><th class="c">Coaching</th><th class="c">Plans</th></tr></thead><tbody>'+rows+'</tbody>';
-  var all=allEntries().sort(function(a,b){return (b.savedAt||'').localeCompare(a.savedAt||'')}).slice(0,8);
-  $('#h-recent').innerHTML=all.length?all.map(entryRow).join(''):'<div class="empty">Nothing saved yet. Plans, observations and coaching entries from every department will appear here as they are saved.</div>';
+  $('#h-depts').innerHTML=html||'<div class="empty">No teacher matches these filters.</div>';
 }
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-open-cot]'); if(b){ openObs(b.dataset.openCot,'cot'); return; }
+  b=e.target.closest('[data-open-pmcf]'); if(b) openPMCF(b.dataset.openPmcf,($('#h-year').value||TODAY.slice(0,4))+'-'+pad($('#h-month').value));
+});
 function allEntries(){
   return S.obs.map(function(o){return {type:'obs',id:o.id,sy:o.sy,date:o.date,who:o.teacher,dept:o.dept,by:(o.observers||[]).map(function(x){return x.n}).join(', '),what:obsKind(o)+(o.no===3?' observation':' COT observation')+((o.observers||[]).length>1?' (IOA)':'')+(o.subject?' \u00b7 '+o.subject:''),savedAt:o.savedAt}})
    .concat(S.coach.map(function(c){return {type:'coach',id:c.id,sy:c.sy,date:c.date,who:c.ratee,dept:c.dept,by:c.rater,what:'PMCF '+monthLabel(entryMonth(c))+' \u00b7 '+((c.mech||[]).join(', ')||'coaching'),savedAt:c.savedAt}}))
@@ -2050,8 +2677,206 @@ window.addEventListener('resize',fitSoon);
 if(window.MutationObserver) $$('.leafwrap').forEach(function(w){ new MutationObserver(fitSoon).observe(w,{childList:true,subtree:true}); });
 $$('.nav button[role=tab]').forEach(function(b){ b.addEventListener('click',fitSoon); });
 
+/* ---------- real Word (.docx) from a form preview: paragraphs, tables, lines and pictures, read from how the preview is laid out ---------- */
+var HDOCX=(function(){
+  var X=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+  var BLOCK=/^(P|DIV|H1|H2|H3|H4|H5|H6|TABLE|UL|OL|LI|SECTION)$/;
+  function hex(c){ var m=/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/.exec(c||''); if(!m||(m[4]!=null&&+m[4]<0.1)) return ''; return [m[1],m[2],m[3]].map(function(v){return ('0'+(+v).toString(16)).slice(-2)}).join('').toUpperCase(); }
+  function pt(px){ return parseFloat(px)*0.75; }
+  function font(cs){ var f=(cs.fontFamily||'Arial').split(',')[0].replace(/["']/g,'').trim(); if(/UnifrakturMaguntia/i.test(f)) f='Old English Text MT'; if(/Cinzel/i.test(f)) f='Trajan Pro'; if(/Jost|Century|system|ui-|Helvetica|sans-serif/i.test(f)) f='Arial'; return f; }
+  function Ctx(pg){ this.media=[]; this.pg=pg; this.cw=Math.round((pg.w-pg.m[1]-pg.m[3])*20); }
+  Ctx.prototype.img=function(im){
+    var src=im.getAttribute('src')||'', m=/^data:image\/(png|jpe?g|gif);base64,(.*)$/i.exec(src); if(!m) return '';
+    var ext=m[1].toLowerCase().replace('jpeg','jpg'), id='rIdImg'+(this.media.length+1), name='image'+(this.media.length+1)+'.'+ext;
+    this.media.push({id:id,name:name,data:m[2],ext:ext});
+    var r=im.getBoundingClientRect(), w=Math.max(1,Math.round(r.width*9525)), h=Math.max(1,Math.round(r.height*9525)), n=this.media.length;
+    return '<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="'+w+'" cy="'+h+'"/><wp:docPr id="'+n+'" name="Picture '+n+'"/>'+
+      '<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">'+
+      '<pic:nvPicPr><pic:cNvPr id="'+n+'" name="'+name+'"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="'+id+'"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'+
+      '<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+w+'" cy="'+h+'"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>';
+  };
+  Ctx.prototype.run=function(text,cs){
+    if(cs.textTransform==='uppercase') text=text.toUpperCase();
+    var sz=Math.max(8,Math.round(pt(cs.fontSize)*2)), b=(+cs.fontWeight>=600||cs.fontWeight==='bold'), i=cs.fontStyle==='italic', u=/underline/.test(cs.textDecorationLine||cs.textDecoration||''), col=hex(cs.color), f=font(cs);
+    var rpr='<w:rPr><w:rFonts w:ascii="'+X(f)+'" w:hAnsi="'+X(f)+'" w:cs="'+X(f)+'" w:eastAsia="'+X(f)+'"/>'+(b?'<w:b/>':'')+(i?'<w:i/>':'')+(u?'<w:u w:val="single"/>':'')+(col&&col!=='000000'?'<w:color w:val="'+col+'"/>':'')+'<w:sz w:val="'+sz+'"/><w:szCs w:val="'+sz+'"/></w:rPr>';
+    return text.split('\n').map(function(t,k){ return (k?'<w:r>'+rpr+'<w:br/></w:r>':'')+(t?'<w:r>'+rpr+'<w:t xml:space="preserve">'+X(t)+'</w:t></w:r>':''); }).join('');
+  };
+  Ctx.prototype.inline=function(node){
+    var self=this, out='';
+    Array.prototype.forEach.call(node.childNodes,function(n){
+      if(n.nodeType===3){ var cs=getComputedStyle(n.parentNode), t=n.textContent;
+        if(cs.whiteSpace.indexOf('pre')<0) t=t.replace(/\s+/g,' '); out+=self.run(t,cs); }
+      else if(n.nodeType===1){ if(n.tagName==='BR') out+='<w:r><w:br/></w:r>'; else if(n.tagName==='IMG') out+=self.img(n); else if(!BLOCK.test(n.tagName)&&getComputedStyle(n).display!=='none') out+=self.inline(n); }
+    });
+    return out;
+  };
+  Ctx.prototype.para=function(el,runs,extra){
+    var cs=getComputedStyle(el), cell=/^(TD|TH|TABLE|TR)$/.test(el.tagName), jc={center:'center',right:'right',end:'right',justify:'both'}[cs.textAlign]||'', bb=cell?0:parseFloat(cs.borderBottomWidth), bt=cell?0:parseFloat(cs.borderTopWidth);
+    var pl=cell?0:Math.round(pt(cs.paddingLeft)*20+pt(cs.marginLeft)*20), ti=Math.round(pt(cs.textIndent)*20);
+    var ppr='<w:pPr><w:spacing w:before="'+Math.round(pt(cs.marginTop)*20)+'" w:after="'+Math.round(pt(cs.marginBottom)*20)+'" w:line="240" w:lineRule="auto"/>'+
+      ((bb>0&&cs.borderBottomStyle!=='none')||(bt>0&&cs.borderTopStyle!=='none')?'<w:pBdr>'+(bt>0&&cs.borderTopStyle!=='none'?'<w:top w:val="single" w:sz="'+Math.max(4,Math.round(pt(bt)*8))+'" w:space="1" w:color="000000"/>':'')+(bb>0&&cs.borderBottomStyle!=='none'?'<w:bottom w:val="single" w:sz="'+Math.max(4,Math.round(pt(bb)*8))+'" w:space="1" w:color="000000"/>':'')+'</w:pBdr>':'')+
+      (pl>0||ti?'<w:ind w:left="'+Math.max(0,pl)+'"'+(ti<0?' w:hanging="'+(-ti)+'"':ti>0?' w:firstLine="'+ti+'"':'')+'/>':'')+(jc?'<w:jc w:val="'+jc+'"/>':'')+(extra||'')+'</w:pPr>';
+    return '<w:p>'+ppr+(runs||'')+'</w:p>';
+  };
+  Ctx.prototype.block=function(el){
+    var tag=el.tagName, self=this;
+    if(tag==='TABLE') return this.table(el);
+    if(tag==='UL'||tag==='OL') return Array.prototype.map.call(el.children,function(li){ return self.para(li,self.run('• ',getComputedStyle(li))+self.inline(li)); }).join('');
+    var hasBlock=Array.prototype.some.call(el.children,function(c){ return BLOCK.test(c.tagName)&&getComputedStyle(c).display!=='none'; });
+    if(!hasBlock){ var r=this.inline(el); return this.para(el,r); }
+    // mixed content: inline runs between blocks become their own paragraphs
+    var out='', buf='';
+    Array.prototype.forEach.call(el.childNodes,function(n){
+      if(n.nodeType===1&&getComputedStyle(n).display==='none') return;
+      if(n.nodeType===1&&BLOCK.test(n.tagName)){ if(buf.replace(/<[^>]+>/g,'').trim()) out+=self.para(el,buf); buf=''; out+=self.block(n); }
+      else if(n.nodeType===3){ var t=n.textContent; if(getComputedStyle(el).whiteSpace.indexOf('pre')<0) t=t.replace(/\s+/g,' '); if(t.trim()) buf+=self.run(t,getComputedStyle(el)); }
+      else if(n.nodeType===1){ buf+=n.tagName==='BR'?'<w:r><w:br/></w:r>':n.tagName==='IMG'?self.img(n):self.inline(n); }
+    });
+    if(buf.replace(/<[^>]+>/g,'').trim()||/w:drawing/.test(buf)) out+=self.para(el,buf);
+    return out;
+  };
+  Ctx.prototype.table=function(t){
+    var self=this, rows=Array.prototype.filter.call(t.rows,function(r){return getComputedStyle(r).display!=='none'});
+    if(!rows.length) return '';
+    var tw=t.getBoundingClientRect().width||1, scale=Math.min(1,this.cw/(tw*15)), lay=t.classList.contains('lay');
+    // column grid from the widest row
+    var grid=null; rows.forEach(function(r){ var ws=Array.prototype.map.call(r.cells,function(c){return {w:c.getBoundingClientRect().width,s:c.colSpan||1}}); var n=ws.reduce(function(a,c){return a+c.s},0); if(!grid||n>grid.n) grid={n:n,ws:ws}; });
+    var cols=[]; grid.ws.forEach(function(c){ for(var k=0;k<c.s;k++) cols.push(Math.round(c.w/c.s*15*scale)); });
+    var x='<w:tbl><w:tblPr><w:tblW w:w="'+cols.reduce(function(a,b){return a+b},0)+'" w:type="dxa"/>'+(getComputedStyle(t).marginLeft==='auto'||t.getAttribute('align')==='center'?'<w:jc w:val="center"/>':'')+'<w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="'+(lay?0:60)+'" w:type="dxa"/><w:right w:w="'+(lay?0:60)+'" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>'+cols.map(function(w){return '<w:gridCol w:w="'+w+'"/>'}).join('')+'</w:tblGrid>';
+    rows.forEach(function(r){
+      var rh=r.style.height?Math.round(parseFloat(r.style.height)*20):0, ci=0;
+      x+='<w:tr>'+(rh?'<w:trPr><w:trHeight w:val="'+rh+'" w:hRule="atLeast"/></w:trPr>':'');
+      Array.prototype.forEach.call(r.cells,function(c){
+        var span=c.colSpan||1, w=0; for(var k=0;k<span;k++) w+=cols[ci+k]||0; ci+=span;
+        var cs=getComputedStyle(c), cl=c.classList, bd=function(side){ var wd=parseFloat(cs['border'+side+'Width']), st=cs['border'+side+'Style'];
+          if(cl.contains('lay')||cl.contains('wk')) return '<w:'+side.toLowerCase()+' w:val="nil"/>';
+          if(cl.contains('wv')) return side==='Bottom'?'<w:bottom w:val="single" w:sz="6" w:color="000000"/>':'<w:'+side.toLowerCase()+' w:val="nil"/>';
+          return wd>0&&st!=='none'?'<w:'+side.toLowerCase()+' w:val="single" w:sz="'+Math.max(4,Math.round(pt(wd)*8))+'" w:color="'+(hex(cs['border'+side+'Color'])||'808080')+'"/>':'<w:'+side.toLowerCase()+' w:val="nil"/>'; };
+        var bg=hex(cs.backgroundColor), va=/middle/.test(cs.verticalAlign)?'center':/bottom/.test(cs.verticalAlign)?'bottom':'top';
+        var inner=self.block(c); if(!/<w:p[ >]/.test(inner)) inner+=self.para(c,'');
+        x+='<w:tc><w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/>'+(span>1?'<w:gridSpan w:val="'+span+'"/>':'')+'<w:tcBorders>'+['Top','Left','Bottom','Right'].map(bd).join('')+'</w:tcBorders>'+(bg&&bg!=='FFFFFF'?'<w:shd w:val="clear" w:color="auto" w:fill="'+bg+'"/>':'')+'<w:vAlign w:val="'+va+'"/></w:tcPr>'+inner+'</w:tc>';
+      });
+      x+='</w:tr>';
+    });
+    return x+'</w:tbl>'+this.para(t,'',''); // Word needs a paragraph after a table
+  };
+  async function build(leaf,pg){
+    if(typeof JSZip==='undefined') throw new Error('zip');
+    var c=new Ctx(pg), body=c.block(leaf);
+    var z=new JSZip(), m=pg.m, tw=function(v){return Math.round(v*20)};
+    z.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/><Default Extension="gif" ContentType="image/gif"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+    z.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+    z.file('word/_rels/document.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+c.media.map(function(md){ return '<Relationship Id="'+md.id+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/'+md.name+'"/>'; }).join('')+'</Relationships>');
+    c.media.forEach(function(md){ z.file('word/media/'+md.name,md.data,{base64:true}); });
+    var sect='<w:sectPr><w:pgSz w:w="'+tw(pg.w)+'" w:h="'+tw(pg.h)+'"'+(pg.land?' w:orient="landscape"':'')+'/><w:pgMar w:top="'+tw(m[0])+'" w:right="'+tw(m[1])+'" w:bottom="'+tw(m[2])+'" w:left="'+tw(m[3])+'" w:header="360" w:footer="360" w:gutter="0"/></w:sectPr>';
+    z.file('word/document.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><w:body>'+body+sect+'</w:body></w:document>');
+    return z.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  }
+  return {build:build};
+})();
+
+/* ================================================================== EXPORT: any sheet preview to PDF or editable Word (.doc) */
+var EXP=(function(){
+  function pageOf(leaf){
+    if(leaf.classList.contains('folio')) return {w:936,h:612,land:true,m:[36,54,36,54]};
+    if(leaf.classList.contains('a4land')) return {w:842,h:595,land:true,m:[29,36,29,36]};
+    if(leaf.classList.contains('land')) return {w:1008,h:612,land:true,m:[29,36,29,36]};
+    return {w:595,h:842,land:false,m:[29,36,29,36]};
+  }
+  async function stage(html){
+    var box=document.createElement('div');
+    box.style.cssText='position:fixed;left:-20000px;top:0;z-index:-1;background:#fff';
+    box.innerHTML=html; document.body.appendChild(box);
+    var leaf=box.querySelector('.leaf')||box.firstElementChild; leaf.style.zoom=''; leaf.style.boxShadow='none';
+    await Promise.all(Array.prototype.map.call(box.querySelectorAll('img'),function(im){ return im.complete?0:new Promise(function(r){ im.onload=im.onerror=r; }); }));
+    if(document.fonts&&document.fonts.ready) await document.fonts.ready;
+    return {box:box,leaf:leaf};
+  }
+  async function pdf(html,name){
+    var J=window.jspdf&&window.jspdf.jsPDF;
+    if(!J||!window.html2canvas){ toast('The PDF maker did not load. Check the internet connection and reload the page.'); return; }
+    toast('Preparing the PDF\u2026');
+    var st=await stage(html);
+    try{
+      var pg=pageOf(st.leaf), cv=await html2canvas(st.leaf,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+      var doc=new J({unit:'pt',format:[pg.w,pg.h],orientation:pg.land?'landscape':'portrait'});
+      var pxPerPt=cv.width/pg.w, sliceH=Math.floor(pg.h*pxPerPt), y=0, first=true;
+      while(y<cv.height-4){
+        var h=Math.min(sliceH,cv.height-y), c=document.createElement('canvas'); c.width=cv.width; c.height=h;
+        var g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,h); g.drawImage(cv,0,y,cv.width,h,0,0,cv.width,h);
+        if(!first) doc.addPage([pg.w,pg.h],pg.land?'landscape':'portrait');
+        doc.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,pg.w,h/pxPerPt); first=false; y+=h;
+      }
+      await offerFile(safeName(name)+'.pdf',doc.output('blob'));
+    }catch(e){ toast('Could not build the PDF. Reload the page and try again.'); }
+    finally{ st.box.remove(); }
+  }
+  /* --- Word: rebuild the sheet with tables (Word ignores flex/grid), pack it with its images as a single-file .doc --- */
+  function el(tag,cls,html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+  function layTable(cells,widths){
+    var t=el('table','lay'), tr=el('tr'); t.setAttribute('width','100%'); t.setAttribute('cellspacing','0'); t.setAttribute('cellpadding','0');
+    cells.forEach(function(c,i){ var td=el('td','lay'); if(widths) td.setAttribute('width',widths[i]); td.style.verticalAlign='top'; if(typeof c==='string') td.innerHTML=c; else td.appendChild(c); tr.appendChild(td); });
+    t.appendChild(tr); return t;
+  }
+  function pairTable(pairs){
+    var t=el('table','lay'); t.setAttribute('width','100%'); t.setAttribute('cellspacing','0'); t.setAttribute('cellpadding','0');
+    pairs.forEach(function(p){ var tr=el('tr'); tr.appendChild(el('td','wk',p[0])); tr.appendChild(el('td','wv',p[1]||'&nbsp;')); t.appendChild(tr); });
+    return t;
+  }
+  function pairsOf(node){
+    var kids=Array.prototype.slice.call(node.children), out=[];
+    for(var i=0;i<kids.length;i++){ if(kids[i].classList.contains('fk')){ var k=kids[i].cloneNode(true); Array.prototype.forEach.call(k.querySelectorAll('i'),function(x){x.remove()}); var v=kids[i+1]&&kids[i+1].classList.contains('fv')?kids[i+1].innerHTML:''; out.push([k.innerHTML,v]); } }
+    return out;
+  }
+  function boxTable(inner,minH){
+    var t=el('table','box'); t.setAttribute('width','100%'); t.setAttribute('cellspacing','0');
+    var tr=el('tr'), td=el('td','box'); if(minH) tr.style.height=minH+'pt'; td.style.verticalAlign='top'; td.innerHTML=inner; tr.appendChild(td); t.appendChild(tr); return t;
+  }
+  function convert(leaf){
+    var q=function(s){ return Array.prototype.slice.call(leaf.querySelectorAll(s)); };
+    // fix every image size from its rendered size
+    q('img').forEach(function(im){ var w=Math.round(im.getBoundingClientRect().width), h=Math.round(im.getBoundingClientRect().height); if(w&&h){ im.setAttribute('width',w); im.setAttribute('height',h); im.style.width=(w*0.75)+'pt'; im.style.height=(h*0.75)+'pt'; } });
+    var foot=leaf.querySelector('.lh-bot'); if(foot) foot.remove();
+    q('.fc').forEach(function(n){ n.replaceWith(pairTable(pairsOf(n))); });
+    q('.fr').forEach(function(n){ n.replaceWith(pairTable(pairsOf(n))); });
+    q('.fl').forEach(function(n){ var c=Array.prototype.slice.call(n.children); n.replaceWith(layTable(c,['58%','42%'])); });
+    q('.sigs,.psig').forEach(function(n){ var c=Array.prototype.slice.call(n.children); var w=Math.floor(100/Math.max(1,c.length))+'%'; var t=layTable(c,c.map(function(){return w})); t.className='lay sigt'; n.replaceWith(t); });
+    q('.cfoot').forEach(function(n){ var c=Array.prototype.slice.call(n.children); n.replaceWith(layTable(c,['40%','35%','25%'])); });
+    q('.notes').forEach(function(n){ n.replaceWith(boxTable(n.innerHTML.replace(/\n/g,'<br>'),430)); });
+    q('.cbox').forEach(function(n){ n.replaceWith(boxTable(n.innerHTML.replace(/\n/g,'<br>'),90)); });
+    q('div[style*="background"]').forEach(function(n){ var t=boxTable(n.innerHTML); t.setAttribute('width','200'); t.setAttribute('align','center'); var td=t.querySelector('td'); td.setAttribute('style',n.getAttribute('style')+';text-align:center;font-weight:bold;color:#fff;border:none'); n.replaceWith(t); });
+    q('td,th').forEach(function(c){ if(c.style.whiteSpace==='pre-wrap'){ c.innerHTML=c.innerHTML.replace(/\n/g,'<br>'); } });
+    if(foot){ var f=foot.cloneNode(); f.removeAttribute('class'); leaf.appendChild(f); }
+    return leaf.innerHTML;
+  }
+  var CSS='body{font-family:Arial,sans-serif;font-size:9.5pt;color:#000}p{margin:0 0 4pt}h4{font-size:11pt;font-weight:bold;text-align:center;margin:2pt 0}'+
+    'table{border-collapse:collapse;margin:0 0 6pt}th,td{border:.75pt solid #808080;padding:3pt 4pt;vertical-align:top;font-size:9pt}th{background:#D9D9D9;font-weight:bold;text-align:center;vertical-align:middle}td.c{text-align:center;vertical-align:middle}'+
+    'table.lay,td.lay{border:none;padding:0}td.wk{border:none;font-weight:bold;white-space:nowrap;padding:5pt 4pt 0 0;vertical-align:bottom}td.wv{border:none;border-bottom:.75pt solid #000;padding:5pt 0 0 14pt;vertical-align:bottom;width:100%}'+
+    'table.box td.box{border:.75pt solid #808080;padding:4pt 6pt}table.sigt td.lay{padding:0 10pt;text-align:center}.sig{text-align:center}.nm{border-bottom:.75pt solid #000;font-weight:bold;text-transform:uppercase;padding-top:24pt;text-align:center}.lb{font-size:8.5pt;text-align:center}'+
+    '.hd,.lh-top,.lh-in{text-align:center}.oe{font-family:"Old English Text MT",serif}.tj{font-family:"Trajan Pro",serif;font-size:10pt}.tj.b{font-weight:bold}.rule{border-bottom:1.5pt solid #000}.sec{font-weight:bold;margin:8pt 0 3pt}.fobs{margin:9pt 0 6pt}.nonote{font-size:8pt}'+
+    '.psig b{display:block;text-transform:uppercase}.cfoot .lab{font-size:8pt;text-align:right;padding:4pt 8pt}.cfoot .rt{font-size:5.5pt}';
+  function b64utf8(str){ var bytes=new TextEncoder().encode(str), bin=''; for(var i=0;i<bytes.length;i+=0x8000) bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000)); return btoa(bin); }
+  function wrap76(b){ return b.replace(/.{1,76}/g,'$&\r\n'); }
+  async function word(html,name){
+    var st=await stage(html);
+    try{ var pg=pageOf(st.leaf); convert(st.leaf); var blob=await HDOCX.build(st.leaf,pg); await offerFile(safeName(name)+'.docx',blob); }
+    catch(e){ toast('Could not build the Word file. Reload the page and try again.'); }
+    finally{ st.box.remove(); }
+  }
+  function wordFallback(html,name){ word(html,name); }
+  return {pdf:pdf,word:word,wordFallback:wordFallback};
+})();
+
+var obsName=function(d){ return (d.observers.length>1?'COT IOA Form ':'COT Rating Sheet ')+obsFileBase(d); };
+$('#pl-pdf').addEventListener('click',function(){ var d=readPlan(); planLeaf(); EXP.pdf($('#pl-leaf').outerHTML,'Annex B IS Plan '+(MONTHS[d.month-1]||'')+' '+d.year+' '+(d.dept||'')); });
+$('#o-pdf').addEventListener('click',function(){ var d=readObs(); if(!validObs(d)) return; EXP.pdf(cotSheetHTML(d),obsName(d)); });
+$('#o-doc').addEventListener('click',function(){ var d=readObs(); if(!validObs(d)) return; EXP.word(cotSheetHTML(d),obsName(d)); });
+$('#o-notes-doc').addEventListener('click',function(){ var d=readObs(); EXP.word(notesSheetHTML(d),'COT Observation Notes '+obsFileBase(d)); });
+$('#c-pdf').addEventListener('click',function(){ var d=readCoach(); if(!d.ratee){ toast('Choose the ratee first.'); wizGo($('#p-coach'),1); return; } coachLeaf(); EXP.pdf($('#c-leaf').outerHTML,'PMCF '+d.ratee+' '+monthLabel(monthKey())); });
+$('#c-doc').addEventListener('click',function(){ var d=readCoach(); if(!d.ratee){ toast('Choose the ratee first.'); wizGo($('#p-coach'),1); return; } coachLeaf(); EXP.word($('#c-leaf').outerHTML,'PMCF '+d.ratee+' '+monthLabel(monthKey())); });
+
 /* ================================================================== boot */
-function renderAll(){ renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
+function renderAll(){ if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
 function initSelects(){
   $('#g-sy').innerHTML=SYS.map(function(s){return '<option value="'+s+'"'+(s===S.sy?' selected':'')+'>SY '+s+'</option>'}).join('');
   $('#g-sy').addEventListener('change',function(){ S.sy=this.value; ls('sy',S.sy); if(!obs.id){ drawRate(); obsLeafSoon(); } if(!coach.id) renderCoachLog(); renderAll(); });
@@ -2067,7 +2892,7 @@ function initSelects(){
 initSelects(); initDates(); renderLibrary();
 newPlan(); newObs(); newCoach(false);
 renderAll(); renderPeople();
-var startTab=ls('tab'); if(/^#(home|plan|obs|coach|records|people|library|help|settings)$/.test(location.hash)) go(location.hash.slice(1)); else if(startTab) go(startTab);
+var startTab=ls('tab'); if(/^#(home|plan|obs|coach|reports|records|people|library|help|settings)(:(notes|cot|plans|pmcf))?$/.test(location.hash)) go(location.hash.slice(1)); else if(startTab) go(startTab);
 
 Store.init().then(function(){
   Store.watch('obs',function(l){ S.obs=l; renderAll(); });
