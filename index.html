@@ -473,12 +473,17 @@ table.rate .finds li{margin:2px 0}
     <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="notes"><span>1</span>Classroom Observation Notes Form</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="cot"><span>2</span>COT Rating</button>
     <button role="tab" aria-selected="false" data-panel="coach"><span>D</span>Monitoring &amp; Coaching</button>
+    <button role="tab" aria-selected="false" data-panel="ots"><span>T</span>On-the-Spot Test</button>
+    <button role="tab" aria-selected="false" data-panel="lp"><span>L</span>Lesson Plan Monitoring</button>
     <div class="navhead">Records</div>
     <button role="tab" aria-selected="false" data-panel="reports"><span>R</span>Supervisory Reports</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="plans"><span>1</span>Supervisory Plans</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="notes"><span>2</span>Classroom Observation Notes Form</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="cot"><span>3</span>Classroom Observation&ndash;COT Rating</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="pmcf"><span>4</span>Performance Monitoring and Coaching Forms</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="ots"><span>5</span>On-the-Spot Test Reports</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="lp"><span>6</span>Lesson Plan Monitoring Reports</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="monthly"><span>7</span>Monthly Supervisory Report</button>
     <button role="tab" aria-selected="false" data-panel="records"><span>&#8801;</span>Supervision Records</button>
     <button role="tab" aria-selected="false" data-panel="people"><span>&#9823;</span>Personnel &amp; Departments</button>
     <div class="navhead">Reference</div>
@@ -692,6 +697,130 @@ table.rate .finds li{margin:2px 0}
   </div>
 </section>
 
+<!-- ============ ON-THE-SPOT TEST ============ -->
+<section class="panel wiz" id="p-ots">
+  <div class="card">
+    <h2>Saved on-the-spot tests</h2>
+    <div id="ot-list"></div>
+    <div class="row" style="margin-top:12px"><button class="btn ghost small" id="ot-new" type="button">Start a new on-the-spot test</button></div>
+  </div>
+  <div class="card" data-step="1">
+    <h2><span class="step">STEP 1</span> Teacher and test</h2>
+    <div class="lines">
+      <label class="fline"><span class="lk">Name of teacher</span><span class="lv"><select id="ot-teacher" data-people="teach" data-pos="ot-teacher-pos" data-other="ot-teacher-other"></select><input type="text" id="ot-teacher-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="ot-teacher-pos" readonly></span></label>
+      <label class="fline"><span class="lk">Department</span><span class="lv"><select id="ot-dept"></select></span></label>
+      <label class="fline"><span class="lk">Learning area</span><span class="lv"><select id="ot-subj"></select><input type="text" id="ot-subj-other" class="other" placeholder="Type the learning area and grade" hidden></span></label>
+      <label class="fline"><span class="lk">Section</span><span class="lv"><input type="text" id="ot-section" placeholder="Adorable" autocomplete="off"></span></label>
+      <div class="fline"><span class="lk">Term</span><span class="lv"><span class="seg" style="align-self:flex-start"><label><input type="radio" name="ot-term" value="1" checked>1</label><label><input type="radio" name="ot-term" value="2">2</label><label><input type="radio" name="ot-term" value="3">3</label></span></span></div>
+      <label class="fline"><span class="lk">Date</span><span class="lv"><span class="dfield"><input type="text" class="date" id="ot-date" placeholder="October 14, 2026" autocomplete="off"></span></span></label>
+      <label class="fline"><span class="lk">Monitored by</span><span class="lv"><select id="ot-mon" data-people="sup" data-pos="ot-mon-pos" data-other="ot-mon-other"></select><input type="text" id="ot-mon-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="ot-mon-pos" readonly></span></label>
+    </div>
+  </div>
+  <div class="card" data-step="2">
+    <h2><span class="step">STEP 2</span> Number of learners</h2>
+    <div class="lines">
+      <label class="fline"><span class="lk">Present</span><span class="lv"><input type="number" min="0" id="ot-present" inputmode="numeric"></span></label>
+      <label class="fline"><span class="lk">Took the test</span><span class="lv"><input type="number" min="0" id="ot-took" inputmode="numeric"></span></label>
+      <div class="fline"><span class="lk">Did not take the test</span><span class="lv"><span class="calc" id="ot-absent">&ndash;</span></span></div>
+    </div>
+    <div id="ot-warn2"></div>
+  </div>
+  <div class="card" data-step="3">
+    <h2><span class="step">STEP 3</span> Score distribution</h2>
+    <p class="hint">Type how many learners got each score. The percentages, passed and not passed, mean score and MPS are computed for you.</p>
+    <div class="lines" id="ot-scores"></div>
+    <div id="ot-warn3"></div>
+    <div class="tiles" id="ot-tiles3"></div>
+  </div>
+  <div class="card" data-step="4">
+    <h2><span class="step">STEP 4</span> Item analysis</h2>
+    <p class="hint">For each item, write the competency it tests and how many learners answered it correctly. The % correct and the mastery level are computed for you.</p>
+    <div id="ot-items"></div>
+    <div id="ot-warn4"></div>
+  </div>
+  <div class="card" data-step="5">
+    <h2><span class="step">STEP 5</span> Analysis and recommendations</h2>
+    <p class="hint">Written from the results. Edit any of it. <button class="btn ghost small" id="ot-regen" type="button">Rewrite from the results</button></p>
+    <div class="lines" style="max-width:none">
+      <label class="fline top"><span class="lk">Analysis 1</span><span class="lv"><textarea id="ot-a1" rows="3"></textarea></span></label>
+      <label class="fline top"><span class="lk">Analysis 2: competencies mastered, closely approaching or moving towards mastery</span><span class="lv"><textarea id="ot-a2" rows="3"></textarea></span></label>
+      <label class="fline top"><span class="lk">Analysis 3: learning gaps</span><span class="lv"><textarea id="ot-a3" rows="3"></textarea></span></label>
+      <div class="fline"><span class="lk">Recommendation 1</span><span class="lv"><span class="calc" id="ot-r1">&ndash;</span></span></div>
+      <div class="fline"><span class="lk">Recommendation 2</span><span class="lv"><span class="calc" id="ot-r2">&ndash;</span></span></div>
+      <label class="fline top"><span class="lk">Recommendation 3</span><span class="lv"><textarea id="ot-r3" rows="2"></textarea></span></label>
+      <label class="fline top"><span class="lk">Recommendation 4</span><span class="lv"><textarea id="ot-r4" rows="2"></textarea></span></label>
+    </div>
+  </div>
+  <div class="card" data-step="6">
+    <h2><span class="step">STEP 6</span> Save, report and capture</h2>
+    <div class="lines" style="max-width:none">
+      <label class="fline"><span class="lk">Teacher&rsquo;s PMCF</span><span class="lv"><span class="row" style="gap:8px;font-size:14px"><input type="checkbox" id="ot-cap-pmcf" checked> Add this test as a coaching entry on the teacher&rsquo;s PMCF</span></span></label>
+      <label class="fline"><span class="lk">Supervisory report</span><span class="lv"><span class="row" style="gap:8px;font-size:14px"><input type="checkbox" id="ot-cap-rep" checked> Include this test in the Monthly Supervisory Report</span></span></label>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn gold" id="ot-save" type="button">Save on-the-spot test</button>
+      <button class="btn" id="ot-pdf" type="button">Download PDF</button>
+      <button class="btn ghost" id="ot-doc" type="button">Download Word (.docx)</button>
+      <button class="btn ghost" id="ot-print" type="button">Print</button>
+      <button class="btn danger" id="ot-del" type="button" hidden>Delete this test</button>
+      <span class="mini" id="ot-state"></span>
+    </div>
+    <div class="leafwrap" id="ot-leafwrap"></div>
+  </div>
+</section>
+
+<!-- ============ LESSON PLAN MONITORING ============ -->
+<section class="panel wiz" id="p-lp">
+  <div class="card">
+    <h2>Saved lesson plan monitoring</h2>
+    <div id="lp-list"></div>
+    <div class="row" style="margin-top:12px"><button class="btn ghost small" id="lp-new" type="button">Start a new lesson plan monitoring</button></div>
+  </div>
+  <div class="card" data-step="1">
+    <h2><span class="step">STEP 1</span> Teacher and lesson</h2>
+    <div class="lines">
+      <label class="fline"><span class="lk">Name of teacher</span><span class="lv"><select id="lp-teacher" data-people="teach" data-pos="lp-teacher-pos" data-other="lp-teacher-other"></select><input type="text" id="lp-teacher-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="lp-teacher-pos" readonly></span></label>
+      <label class="fline"><span class="lk">Department</span><span class="lv"><select id="lp-dept"></select></span></label>
+      <label class="fline"><span class="lk">Learning area</span><span class="lv"><select id="lp-subj"></select><input type="text" id="lp-subj-other" class="other" placeholder="Type the learning area and grade" hidden></span></label>
+      <label class="fline"><span class="lk">Topic</span><span class="lv"><input type="text" id="lp-topic" placeholder="e.g. The Writing Process"></span></label>
+      <div class="fline"><span class="lk">Term</span><span class="lv"><span class="seg" style="align-self:flex-start"><label><input type="radio" name="lp-term" value="1" checked>1</label><label><input type="radio" name="lp-term" value="2">2</label><label><input type="radio" name="lp-term" value="3">3</label></span></span></div>
+      <label class="fline"><span class="lk">Date</span><span class="lv"><span class="dfield"><input type="text" class="date" id="lp-date" placeholder="October 14, 2026" autocomplete="off"></span></span></label>
+      <label class="fline"><span class="lk">Monitored by</span><span class="lv"><select id="lp-mon" data-people="sup" data-pos="lp-mon-pos" data-other="lp-mon-other"></select><input type="text" id="lp-mon-other" class="other" placeholder="Type the full name" hidden></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="lp-mon-pos" readonly></span></label>
+    </div>
+  </div>
+  <div class="card" data-step="2"><h2><span class="step">STEP 2</span> Part 1 &middot; Intentions</h2><p class="hint">I can say that in my lesson plan&hellip;</p><div id="lp-part1"></div><div class="tiles" id="lp-t1"></div></div>
+  <div class="card" data-step="3"><h2><span class="step">STEP 3</span> Part 2 &middot; Learning experience</h2><p class="hint">I can say that in my lesson plan&hellip;</p><div id="lp-part2"></div><div class="tiles" id="lp-t2"></div></div>
+  <div class="card" data-step="4"><h2><span class="step">STEP 4</span> Part 3 &middot; Assessment and interventions</h2><p class="hint">I can say that in my lesson plan&hellip;</p><div id="lp-part3"></div><div class="tiles" id="lp-t3"></div></div>
+  <div class="card" data-step="5">
+    <h2><span class="step">STEP 5</span> Summary and recommendations</h2>
+    <div class="tiles" id="lp-tiles"></div>
+    <p class="hint">The recommendations are written from the criteria marked Not Yet. Edit them as needed. <button class="btn ghost small" id="lp-regen" type="button">Rewrite from the ratings</button></p>
+    <div class="lines" style="max-width:none">
+      <label class="fline top"><span class="lk">Recommendations</span><span class="lv"><textarea id="lp-rec" rows="7"></textarea></span></label>
+    </div>
+  </div>
+  <div class="card" data-step="6">
+    <h2><span class="step">STEP 6</span> Save, report and capture</h2>
+    <div class="lines" style="max-width:none">
+      <label class="fline"><span class="lk">Teacher&rsquo;s PMCF</span><span class="lv"><span class="row" style="gap:8px;font-size:14px"><input type="checkbox" id="lp-cap-pmcf" checked> Add this monitoring as a coaching entry on the teacher&rsquo;s PMCF</span></span></label>
+      <label class="fline"><span class="lk">Supervisory report</span><span class="lv"><span class="row" style="gap:8px;font-size:14px"><input type="checkbox" id="lp-cap-rep" checked> Include this monitoring in the Monthly Supervisory Report</span></span></label>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn gold" id="lp-save" type="button">Save lesson plan monitoring</button>
+      <button class="btn" id="lp-pdf" type="button">Download PDF</button>
+      <button class="btn ghost" id="lp-doc" type="button">Download Word (.docx)</button>
+      <button class="btn ghost" id="lp-print" type="button">Print</button>
+      <button class="btn danger" id="lp-del" type="button" hidden>Delete this monitoring</button>
+      <span class="mini" id="lp-state"></span>
+    </div>
+    <div class="leafwrap" id="lp-leafwrap"></div>
+  </div>
+</section>
+
 <!-- ============ SUPERVISORY REPORTS ============ -->
 <section class="panel" id="p-reports">
   <div class="card">
@@ -703,9 +832,19 @@ table.rate .finds li{margin:2px 0}
       <label class="f">Search name<input type="text" id="rp-q" placeholder="Teacher, observer or rater"></label>
     </div>
   </div>
-  <div class="card">
+  <div class="card" id="rp-listcard">
     <h2 id="rp-title">Accomplished reports <span class="tag" id="rp-count">0</span></h2>
     <div class="scroll"><table class="ind" id="rp-table" style="min-width:760px"></table></div>
+  </div>
+  <div class="card" id="rp-monthcard" hidden>
+    <h2>Monthly Supervisory Report <span class="tag" id="rp-mcount">0</span></h2>
+    <p class="hint">Built from the on-the-spot tests, lesson plan monitoring, coaching entries (PMCF) and COT classroom observations saved for the month and department chosen above.</p>
+    <div class="lines">
+      <label class="fline"><span class="lk">Prepared by</span><span class="lv"><select id="rp-prep" data-people="sup" data-pos="rp-prep-pos" data-other="rp-prep-other"></select><input type="text" id="rp-prep-other" class="other" placeholder="Type the full name" hidden><input type="hidden" id="rp-prep-pos"></span></label>
+      <label class="fline"><span class="lk">Noted by</span><span class="lv"><select id="rp-noted" data-people="sup" data-pos="rp-noted-pos" data-other="rp-noted-other"></select><input type="text" id="rp-noted-other" class="other" placeholder="Type the full name" hidden><input type="hidden" id="rp-noted-pos"></span></label>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="rp-mpdf" type="button">Download PDF</button><button class="btn ghost" id="rp-mdoc" type="button">Download Word (.docx)</button></div>
+    <div class="leafwrap" id="rp-mleaf"></div>
   </div>
 </section>
 
@@ -1268,7 +1407,7 @@ function setPerson(id,name,pos){
 }
 
 /* ------------------------------------------------------------------ shared record (Google Sheet through Apps Script) */
-var S={obs:[],coach:[],plans:[],cfg:{heads:{},assign:{}},sy:ls('sy')||'2026-2027',canWrite:true,canEdit:false,mode:'connecting',role:''};
+var S={obs:[],ots:[],lp:[],coach:[],plans:[],cfg:{heads:{},assign:{}},sy:ls('sy')||'2026-2027',canWrite:true,canEdit:false,mode:'connecting',role:''};
 var CFG=window.CANHS_IS||{};
 var API={url:String(CFG.apiUrl||ls('apiUrl')||'').trim(), code:ls('code')||''};
 var COLLS=['obs','coach','plans','config'];
@@ -1342,7 +1481,7 @@ function connUI(){
   else if(S.mode==='offline') banner('<b>The shared record could not be reached.</b> Check the internet connection, then reload the page.','warn');
   else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for the department heads&rsquo; access code.','ask');
   else banner('');
-  $$('#pl-save,#o-save,#o-notes-save,#sm-save,#c-save,#pl-del,#o-del,#c-del').forEach(function(b){ b.disabled=!S.canWrite; });
+  $$('#pl-save,#o-save,#o-notes-save,#sm-save,#ot-save,#ot-del,#lp-save,#lp-del,#c-save,#pl-del,#o-del,#c-del').forEach(function(b){ b.disabled=!S.canWrite; });
   var st=$('#set-state'); if(st) st.textContent=$('#conntext').textContent;
   renderPeople();
 }
@@ -1416,6 +1555,8 @@ var LEDES={
   obs:['Classroom Observation','Annex E. Rate the COT indicators of the school year on the teacher\u2019s career-stage scale and file the Rating Sheet or Inter-Observer Agreement Form.'],
   coach:['Monitoring & Coaching','Annex D. Log each coaching and feedback session; the entries make up the teacher\u2019s Performance Monitoring and Coaching Form.'],
   reports:['Supervisory Reports',''],
+  ots:['On-the-Spot Test',''],
+  lp:['Lesson Plan Monitoring',''],
   records:['Supervision Records','Every plan, observation and coaching entry saved by the department heads, in one place.'],
   people:['Personnel & Departments','The PSIPOP roster of the school, each teacher\u2019s department, and the department head designates.'],
   library:['Annex Files A\u2013F','The original templates and tools of the instructional supervision package.'],
@@ -1423,7 +1564,7 @@ var LEDES={
   settings:['Connection','The shared Google Sheet record, your access code, and backups.']
 };
 var SUBS={obs:{notes:'Classroom Observation Notes Form',cot:'COT Rating'},
-  reports:{plans:'Supervisory Plans',notes:'Classroom Observation Notes Form',cot:'Classroom Observation\u2013COT Rating',pmcf:'Performance Monitoring and Coaching Forms'}};
+  reports:{plans:'Supervisory Plans',notes:'Classroom Observation Notes Form',cot:'Classroom Observation\u2013COT Rating',pmcf:'Performance Monitoring and Coaching Forms',ots:'On-the-Spot Test Reports',lp:'Lesson Plan Monitoring Reports',monthly:'Monthly Supervisory Report'}};
 var curSub={obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
 function go(p,sub){
   if(String(p).indexOf(':')>0){ sub=p.split(':')[1]; p=p.split(':')[0]; }
@@ -2445,6 +2586,8 @@ function initReports(){
     else if(a[0]==='notes') openObs(a[1],'notes');
     else if(a[0]==='cot') openObs(a[1],'cot');
     else if(a[0]==='pmcf') openPMCF(a[1],a[2]);
+    else if(a[0]==='ots') openOts(a[1]);
+    else if(a[0]==='lp') openLp(a[1]);
   });
 }
 function openPMCF(ratee,month){
@@ -2464,7 +2607,16 @@ function renderReports(){
   var okYM=function(y,m){ return (!fy||y===fy)&&(!fm||m===fm); };
   var okQ=function(){ if(!q) return true; for(var i=0;i<arguments.length;i++) if(String(arguments[i]||'').toUpperCase().indexOf(q)>=0) return true; return false; };
   var head, rows=[];
-  if(sub==='plans'){
+  if(sub==='ots'){
+    head=['Date','Teacher','Learning area','Results','Monitored by',''];
+    rows=S.ots.filter(function(o){ var t=ymOf(o.date); return okYM(t.y,t.m)&&(!fd||(o.dept||deptOf(o.teacher))===fd)&&okQ(o.teacher,o.mon); }).sort(byDateDesc)
+      .map(function(o){ return [longDate(o.date),o.teacher,[o.subject,o.section].filter(Boolean).join(' \u2013 ')||'\u2014','MPS '+fmt(o.mps||0)+'% ('+masteryOf(o.mps||0)[1]+')',o.mon||'\u2014','ots|'+o.id]; });
+  } else if(sub==='lp'){
+    head=['Date','Teacher','Learning area and topic','Criteria met','Monitored by',''];
+    rows=S.lp.filter(function(o){ var t=ymOf(o.date); return okYM(t.y,t.m)&&(!fd||(o.dept||deptOf(o.teacher))===fd)&&okQ(o.teacher,o.mon); }).sort(byDateDesc)
+      .map(function(o){ return [longDate(o.date),o.teacher,[o.subject,o.topic].filter(Boolean).join(' \u2013 ')||'\u2014',(o.yes||0)+' of '+LPC.length,o.mon||'\u2014','lp|'+o.id]; });
+  } else if(sub==='monthly'){ head=[]; }
+  else if(sub==='plans'){
     head=['Month','Department','Prepared by','Date prepared','Rows',''];
     rows=S.plans.filter(function(p){ return okYM(+p.year,+p.month)&&(!fd||p.dept===fd)&&okQ(p.prep,p.appr,p.dept); })
       .sort(function(a,b){return (b.year-a.year)||(b.month-a.month)||String(a.dept).localeCompare(b.dept)})
@@ -2486,6 +2638,7 @@ function renderReports(){
       .map(function(x){ var l=x.list.slice().sort(byDateDesc); return [monthLabel(x.month),x.ratee,x.list.length,longDate(l[0].date),l[0].rater||'—','pmcf|'+x.ratee+'|'+x.month]; });
   }
   $('#rp-title').firstChild.textContent=SUBS.reports[sub]+' ';
+  $('#rp-listcard').hidden=sub==='monthly'; $('#rp-monthcard').hidden=sub!=='monthly'; if(sub==='monthly'){ renderMonthly(fm,fy,fd,q); return; }
   $('#rp-count').textContent=rows.length+' found';
   var when=(fm?MONTHS[fm-1]+' ':'')+(fy||'');
   $('#rp-table').innerHTML='<thead><tr>'+head.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr></thead><tbody>'+
@@ -2801,6 +2954,10 @@ var EXP=(function(){
       var pg=pageOf(st.leaf), cv=await html2canvas(st.leaf,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
       var doc=new J({unit:'pt',format:[pg.w,pg.h],orientation:pg.land?'landscape':'portrait'});
       var pxPerPt=cv.width/pg.w, sliceH=Math.floor(pg.h*pxPerPt), y=0, first=true;
+      if(cv.height>sliceH&&cv.height<=sliceH*1.15){ // just over one page: shrink it onto one page
+        var k=sliceH/cv.height, wpt=pg.w*k, xo=(pg.w-wpt)/2;
+        doc.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',xo,0,wpt,pg.h);
+        await offerFile(safeName(name)+'.pdf',doc.output('blob')); return; }
       while(y<cv.height-4){
         var h=Math.min(sliceH,cv.height-y), c=document.createElement('canvas'); c.width=cv.width; c.height=h;
         var g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,h); g.drawImage(cv,0,y,cv.width,h,0,0,cv.width,h);
@@ -2844,7 +3001,8 @@ var EXP=(function(){
     q('.cfoot').forEach(function(n){ var c=Array.prototype.slice.call(n.children); n.replaceWith(layTable(c,['40%','35%','25%'])); });
     q('.notes').forEach(function(n){ n.replaceWith(boxTable(n.innerHTML.replace(/\n/g,'<br>'),430)); });
     q('.cbox').forEach(function(n){ n.replaceWith(boxTable(n.innerHTML.replace(/\n/g,'<br>'),90)); });
-    q('div[style*="background"]').forEach(function(n){ var t=boxTable(n.innerHTML); t.setAttribute('width','200'); t.setAttribute('align','center'); var td=t.querySelector('td'); td.setAttribute('style',n.getAttribute('style')+';text-align:center;font-weight:bold;color:#fff;border:none'); n.replaceWith(t); });
+    q('div[style*="background"]').forEach(function(n){ var st=n.getAttribute('style')||'', full=/border\s*:/.test(st), t=boxTable(n.innerHTML); if(!full){ t.setAttribute('width','200'); t.setAttribute('align','center'); } var td=t.querySelector('td'); td.setAttribute('style',st+';text-align:center;font-weight:bold'+(full?'':';border:none')); n.replaceWith(t); });
+    q('div[style*="border:"]').forEach(function(n){ var t=boxTable(n.innerHTML); var td=t.querySelector('td'); td.setAttribute('style',n.getAttribute('style')||''); n.replaceWith(t); });
     q('td,th').forEach(function(c){ if(c.style.whiteSpace==='pre-wrap'){ c.innerHTML=c.innerHTML.replace(/\n/g,'<br>'); } });
     if(foot){ var f=foot.cloneNode(); f.removeAttribute('class'); leaf.appendChild(f); }
     return leaf.innerHTML;
@@ -2875,14 +3033,366 @@ $('#o-notes-doc').addEventListener('click',function(){ var d=readObs(); EXP.word
 $('#c-pdf').addEventListener('click',function(){ var d=readCoach(); if(!d.ratee){ toast('Choose the ratee first.'); wizGo($('#p-coach'),1); return; } coachLeaf(); EXP.pdf($('#c-leaf').outerHTML,'PMCF '+d.ratee+' '+monthLabel(monthKey())); });
 $('#c-doc').addEventListener('click',function(){ var d=readCoach(); if(!d.ratee){ toast('Choose the ratee first.'); wizGo($('#p-coach'),1); return; } coachLeaf(); EXP.word($('#c-leaf').outerHTML,'PMCF '+d.ratee+' '+monthLabel(monthKey())); });
 
+
+/* ================================================================== ON-THE-SPOT TEST MONITORING AND EVALUATION TOOL */
+/* Saved with the observation records (kind "ots") so the shared Google Sheet needs no change. */
+var OT_ITEMS=5;
+var ots={id:'',coachId:''};
+function masteryOf(p){ var r=Math.round(p);
+  if(r>=96) return ['M','Mastered']; if(r>=86) return ['CAM','Closely Approaching Mastery']; if(r>=66) return ['MTM','Moving Towards Mastery'];
+  if(r>=35) return ['A','Average Mastery']; if(r>=15) return ['L','Low Mastery']; if(r>=5) return ['VL','Very Low Mastery']; return ['AWM','Absolutely Without Mastery']; }
+function num(v){ var n=parseInt(v,10); return isNaN(n)||n<0?0:n; }
+function r1(x){ return Math.round(x*100)/100; }
+function fmt(x){ return (Math.round(x*100)/100).toString(); }
+function otRead(){
+  var t=getPerson('ot-teacher'), m=getPerson('ot-mon'), sv=$('#ot-subj').value;
+  return {kind:'ots',sy:S.sy,teacher:t.n,teacherPos:t.p,dept:$('#ot-dept').value,subject:sv==='__other'?$('#ot-subj-other').value.trim():sv,section:$('#ot-section').value.trim(),
+    term:+($('input[name=ot-term]:checked')||{value:1}).value,date:getDate('ot-date'),mon:m.n,monPos:m.p,
+    present:num($('#ot-present').value),took:num($('#ot-took').value),
+    counts:[0,1,2,3,4,5].map(function(s){ var el=$('#ot-c'+s); return el?num(el.value):0; }),
+    items:Array.apply(null,{length:OT_ITEMS}).map(function(_,i){ return {comp:($('#ot-ic'+i)||{value:''}).value.trim(),correct:num(($('#ot-ir'+i)||{value:''}).value)}; }),
+    a1:$('#ot-a1').value,a2:$('#ot-a2').value,a3:$('#ot-a3').value,r3:$('#ot-r3').value,r4:$('#ot-r4').value,
+    capPmcf:$('#ot-cap-pmcf').checked,capRep:$('#ot-cap-rep').checked,coachId:ots.coachId||''};
+}
+function otCalc(d){
+  var sum=d.counts.reduce(function(a,b){return a+b},0), N=d.took||sum, points=d.counts.reduce(function(a,c,s){return a+c*s},0);
+  var mean=N?points/N:0, mps=mean/5*100, passed=d.counts[4]+d.counts[5], dnm=d.counts[0]+d.counts[1]+d.counts[2]+d.counts[3];
+  var items=d.items.map(function(it){ var p=N?it.correct/N*100:0; return {comp:it.comp,correct:it.correct,pct:p,lv:masteryOf(p)}; });
+  return {sum:sum,N:N,points:points,mean:mean,mps:mps,lv:masteryOf(mps),passed:passed,dnm:dnm,pctOf:function(c){return N?c/N*100:0},items:items,
+    correctTotal:d.items.reduce(function(a,b){return a+b.correct},0)};
+}
+function otAuto(d,c){
+  var it=c.items.map(function(x,i){ return {n:i+1,comp:x.comp||'(competency not written)',pct:x.pct,lv:x.lv,has:x.correct>0||!!x.comp}; });
+  var good=it.filter(function(x){return x.has&&Math.round(x.pct)>=66}), gap=it.filter(function(x){return x.has&&Math.round(x.pct)<35}), mid=it.filter(function(x){return x.has&&Math.round(x.pct)>=35&&Math.round(x.pct)<66});
+  var line=function(x){ return 'Item '+x.n+' – '+x.comp+' ('+fmt(x.pct)+'%, '+x.lv[1]+')'; };
+  return {
+    a1:'On the average, students answered '+fmt(c.mps)+'% of the items correctly, indicating that they have achieved '+fmt(c.mps)+'% mastery of the tested competencies ('+c.lv[1]+').',
+    a2:good.length?good.map(line).join('\n'):'None of the tested competencies reached Moving Towards Mastery (66% or more of the learners answering correctly).',
+    a3:gap.length?gap.map(line).join('\n'):'No competency was mastered by less than 35% of the learners.',
+    r3:gap.length?'Reteach '+gap.map(function(x){return 'Item '+x.n+(x.comp&&x.comp!=='(competency not written)'?' ('+x.comp+')':'')}).join(', ')+' using a different strategy, then give a short follow-up test.'
+      :mid.length?'Review '+mid.map(function(x){return 'Item '+x.n}).join(', ')+' with guided practice before moving on.':'Proceed to the next competencies and keep the same strategies.',
+    r4:c.dnm?'Monitor the '+c.dnm+' learner'+(c.dnm===1?'':'s')+' who got 0–3 in the next on-the-spot test.':'Sustain the results through regular formative checks.'
+  };
+}
+function otRecLines(d,c){ return ['Enrichment activities for '+c.passed+' learner'+(c.passed===1?'':'s'),'Remedial/Intervention activities for '+c.dnm+' learner'+(c.dnm===1?'':'s'),d.r3,d.r4].filter(function(x){return String(x||'').trim()}); }
+function otBuildInputs(){
+  $('#ot-scores').innerHTML=[5,4,3,2,1,0].map(function(s){ return '<label class="fline"><span class="lk">Score '+s+'</span><span class="lv"><span class="row" style="gap:12px;flex-wrap:nowrap"><input type="number" min="0" id="ot-c'+s+'" inputmode="numeric" style="max-width:160px" placeholder="0"><span class="calc" id="ot-p'+s+'"></span></span></span></label>'; }).join('');
+  $('#ot-items').innerHTML=Array.apply(null,{length:OT_ITEMS}).map(function(_,i){ return '<div class="iitem"><div class="ih">Item '+(i+1)+'</div><div class="lines" style="max-width:none">'+
+    '<label class="fline"><span class="lk">Competency tested</span><span class="lv"><input type="text" id="ot-ic'+i+'" placeholder="e.g. Identifies the stages of the writing process"></span></label>'+
+    '<label class="fline"><span class="lk">No. of correct responses</span><span class="lv"><input type="number" min="0" id="ot-ir'+i+'" inputmode="numeric" style="max-width:160px" placeholder="0"></span></label>'+
+    '<div class="fline"><span class="lk">% of correct responses</span><span class="lv"><span class="calc" id="ot-ip'+i+'">&ndash;</span></span></div>'+
+    '<div class="fline"><span class="lk">Mastery level</span><span class="lv"><span class="calc" id="ot-il'+i+'">&ndash;</span></span></div></div></div>'; }).join('');
+}
+function otWarn(id,msgs){ $('#'+id).innerHTML=msgs.length?'<div class="notice ask">'+msgs.join('<br>')+'</div>':''; }
+function otRefresh(fromText){
+  var d=otRead(), c=otCalc(d);
+  $('#ot-absent').textContent=d.present||d.took?Math.max(0,d.present-d.took)+' learner'+(Math.max(0,d.present-d.took)===1?'':'s'):'–';
+  otWarn('ot-warn2',d.took>d.present&&d.present?['More learners took the test ('+d.took+') than were present ('+d.present+'). Check the numbers.']:[]);
+  [0,1,2,3,4,5].forEach(function(s){ var n=d.counts[s]; $('#ot-p'+s).textContent=n?n+' learner'+(n===1?'':'s')+' · '+fmt(c.pctOf(n))+'% of learners':''; });
+  var w3=[]; if(d.took&&c.sum!==d.took) w3.push('The score counts add up to '+c.sum+' learner'+(c.sum===1?'':'s')+', but '+d.took+' took the test.');
+  if(!d.took&&c.sum) w3.push('Type the number who took the test in Step 2. The percentages below use the '+c.sum+' learners counted here for now.');
+  otWarn('ot-warn3',w3);
+  $('#ot-tiles3').innerHTML='<div class="tile"><b>'+c.passed+'<small> · '+fmt(c.pctOf(c.passed))+'%</small></b><span>Passed (got 4–5)</span></div><div class="tile"><b>'+c.dnm+'<small> · '+fmt(c.pctOf(c.dnm))+'%</small></b><span>Did not meet expectation (0–3)</span></div>'+
+    '<div class="tile"><b>'+fmt(c.mean)+'<small> / 5</small></b><span>Mean score</span></div><div class="tile"><b>'+fmt(c.mps)+'<small>%</small></b><span>MPS · '+c.lv[1]+'</span></div>';
+  c.items.forEach(function(x,i){ var has=d.items[i].correct||d.items[i].comp; $('#ot-ip'+i).textContent=has?fmt(x.pct)+'%':'–'; $('#ot-il'+i).textContent=has?x.lv[1]+' ('+x.lv[0]+')':'–'; });
+  var w4=[]; d.items.forEach(function(it,i){ if(c.N&&it.correct>c.N) w4.push('Item '+(i+1)+': '+it.correct+' correct responses is more than the '+c.N+' learners who took the test.'); });
+  if(c.correctTotal&&c.points&&c.correctTotal!==c.points) w4.push('The correct responses add up to '+c.correctTotal+', but the scores in Step 3 add up to '+c.points+' points. They should match; check the entries.');
+  otWarn('ot-warn4',w4);
+  $('#ot-r1').textContent='Enrichment activities for '+c.passed+' learner'+(c.passed===1?'':'s');
+  $('#ot-r2').textContent='Remedial/Intervention activities for '+c.dnm+' learner'+(c.dnm===1?'':'s');
+  if(!fromText){ var a=otAuto(d,c); ['a1','a2','a3','r3','r4'].forEach(function(k){ var el=$('#ot-'+k); if(!el.dataset.edited) el.value=a[k]; }); }
+  otLeafSoon();
+}
+var otT; function otLeafSoon(){ clearTimeout(otT); otT=setTimeout(function(){ $('#ot-leafwrap').innerHTML=otSheetHTML(otRead()); },250); }
+function otSheetHTML(d){
+  var c=otCalc(d), box=function(on){ return on?'&#9745;':'&#9744;'; }, TD='style="border:.75pt solid #808080;padding:2pt 4pt"', TH='style="border:.75pt solid #808080;padding:2pt 3pt;background:#E2EFD9;font-weight:700;text-align:center"';
+  var cell=function(v,o){ return '<td '+TD.replace('"',(o&&o.c?'"text-align:center;':'"'))+'>'+(v===''||v==null?'&nbsp;':v)+'</td>'; };
+  var learners='<table style="width:100%;border-collapse:collapse"><tr><th '+TH+' colspan="2">Number of Learners&hellip;</th></tr>'+
+    [['present',d.present],['took the test',d.took],['passed<br>(got 4-5)',c.passed],['did not meet<br>expectation<br>(got 0-3)',c.dnm]].map(function(r){ return '<tr>'+cell(r[0])+cell(r[1]===''?'':String(r[1]),{c:1})+'</tr>'; }).join('')+'</table>';
+  var scores='<table style="width:100%;border-collapse:collapse"><tr><th '+TH+'>Score</th><th '+TH+'>No. of Learners</th><th '+TH+'>% of Learners</th></tr>'+
+    [5,4,3,2,1,0].map(function(s){ var n=d.counts[s]; return '<tr>'+cell(String(s),{c:1})+cell(n?String(n):'',{c:1})+cell(n?fmt(c.pctOf(n)):'',{c:1})+'</tr>'; }).join('')+
+    '<tr><td colspan="3" '+TD+'>Mean Score: <b>'+(c.N?fmt(c.mean):'')+'</b><br>MPS: <b>'+(c.N?fmt(c.mps):'')+'</b></td></tr></table>';
+  var items='<table style="width:100%;border-collapse:collapse"><tr><th '+TH+'>Item No.</th><th '+TH+'>No. of Correct Response</th><th '+TH+'>% of Correct Response</th><th '+TH+'>Mastery Level</th></tr>'+
+    c.items.map(function(x,i){ var has=d.items[i].correct||d.items[i].comp; return '<tr>'+cell(String(i+1),{c:1})+cell(has?String(x.correct):'',{c:1})+cell(has?fmt(x.pct):'',{c:1})+cell(has?x.lv[0]:'',{c:1})+'</tr>'; }).join('')+
+    '<tr><td colspan="4" '+TD+' ><div style="font-size:7pt;font-style:italic;line-height:1.3">96-100 Mastered (M)<br>86-95 Closely Approaching Mastery (CAM)<br>66-85 Moving Towards Mastery (MTM)<br>35-65 Average Mastery (A)<br>15-34 Low Mastery (L)<br>5-14 Very Low Mastery (VL)<br>0-4 Absolutely Without Mastery</div></td></tr></table>';
+  var sec=function(t){ return '<div style="background:#E2EFD9;border:.75pt solid #808080;text-align:center;font-weight:700;padding:1pt;margin-top:6pt">'+t+'</div>'; };
+  var lines=function(t){ return '<div style="white-space:pre-wrap;padding:2pt 0 0 14pt">'+esc(t||'')+'</div>'; };
+  var recs=otRecLines(d,c);
+  return '<div class="leaf page" style="padding-bottom:70pt">'+LH_HTML(1)+'<div style="height:6pt"></div><h4>ON THE SPOT TEST MONITORING AND EVALUATION TOOL<br>SY '+esc(d.sy)+'</h4>'+
+    '<table class="lay" style="width:100%;border-collapse:collapse;margin:6pt 0 0"><tr>'+
+      '<td class="lay" style="width:62%;border:none;padding:0">'+fcol([['Name of Teacher:',d.teacher],['Learning Area:',d.subject],['Section:',d.section]])+'</td>'+
+      '<td class="lay" style="border:none;padding:0 0 0 14pt;vertical-align:top">Term: '+box(d.term===1)+' 1 &nbsp; '+box(d.term===2)+' 2 &nbsp; '+box(d.term===3)+' 3<div style="margin-top:7pt">'+fcol([['Date:',longDate(d.date)]])+'</div></td></tr></table>'+
+    sec('Test Results Summary')+
+    '<table class="lay" style="width:100%;border-collapse:collapse;border:.75pt solid #808080;border-top:none"><tr>'+
+      '<td class="lay" style="width:24%;border:none;padding:4pt;vertical-align:top">'+learners+'</td>'+
+      '<td class="lay" style="width:31%;border:none;padding:4pt;vertical-align:top">'+scores+'</td>'+
+      '<td class="lay" style="border:none;padding:4pt;vertical-align:top">'+items+'</td></tr></table>'+
+    sec('Analysis')+
+    '<div style="border:.75pt solid #808080;border-top:none;padding:3pt 6pt">'+
+      '<div>1. '+esc(d.a1||'')+'</div><div style="margin-top:3pt">2. Competencies that students mastered, closely approaching mastery, or moving towards mastery:</div>'+lines(d.a2)+
+      '<div style="margin-top:3pt">3. Learning gaps (misconceptions, skills not mastered/competencies mastered by less than 35% of learners):</div>'+lines(d.a3)+'</div>'+
+    sec('Recommendations')+
+    '<div style="border:.75pt solid #808080;border-top:none;padding:3pt 6pt">'+recs.map(function(r,i){ return '<div>'+(i+1)+'. '+esc(r)+'</div>'; }).join('')+'</div>'+
+    '<table class="lay" style="width:100%;border-collapse:collapse;margin-top:16pt"><tr>'+
+      '<td class="lay" style="width:50%;border:none;padding:0 20pt 0 0;vertical-align:top"><b>Monitored by:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left">'+esc(d.mon||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.monPos||'HT/MT/School Head')+'</div></div></td>'+
+      '<td class="lay" style="border:none;padding:0;vertical-align:top"><b>Conforme:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left">'+esc(d.teacher||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.teacherPos||'Teacher/Master Teacher')+'</div></div></td></tr></table>'+
+    '<img class="lh-bot" src="'+LH_BOT+'" alt=""></div>';
+}
+function otFillSubj(){
+  var first=$('#ot-dept').value, cur=$('#ot-subj').value, order=DEPTS.slice(); if(first){ order.splice(order.indexOf(first),1); order.unshift(first); }
+  $('#ot-subj').innerHTML='<option value="">Choose a learning area and grade&hellip;</option>'+order.map(function(dp){ return '<optgroup label="'+esc(dp)+'">'+SUBJ_ALL.filter(function(x){return x[1]===dp}).map(function(x){return '<option>'+esc(x[0])+'</option>'}).join('')+'</optgroup>'; }).join('')+'<option value="__other">Not in the list (type it)&hellip;</option>';
+  $('#ot-subj').value=cur;
+}
+function otSetSubj(v){ otFillSubj(); if(!v){ $('#ot-subj').value=''; $('#ot-subj-other').hidden=true; return; } if(subjDept(v)){ $('#ot-subj').value=v; $('#ot-subj-other').hidden=true; } else { $('#ot-subj').value='__other'; $('#ot-subj-other').value=v; $('#ot-subj-other').hidden=false; } }
+function otClearEdits(){ ['a1','a2','a3','r3','r4'].forEach(function(k){ delete $('#ot-'+k).dataset.edited; }); }
+function newOts(){
+  ots={id:'',coachId:''}; setPerson('ot-teacher',''); $('#ot-dept').value=''; otSetSubj(''); $('#ot-section').value=''; $('input[name=ot-term][value="1"]').checked=true; setDate('ot-date',TODAY);
+  var me=ls('observer'); setPerson('ot-mon',me?me.n:'',me?me.p:'');
+  ['ot-present','ot-took'].forEach(function(k){$('#'+k).value=''}); [0,1,2,3,4,5].forEach(function(s){$('#ot-c'+s).value=''});
+  for(var i=0;i<OT_ITEMS;i++){ $('#ot-ic'+i).value=''; $('#ot-ir'+i).value=''; }
+  otClearEdits(); $('#ot-cap-pmcf').checked=true; $('#ot-cap-rep').checked=true; $('#ot-del').hidden=true; $('#ot-state').textContent='New on-the-spot test, not yet saved.';
+  otRefresh(); wizGo($('#p-ots'),1);
+}
+function openOts(id){
+  var o=S.ots.filter(function(x){return x.id===id})[0]; if(!o) return;
+  ots={id:id,coachId:o.coachId||''}; setPerson('ot-teacher',o.teacher,o.teacherPos); $('#ot-dept').value=o.dept||''; otSetSubj(o.subject||''); $('#ot-section').value=o.section||'';
+  var tr=$('input[name=ot-term][value="'+(o.term||1)+'"]'); if(tr) tr.checked=true; setDate('ot-date',o.date||''); setPerson('ot-mon',o.mon,o.monPos);
+  $('#ot-present').value=o.present||''; $('#ot-took').value=o.took||''; [0,1,2,3,4,5].forEach(function(s){ $('#ot-c'+s).value=(o.counts||[])[s]||''; });
+  for(var i=0;i<OT_ITEMS;i++){ var it=(o.items||[])[i]||{}; $('#ot-ic'+i).value=it.comp||''; $('#ot-ir'+i).value=it.correct||''; }
+  ['a1','a2','a3','r3','r4'].forEach(function(k){ var el=$('#ot-'+k); el.value=o[k]||''; el.dataset.edited='1'; });
+  $('#ot-cap-pmcf').checked=o.capPmcf!==false; $('#ot-cap-rep').checked=o.capRep!==false; $('#ot-del').hidden=false; $('#ot-state').textContent='Opened the saved test. Save again after changes.';
+  otRefresh(true); go('ots'); wizGo($('#p-ots'),6);
+}
+function otCoachEntry(d,c){
+  var gaps=c.items.map(function(x,i){return {x:x,i:i}}).filter(function(o){return (d.items[o.i].correct||d.items[o.i].comp)&&Math.round(o.x.pct)<35});
+  return {ratee:d.teacher,rateePos:d.teacherPos,desig:'',rater:d.mon,raterPos:d.monPos,appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:d.date,month:d.date.slice(0,7),sy:d.date?syOfMonth(d.date.slice(0,7)):d.sy,dept:d.dept,
+    incident:'On-the-spot test, '+[d.subject,d.section].filter(Boolean).join(' – ')+(d.term?' (Term '+d.term+')':'')+': '+c.N+' of '+(d.present||c.N)+' learners took the 5-item test. Mean score '+fmt(c.mean)+'; MPS '+fmt(c.mps)+'% ('+c.lv[1]+'). '+c.passed+' passed (4–5); '+c.dnm+' did not meet expectation (0–3).'+(gaps.length?' Learning gaps: '+gaps.map(function(o){return 'Item '+(o.i+1)+(d.items[o.i].comp?' ('+d.items[o.i].comp+')':'')+' '+fmt(o.x.pct)+'%'}).join('; ')+'.':''),
+    impact:c.dnm?fmt(c.pctOf(c.dnm))+'% of the learners ('+c.dnm+') need remediation on the tested competencies.':'All learners met the expected score on the tested competencies.',
+    mech:['Conduct of on-the-spot test'],feedback:otRecLines(d,c).join('\n'),progress:'',source:'ots',otsId:ots.id};
+}
+$('#ot-save').addEventListener('click',async function(){
+  var d=otRead(), c=otCalc(d);
+  if(!d.teacher){ toast('Choose the teacher.'); wizGo($('#p-ots'),1); $('#ot-teacher').focus(); return; }
+  if(!d.date){ toast('Enter the date of the test.'); wizGo($('#p-ots'),1); $('#ot-date').focus(); return; }
+  if(!c.N){ toast('Enter the number of learners who took the test.'); wizGo($('#p-ots'),2); $('#ot-took').focus(); return; }
+  this.disabled=true;
+  try{
+    var id=ots.id||uid('t'); ots.id=id;
+    if(d.capPmcf){ var cid=ots.coachId||uid('c'), ce=otCoachEntry(d,c); ce.otsId=id; ce.savedAt=new Date().toISOString(); await Store.put('coach',cid,ce); ots.coachId=cid; }
+    else if(ots.coachId){ await Store.del('coach',ots.coachId); ots.coachId=''; }
+    d.coachId=ots.coachId; d.mps=r1(c.mps); d.mean=r1(c.mean); d.savedAt=new Date().toISOString();
+    await Store.put('obs',id,d);
+    $('#ot-del').hidden=false; $('#ot-state').textContent='Saved '+longDate(TODAY)+(d.capPmcf?' · added to the PMCF of '+d.teacher+' for '+monthLabel(d.date.slice(0,7)):'')+(d.capRep?' · in the Monthly Supervisory Report':'')+'.';
+    toast('On-the-spot test saved'+(d.capPmcf?' and added to the PMCF':''));
+  }catch(e){ saveErr(e); }
+  this.disabled=!S.canWrite;
+});
+$('#ot-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ if(ots.coachId) await Store.del('coach',ots.coachId); await Store.del('obs',ots.id); toast('On-the-spot test deleted'); newOts(); }catch(e){ saveErr(e); } }); });
+$('#ot-new').addEventListener('click',newOts);
+$('#ot-regen').addEventListener('click',function(){ otClearEdits(); otRefresh(); toast('Analysis and recommendations rewritten from the results.'); });
+$('#ot-pdf').addEventListener('click',function(){ var d=otRead(); if(!d.teacher){ toast('Choose the teacher first.'); wizGo($('#p-ots'),1); return; } EXP.pdf(otSheetHTML(d),'On-the-Spot Test '+d.teacher+' '+longDate(d.date).replace(',','')); });
+$('#ot-doc').addEventListener('click',function(){ var d=otRead(); if(!d.teacher){ toast('Choose the teacher first.'); wizGo($('#p-ots'),1); return; } EXP.word(otSheetHTML(d),'On-the-Spot Test '+d.teacher+' '+longDate(d.date).replace(',','')); });
+$('#ot-print').addEventListener('click',function(){ $('#printarea').innerHTML=otSheetHTML(otRead()); setTimeout(function(){ window.print(); },60); });
+function renderOtsList(){
+  var list=S.ots.filter(function(o){return o.sy===S.sy}).sort(byDateDesc);
+  $('#ot-list').innerHTML=list.length?list.slice(0,12).map(function(o){ return '<div class="listrow"><div class="what"><b>'+esc(o.teacher)+'</b> &middot; '+esc([o.subject,o.section].filter(Boolean).join(' – ')||'No learning area')+'<div>'+esc(longDate(o.date))+' &middot; MPS '+esc(fmt(o.mps||0))+'% ('+esc(masteryOf(o.mps||0)[1])+') &middot; monitored by '+esc(o.mon||'—')+'</div></div><button class="btn ghost small" type="button" data-open-ots="'+esc(o.id)+'">Open</button></div>'; }).join('')+(list.length>12?'<p class="mini" style="margin-top:8px">The rest are under Supervisory Reports &rsaquo; On-the-Spot Test Reports.</p>':'')
+    :'<div class="empty">No on-the-spot tests saved for SY '+esc(S.sy)+' yet.</div>';
+}
+document.addEventListener('click',function(e){ var b=e.target.closest('[data-open-ots]'); if(b) openOts(b.dataset.openOts); });
+otBuildInputs();
+$('#p-ots').addEventListener('input',function(e){ var t=e.target; if(/^ot-(a1|a2|a3|r3|r4)$/.test(t.id)){ t.dataset.edited='1'; otLeafSoon(); return; } otRefresh(); });
+$('#p-ots').addEventListener('change',function(e){ var t=e.target;
+  if(t.id==='ot-subj'){ var other=t.value==='__other'; $('#ot-subj-other').hidden=!other; var dp=subjDept(t.value); if(dp&&!$('#ot-dept').value){ $('#ot-dept').value=dp; } }
+  if(t.id==='ot-dept') otFillSubj();
+  otRefresh(/^ot-(a1|a2|a3|r3|r4)$/.test(t.id)); });
+$('#p-ots').addEventListener('datechange',function(){ otLeafSoon(); });
+$('#ot-teacher').addEventListener('personchange',function(){ var dp=deptOf(getPerson('ot-teacher').n); if(dp){ $('#ot-dept').value=dp; otFillSubj(); } otRefresh(); });
+$('#ot-mon').addEventListener('personchange',function(){ otLeafSoon(); });
+
+/* ================================================================== MONTHLY SUPERVISORY REPORT (built from the saved records) */
+function monthlyRows(fm,fy,fd,q){
+  var ok=function(iso,dept,names){ var t=ymOf(iso); if(fy&&t.y!==fy) return false; if(fm&&t.m!==fm) return false; if(fd&&dept!==fd) return false;
+    if(q&&!names.some(function(n){return String(n||'').toUpperCase().indexOf(q)>=0})) return false; return true; };
+  var rows=[];
+  S.ots.forEach(function(o){ if(o.capRep===false||!ok(o.date,o.dept||deptOf(o.teacher),[o.teacher,o.mon])) return; var c=otCalc(o);
+    rows.push({date:o.date,teacher:o.teacher,subj:[o.subject,o.section].filter(Boolean).join(' – '),act:'On-the-spot test'+(o.term?' (Term '+o.term+')':''),by:o.mon,
+      find:c.N+' of '+(o.present||c.N)+' learners took the test. Mean score '+fmt(c.mean)+'; MPS '+fmt(c.mps)+'% ('+c.lv[1]+'). '+c.passed+' passed (4–5); '+c.dnm+' did not meet expectation (0–3).'+(String(o.a3||'').indexOf('No competency')===0||!o.a3?'':'\nLearning gaps: '+o.a3),
+      rec:otRecLines(o,c).join('\n')}); });
+  S.lp.forEach(function(o){ if(o.capRep===false||!ok(o.date,o.dept||deptOf(o.teacher),[o.teacher,o.mon])) return; var c=lpCalc(o);
+    rows.push({date:o.date,teacher:o.teacher,subj:[o.subject,o.topic].filter(Boolean).join(' \u2013 '),act:'Lesson plan monitoring'+(o.term?' (Term '+o.term+')':''),by:o.mon,
+      find:c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%).'+(c.notYet.length?'\nNot yet: '+c.notYet.map(function(i){ return LPC[i].b.replace(/,$/,'')+((o.findings||[])[i]?' \u2013 '+o.findings[i]:''); }).join('; '):''),
+      rec:o.rec||''}); });
+  S.coach.forEach(function(c){ if(c.source==='ots'||c.source==='lp'||!ok(c.date,c.dept||deptOf(c.ratee),[c.ratee,c.rater])) return;
+    rows.push({date:c.date,teacher:c.ratee,subj:'',act:(c.mech||[]).join(', ')||'Coaching and feedback',by:c.rater,find:c.incident||'',rec:c.feedback||''}); });
+  S.obs.forEach(function(o){ if(!hasCOT(o)||!ok(o.date,o.dept||deptOf(o.teacher),[o.teacher].concat((o.observers||[]).map(function(x){return x.n})))) return;
+    var st=STAGES[o.stage], sc=(o.ratings||[]).map(function(r){ return st?scoreOf(String(r),st):null; }).filter(function(v){return v!=null});
+    var avg=sc.length?sc.reduce(function(a,b){return a+b},0)/sc.length:0, rated=(o.ratings||[]).filter(function(r){return r!==''&&r!=null}).length;
+    rows.push({date:o.date,teacher:o.teacher,subj:o.subject||'',act:'Classroom observation – COT ('+obsKind(o)+')',by:(o.observers||[]).map(function(x){return x.n}).join(', '),
+      find:rated+' of '+(o.ratings||[]).length+' indicators rated'+(sc.length?'; average rating '+fmt(avg)+(st?' on levels '+st.scale[0]+'–'+st.scale[4]:''):'')+'.'+(o.comments?'\n'+o.comments:''),rec:''}); });
+  return rows.sort(function(a,b){ return String(a.date).localeCompare(String(b.date))||String(a.teacher).localeCompare(String(b.teacher)); });
+}
+function monthlySheetHTML(rows,fm,fy,fd){
+  var prep=getPerson('rp-prep'), noted=getPerson('rp-noted'), when=(fm?MONTHS[fm-1]+' ':'All months of ')+(fy||'');
+  var W=[22,118,84,70,96,230,172], TD=function(v,c){ return '<td'+(c?' class="c"':'')+' style="white-space:pre-wrap">'+esc(v||'')+'</td>'; };
+  return '<div class="leaf folio">'+LH_HTML()+'<img class="lh-bot" src="'+LH_BOT+'" alt=""><h4>SUPERVISORY REPORT</h4><h4 style="font-weight:400">For the month of '+esc(when)+(fd?' &middot; '+esc(fd)+' Department':'')+'</h4>'+
+    '<table class="plantbl" style="margin-top:8pt"><colgroup>'+W.map(function(w){return '<col style="width:'+w+'pt">'}).join('')+'</colgroup><tr><th>No.</th><th>Name of Teacher</th><th>Subject / Grade &amp; Section</th><th>Date</th><th>Activity</th><th>Findings</th><th>Recommendation</th></tr>'+
+    (rows.length?rows.map(function(r,i){ return '<tr>'+TD(String(i+1),1)+TD(r.teacher)+TD(r.subj)+TD(longDate(r.date))+TD(r.act)+TD(r.find)+TD(r.rec)+'</tr>'; }).join(''):'<tr><td colspan="7" class="c" style="padding:12pt">No supervisory activities saved for this period.</td></tr>')+'</table>'+
+    '<div class="psig"><div><div>Prepared by:</div><b>'+esc(prep.n||'')+'</b><div>'+esc(prep.p||'')+'</div></div><div><div>Noted by:</div><b>'+esc(noted.n||'')+'</b><div>'+esc(noted.p||'')+'</div></div></div></div>';
+}
+function renderMonthly(fm,fy,fd,q){
+  var rows=monthlyRows(fm,fy,fd,q);
+  $('#rp-mcount').textContent=rows.length+' activit'+(rows.length===1?'y':'ies');
+  $('#rp-mleaf').innerHTML=monthlySheetHTML(rows,fm,fy,fd);
+  return rows;
+}
+function monthlyName(){ var fm=+$('#rp-month').value||0, fy=+$('#rp-year').value||0, fd=$('#rp-dept').value; return 'Supervisory Report '+(fm?MONTHS[fm-1]+' ':'')+(fy||'')+(fd?' '+fd:''); }
+$('#rp-mpdf').addEventListener('click',function(){ EXP.pdf($('#rp-mleaf').innerHTML,monthlyName()); });
+$('#rp-mdoc').addEventListener('click',function(){ EXP.word($('#rp-mleaf').innerHTML,monthlyName()); });
+$('#p-reports').addEventListener('personchange',function(){ if(curSub.reports==='monthly') renderReports(); });
+
+
+/* ================================================================== LESSON PLAN MONITORING AND EVALUATION TOOL */
+/* Saved with the observation records (kind "lp") so the shared Google Sheet needs no change. */
+var LPC=[
+ {p:1,b:'Intentions are clearly stated',t:', with appropriate learning competencies articulated.',rec:'State the learning intentions in learner-friendly terms and align them with the learning competency and its code.'},
+ {p:1,b:'Intentions are evident across all sections',t:', there is coherence.',rec:'Check that every part of the lesson (activities, practice and assessment) works toward the stated intentions; revise or remove the parts that do not.'},
+ {p:2,b:'Learning experience is clear',t:' – another teacher can implement this lesson without additional explanation.',rec:'Write the procedure in enough detail (directions, key questions, expected answers and time allotment) for another teacher to teach it without further explanation.'},
+ {p:2,b:'Learning experience is well-designed,',t:' with intentionally embedded Learning Design Principles.',rec:'Embed the Learning Design Principles on purpose, e.g. activating prior knowledge, explicit instruction, and guided then independent practice.'},
+ {p:2,b:'Learning experience maximizes available opportunities',t:' for integration.',rec:'Plan at least one meaningful integration where it fits: other learning areas, values, real-life contexts, or literacy and numeracy.'},
+ {p:2,b:'Learning experience is inclusive,',t:' provides opportunities to support learners with disabilities, barriers, and unique contexts.',rec:'Add supports for learners with disabilities, barriers or unique contexts, such as differentiated tasks, scaffolds and accessible materials.'},
+ {p:3,b:'Assessment strategies are integrated throughout the session',t:' to see learners’ progress or if they need support.',rec:'Plan short formative checks within the session (questioning, show-me boards, exit tickets) and note what to do with the results.'},
+ {p:3,b:'Assessment strategies generate evidence',t:' if learning is successful.',rec:'Make the assessment produce evidence of the intended learning, with success criteria or a rubric that matches the intentions.'},
+ {p:3,b:'The following interventions are actionable,',t:' providing ways to extend or adjust learning based on reflections.',rec:'Write concrete reflection-based next steps: what to reteach, extend or adjust, and for which learners.'}
+];
+var LP_PARTS={1:'Intentions',2:'Learning experience',3:'Assessment and interventions'};
+var lp={id:'',coachId:''};
+function lpBuild(){
+  [1,2,3].forEach(function(pn){
+    $('#lp-part'+pn).innerHTML=LPC.map(function(c,i){ if(c.p!==pn) return ''; return '<div class="iitem"><div class="ih">Criterion '+(i+1)+' of '+LPC.length+'</div><div class="lines" style="max-width:none">'+
+      '<div class="fline top"><span class="lk">Criterion</span><span class="lv"><span class="itx"><b>'+esc(c.b)+'</b>'+esc(c.t)+'</span></span></div>'+
+      '<div class="fline"><span class="lk">Rating</span><span class="lv"><span class="seg" style="align-self:flex-start"><label><input type="radio" name="lp-r'+i+'" value="Y">Yes</label><label><input type="radio" name="lp-r'+i+'" value="N">Not Yet</label></span></span></div>'+
+      '<label class="fline top"><span class="lk">Findings / remarks</span><span class="lv"><textarea rows="2" id="lp-f'+i+'" placeholder="What in the lesson plan shows this, or what is missing"></textarea></span></label></div></div>'; }).join('');
+  });
+}
+function lpFillSubj(){ var first=$('#lp-dept').value, cur=$('#lp-subj').value, order=DEPTS.slice(); if(first){ order.splice(order.indexOf(first),1); order.unshift(first); }
+  $('#lp-subj').innerHTML='<option value="">Choose a learning area and grade&hellip;</option>'+order.map(function(dp){ return '<optgroup label="'+esc(dp)+'">'+SUBJ_ALL.filter(function(x){return x[1]===dp}).map(function(x){return '<option>'+esc(x[0])+'</option>'}).join('')+'</optgroup>'; }).join('')+'<option value="__other">Not in the list (type it)&hellip;</option>';
+  $('#lp-subj').value=cur; }
+function lpSetSubj(v){ lpFillSubj(); if(!v){ $('#lp-subj').value=''; $('#lp-subj-other').hidden=true; return; } if(subjDept(v)){ $('#lp-subj').value=v; $('#lp-subj-other').hidden=true; } else { $('#lp-subj').value='__other'; $('#lp-subj-other').value=v; $('#lp-subj-other').hidden=false; } }
+function lpRead(){
+  var t=getPerson('lp-teacher'), m=getPerson('lp-mon'), sv=$('#lp-subj').value;
+  return {kind:'lp',sy:S.sy,teacher:t.n,teacherPos:t.p,dept:$('#lp-dept').value,subject:sv==='__other'?$('#lp-subj-other').value.trim():sv,topic:$('#lp-topic').value.trim(),
+    term:+($('input[name=lp-term]:checked')||{value:1}).value,date:getDate('lp-date'),mon:m.n,monPos:m.p,
+    ratings:LPC.map(function(_,i){ var r=$('input[name="lp-r'+i+'"]:checked'); return r?r.value:''; }),findings:LPC.map(function(_,i){ return $('#lp-f'+i).value; }),
+    rec:$('#lp-rec').value,capPmcf:$('#lp-cap-pmcf').checked,capRep:$('#lp-cap-rep').checked,coachId:lp.coachId||''};
+}
+function lpCalc(d){
+  var yes=d.ratings.filter(function(r){return r==='Y'}).length, no=d.ratings.filter(function(r){return r==='N'}).length, part={};
+  [1,2,3].forEach(function(pn){ var idx=LPC.map(function(c,i){return c.p===pn?i:-1}).filter(function(i){return i>=0});
+    part[pn]={n:idx.length,yes:idx.filter(function(i){return d.ratings[i]==='Y'}).length,rated:idx.filter(function(i){return d.ratings[i]}).length}; });
+  return {yes:yes,no:no,rated:yes+no,n:LPC.length,pct:LPC.length?yes/LPC.length*100:0,part:part,notYet:LPC.map(function(c,i){return d.ratings[i]==='N'?i:-1}).filter(function(i){return i>=0})};
+}
+function lpAuto(d,c){
+  if(!c.rated) return '';
+  if(!c.notYet.length) return 'The lesson plan meets all '+c.n+' criteria. Share it as a model in the department LAC session.';
+  return c.notYet.map(function(i,k){ return (k+1)+'. '+LPC[i].rec; }).join('\n');
+}
+function lpRefresh(fromText){
+  var d=lpRead(), c=lpCalc(d), tile=function(a,b,l){ return '<div class="tile"><b>'+a+'<small> / '+b+'</small></b><span>'+l+'</span></div>'; };
+  [1,2,3].forEach(function(pn){ var p=c.part[pn]; $('#lp-t'+pn).innerHTML=tile(p.yes,p.n,'Yes in this part')+tile(p.rated,p.n,'Rated in this part'); });
+  $('#lp-tiles').innerHTML=tile(c.yes,c.n,'Criteria met (Yes) · '+fmt(c.pct)+'%')+tile(c.no,c.n,'Not Yet')+[1,2,3].map(function(pn){ return tile(c.part[pn].yes,c.part[pn].n,LP_PARTS[pn]); }).join('');
+  if(!fromText&&!$('#lp-rec').dataset.edited) $('#lp-rec').value=lpAuto(d,c);
+  lpLeafSoon();
+}
+var lpT; function lpLeafSoon(){ clearTimeout(lpT); lpT=setTimeout(function(){ $('#lp-leafwrap').innerHTML=lpSheetHTML(lpRead()); },250); }
+function lpSheetHTML(d){
+  var c=lpCalc(d), box=function(on){ return on?'&#9745;':'&#9744;'; }, TD='border:.75pt solid #808080;padding:3pt 4pt;vertical-align:top', TH='border:.75pt solid #808080;padding:3pt;background:#E2EFD9;font-weight:700;text-align:center;vertical-align:middle';
+  var recs=String(d.rec||'').split(/\r?\n/).filter(function(x){return x.trim()});
+  return '<div class="leaf page" style="padding-bottom:70pt">'+LH_HTML(1)+'<div style="height:6pt"></div><h4>LESSON PLAN MONITORING AND EVALUATION TOOL<br>SY '+esc(d.sy)+'</h4>'+
+    '<table class="lay" style="width:100%;border-collapse:collapse;margin:6pt 0 0"><tr>'+
+      '<td class="lay" style="width:62%;border:none;padding:0">'+fcol([['Name of Teacher:',d.teacher],['Learning Area:',d.subject]])+'</td>'+
+      '<td class="lay" style="border:none;padding:0 0 0 14pt;vertical-align:top">Term: '+box(d.term===1)+' 1 &nbsp; '+box(d.term===2)+' 2 &nbsp; '+box(d.term===3)+' 3<div style="margin-top:7pt">'+fcol([['Date:',longDate(d.date)]])+'</div></td></tr></table>'+
+    frow('Topic:',d.topic)+
+    '<table style="width:100%;border-collapse:collapse;margin-top:8pt"><colgroup><col style="width:42%"><col style="width:9%"><col style="width:9%"><col></colgroup>'+
+    '<tr><th style="'+TH+';text-align:left">I can say that in my lesson plan&hellip;</th><th style="'+TH+'">Yes</th><th style="'+TH+'">Not Yet</th><th style="'+TH+'">Findings/Remarks</th></tr>'+
+    LPC.map(function(cr,i){ var r=d.ratings[i]; return '<tr><td style="'+TD+'"><b>'+esc(cr.b)+'</b>'+esc(cr.t)+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='Y'?'&#10003;':'')+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='N'?'&#10003;':'')+'</td><td style="'+TD+';white-space:pre-wrap">'+esc(d.findings[i]||'')+'</td></tr>'; }).join('')+
+    '<tr><td style="'+TD+';text-align:right;font-weight:700">Total</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.yes:'')+'</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.no:'')+'</td><td style="'+TD+'">'+(c.rated?c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%)':'')+'</td></tr></table>'+
+    '<div style="background:#E2EFD9;border:.75pt solid #808080;text-align:center;font-weight:700;padding:1pt;margin-top:8pt">Recommendations</div>'+
+    '<div style="border:.75pt solid #808080;border-top:none;padding:4pt 8pt;min-height:56pt">'+recs.map(function(r){ return '<div>'+esc(r)+'</div>'; }).join('')+'</div>'+
+    '<table class="lay" style="width:100%;border-collapse:collapse;margin-top:16pt"><tr>'+
+      '<td class="lay" style="width:50%;border:none;padding:0 20pt 0 0;vertical-align:top"><b>Monitored by:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left">'+esc(d.mon||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.monPos||'HT/MT/School Head')+'</div></div></td>'+
+      '<td class="lay" style="border:none;padding:0;vertical-align:top"><b>Conforme:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left">'+esc(d.teacher||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.teacherPos||'Teacher/Master Teacher')+'</div></div></td></tr></table>'+
+    '<img class="lh-bot" src="'+LH_BOT+'" alt=""></div>';
+}
+function newLp(){
+  lp={id:'',coachId:''}; setPerson('lp-teacher',''); $('#lp-dept').value=''; lpSetSubj(''); $('#lp-topic').value=''; $('input[name=lp-term][value="1"]').checked=true; setDate('lp-date',TODAY);
+  var me=ls('observer'); setPerson('lp-mon',me?me.n:'',me?me.p:'');
+  LPC.forEach(function(_,i){ $$('input[name="lp-r'+i+'"]').forEach(function(r){r.checked=false}); $('#lp-f'+i).value=''; });
+  delete $('#lp-rec').dataset.edited; $('#lp-rec').value=''; $('#lp-cap-pmcf').checked=true; $('#lp-cap-rep').checked=true; $('#lp-del').hidden=true; $('#lp-state').textContent='New lesson plan monitoring, not yet saved.';
+  lpRefresh(); wizGo($('#p-lp'),1);
+}
+function openLp(id){
+  var o=S.lp.filter(function(x){return x.id===id})[0]; if(!o) return;
+  lp={id:id,coachId:o.coachId||''}; setPerson('lp-teacher',o.teacher,o.teacherPos); $('#lp-dept').value=o.dept||''; lpSetSubj(o.subject||''); $('#lp-topic').value=o.topic||'';
+  var tr=$('input[name=lp-term][value="'+(o.term||1)+'"]'); if(tr) tr.checked=true; setDate('lp-date',o.date||''); setPerson('lp-mon',o.mon,o.monPos);
+  LPC.forEach(function(_,i){ $$('input[name="lp-r'+i+'"]').forEach(function(r){ r.checked=r.value===(o.ratings||[])[i]; }); $('#lp-f'+i).value=(o.findings||[])[i]||''; });
+  $('#lp-rec').value=o.rec||''; $('#lp-rec').dataset.edited='1'; $('#lp-cap-pmcf').checked=o.capPmcf!==false; $('#lp-cap-rep').checked=o.capRep!==false; $('#lp-del').hidden=false; $('#lp-state').textContent='Opened the saved monitoring. Save again after changes.';
+  lpRefresh(true); go('lp'); wizGo($('#p-lp'),6);
+}
+function lpCoachEntry(d,c){
+  var ny=c.notYet.map(function(i){ return LPC[i].b.replace(/,$/,'')+(d.findings[i]?' ('+d.findings[i].replace(/\s+/g,' ').trim()+')':''); });
+  return {ratee:d.teacher,rateePos:d.teacherPos,desig:'',rater:d.mon,raterPos:d.monPos,appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:d.date,month:d.date.slice(0,7),sy:d.date?syOfMonth(d.date.slice(0,7)):d.sy,dept:d.dept,
+    incident:'Lesson plan monitoring, '+[d.subject,d.topic].filter(Boolean).join(' – ')+(d.term?' (Term '+d.term+')':'')+': '+c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%).'+(ny.length?' Not yet: '+ny.join('; ')+'.':''),
+    impact:ny.length?'The lesson plan needs revision in '+ny.length+' area'+(ny.length===1?'':'s')+' before it fully supports learning.':'The lesson plan fully supports the intended learning.',
+    mech:['Checking of DLL'],feedback:d.rec||'',progress:'',source:'lp',lpId:lp.id};
+}
+$('#lp-save').addEventListener('click',async function(){
+  var d=lpRead(), c=lpCalc(d);
+  if(!d.teacher){ toast('Choose the teacher.'); wizGo($('#p-lp'),1); $('#lp-teacher').focus(); return; }
+  if(!d.date){ toast('Enter the date.'); wizGo($('#p-lp'),1); $('#lp-date').focus(); return; }
+  if(c.rated<c.n){ var miss=d.ratings.map(function(r,i){return r?0:i+1}).filter(Boolean); toast('Rate every criterion first: criterion '+miss.join(', ')+' still has no Yes or Not Yet.'); wizGo($('#p-lp'),LPC[miss[0]-1].p+1); return; }
+  this.disabled=true;
+  try{
+    var id=lp.id||uid('l'); lp.id=id;
+    if(d.capPmcf){ var cid=lp.coachId||uid('c'), ce=lpCoachEntry(d,c); ce.lpId=id; ce.savedAt=new Date().toISOString(); await Store.put('coach',cid,ce); lp.coachId=cid; }
+    else if(lp.coachId){ await Store.del('coach',lp.coachId); lp.coachId=''; }
+    d.coachId=lp.coachId; d.yes=c.yes; d.savedAt=new Date().toISOString();
+    await Store.put('obs',id,d);
+    $('#lp-del').hidden=false; $('#lp-state').textContent='Saved '+longDate(TODAY)+(d.capPmcf?' · added to the PMCF of '+d.teacher+' for '+monthLabel(d.date.slice(0,7)):'')+(d.capRep?' · in the Monthly Supervisory Report':'')+'.';
+    toast('Lesson plan monitoring saved'+(d.capPmcf?' and added to the PMCF':''));
+  }catch(e){ saveErr(e); }
+  this.disabled=!S.canWrite;
+});
+$('#lp-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ if(lp.coachId) await Store.del('coach',lp.coachId); await Store.del('obs',lp.id); toast('Lesson plan monitoring deleted'); newLp(); }catch(e){ saveErr(e); } }); });
+$('#lp-new').addEventListener('click',newLp);
+$('#lp-regen').addEventListener('click',function(){ delete $('#lp-rec').dataset.edited; lpRefresh(); toast('Recommendations rewritten from the ratings.'); });
+var lpName=function(d){ return 'Lesson Plan Monitoring '+d.teacher+' '+longDate(d.date).replace(',',''); };
+$('#lp-pdf').addEventListener('click',function(){ var d=lpRead(); if(!d.teacher){ toast('Choose the teacher first.'); wizGo($('#p-lp'),1); return; } EXP.pdf(lpSheetHTML(d),lpName(d)); });
+$('#lp-doc').addEventListener('click',function(){ var d=lpRead(); if(!d.teacher){ toast('Choose the teacher first.'); wizGo($('#p-lp'),1); return; } EXP.word(lpSheetHTML(d),lpName(d)); });
+$('#lp-print').addEventListener('click',function(){ $('#printarea').innerHTML=lpSheetHTML(lpRead()); setTimeout(function(){ window.print(); },60); });
+function renderLpList(){
+  var list=S.lp.filter(function(o){return o.sy===S.sy}).sort(byDateDesc);
+  $('#lp-list').innerHTML=list.length?list.slice(0,12).map(function(o){ return '<div class="listrow"><div class="what"><b>'+esc(o.teacher)+'</b> &middot; '+esc([o.subject,o.topic].filter(Boolean).join(' – ')||'No learning area')+'<div>'+esc(longDate(o.date))+' &middot; '+esc(String(o.yes||0))+' of '+LPC.length+' criteria met &middot; monitored by '+esc(o.mon||'—')+'</div></div><button class="btn ghost small" type="button" data-open-lp="'+esc(o.id)+'">Open</button></div>'; }).join('')+(list.length>12?'<p class="mini" style="margin-top:8px">The rest are under Supervisory Reports &rsaquo; Lesson Plan Monitoring Reports.</p>':'')
+    :'<div class="empty">No lesson plan monitoring saved for SY '+esc(S.sy)+' yet.</div>';
+}
+document.addEventListener('click',function(e){ var b=e.target.closest('[data-open-lp]'); if(b) openLp(b.dataset.openLp); });
+lpBuild();
+$('#p-lp').addEventListener('input',function(e){ if(e.target.id==='lp-rec'){ e.target.dataset.edited='1'; lpLeafSoon(); return; } lpRefresh(); });
+$('#p-lp').addEventListener('change',function(e){ var t=e.target;
+  if(t.id==='lp-subj'){ $('#lp-subj-other').hidden=t.value!=='__other'; var dp=subjDept(t.value); if(dp&&!$('#lp-dept').value) $('#lp-dept').value=dp; }
+  if(t.id==='lp-dept') lpFillSubj();
+  lpRefresh(t.id==='lp-rec'); });
+$('#p-lp').addEventListener('datechange',function(){ lpLeafSoon(); });
+$('#lp-teacher').addEventListener('personchange',function(){ var dp=deptOf(getPerson('lp-teacher').n); if(dp){ $('#lp-dept').value=dp; lpFillSubj(); } lpRefresh(); });
+$('#lp-mon').addEventListener('personchange',function(){ lpLeafSoon(); });
+
 /* ================================================================== boot */
-function renderAll(){ if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
+function renderAll(){ if(typeof renderOtsList==='function') renderOtsList(); if(typeof renderLpList==='function') renderLpList(); if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
 function initSelects(){
   $('#g-sy').innerHTML=SYS.map(function(s){return '<option value="'+s+'"'+(s===S.sy?' selected':'')+'>SY '+s+'</option>'}).join('');
   $('#g-sy').addEventListener('change',function(){ S.sy=this.value; ls('sy',S.sy); if(!obs.id){ drawRate(); obsLeafSoon(); } if(!coach.id) renderCoachLog(); renderAll(); });
   $('#pl-month').innerHTML=MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join('');
   $('#c-month').innerHTML=$('#pl-month').innerHTML;
-  $$('#pl-dept,#o-dept,#c-dept').forEach(function(s){ s.innerHTML=optList(DEPTS,'Choose&hellip;'); });
+  $$('#pl-dept,#o-dept,#c-dept,#ot-dept,#lp-dept').forEach(function(s){ s.innerHTML=optList(DEPTS,'Choose&hellip;'); });
   $('#r-dept').innerHTML=optList(DEPTS,'All departments');
   $('#o-stage').innerHTML='<option value="">Choose&hellip;</option>'+Object.keys(STAGES).map(function(k){return '<option value="'+k+'">'+STAGES[k].label+'</option>'}).join('');
   $('#c-mech').innerHTML=MECH.map(function(m,i){return '<label><input type="checkbox" id="c-m'+i+'" value="'+esc(m)+'">'+esc(m)+'</label>'}).join('');
@@ -2890,12 +3400,12 @@ function initSelects(){
   $('#h-today').textContent=longDate(TODAY);
 }
 initSelects(); initDates(); renderLibrary();
-newPlan(); newObs(); newCoach(false);
+newPlan(); newObs(); newCoach(false); newOts(); newLp(); setPerson('rp-noted',PRINCIPAL.n,PRINCIPAL.p); (function(){ var me=ls('observer'); if(me) setPerson('rp-prep',me.n,me.p); })();
 renderAll(); renderPeople();
 var startTab=ls('tab'); if(/^#(home|plan|obs|coach|reports|records|people|library|help|settings)(:(notes|cot|plans|pmcf))?$/.test(location.hash)) go(location.hash.slice(1)); else if(startTab) go(startTab);
 
 Store.init().then(function(){
-  Store.watch('obs',function(l){ S.obs=l; renderAll(); });
+  Store.watch('obs',function(l){ S.obs=l.filter(function(x){return x.kind!=='ots'&&x.kind!=='lp'}); S.ots=l.filter(function(x){return x.kind==='ots'}); S.lp=l.filter(function(x){return x.kind==='lp'}); renderAll(); });
   Store.watch('coach',function(l){ S.coach=l; renderAll(); });
   Store.watch('plans',function(l){ S.plans=l; renderAll(); });
   Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{}}; renderPeople(); renderAll(); });
