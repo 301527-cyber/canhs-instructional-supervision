@@ -902,10 +902,10 @@ table.rate .finds li{margin:2px 0}
     <div class="scroll"><table class="ind" id="pp-heads" style="min-width:620px"></table></div>
   </div>
   <div class="card" id="pp-codes-card" hidden>
-    <h2>Department access codes</h2>
-    <p class="hint">Give each department head their own code. With it they see and save only the plans, observations, on-the-spot tests, lesson plan monitoring and PMCFs of the teachers assigned to their department. They cannot open other departments&rsquo; records. The check is done by the Google Sheet, so the other records never reach their browser. Use at least 6 letters or numbers. Leave a code blank to block that department.</p>
+    <h2>Department head sign-ins</h2>
+    <p class="hint">Give each department head their email and a 4-digit passcode. Signed in, they see and save only the plans, observations, on-the-spot tests, lesson plan monitoring and PMCFs of the teachers assigned to their department. They cannot open other departments&rsquo; records. The check is done by the Google Sheet, so the other records never reach their browser. Leave a row blank to block that department.</p>
     <div class="scroll"><table class="ind" id="pp-codes" style="min-width:560px"></table></div>
-    <div class="row" style="margin-top:12px"><button class="btn gold" id="pp-codes-save" type="button">Save access codes</button><span class="mini" id="pp-codes-state"></span></div>
+    <div class="row" style="margin-top:12px"><button class="btn gold" id="pp-codes-save" type="button">Save sign-ins</button><span class="mini" id="pp-codes-state"></span></div>
   </div>
   <div class="card" id="pp-add-card" hidden>
     <h2>Add a teacher</h2>
@@ -940,17 +940,18 @@ table.rate .finds li{margin:2px 0}
 <section class="panel" id="p-settings">
   <div class="card">
     <h2>Shared record</h2>
-    <p class="hint">Plans, observations and coaching entries are kept in the school&rsquo;s Google Sheet. Enter the access code the School Head gave you. The code stays in this browser on this device.</p>
+    <p class="hint">Plans, observations and coaching entries are kept in the school&rsquo;s Google Sheet. Sign in with your email address and the 4-digit passcode the School Head gave you. You stay signed in on this device until you sign out.</p>
     <div class="grid2">
       <label class="f wide">Web app address<input type="text" id="set-url" placeholder="https://script.google.com/macros/s/&hellip;/exec" autocomplete="off" spellcheck="false"></label>
-      <label class="f">Access code<input type="password" id="set-code" autocomplete="off" spellcheck="false"></label>
+      <label class="f">Email address<input type="email" id="set-email" autocomplete="username" spellcheck="false" placeholder="name@deped.gov.ph"></label>
+      <label class="f">4-digit passcode<input type="password" id="set-pin" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;" style="max-width:140px;letter-spacing:.3em"></label><input type="hidden" id="set-code">
     </div>
     <div class="row" style="margin-top:14px">
-      <button class="btn" id="set-save" type="button">Save and connect</button>
-      <button class="btn ghost" id="set-forget" type="button">Forget the code on this device</button>
+      <button class="btn" id="set-save" type="button">Sign in</button>
+      <button class="btn ghost" id="set-forget" type="button">Sign out on this device</button>
       <span class="mini">Status: <b id="set-state">Connecting&hellip;</b></span>
     </div>
-    <p class="hint" style="margin-top:14px">Each department head uses their department&rsquo;s own code: they see, add and change only the records of their department&rsquo;s teachers. The School Head&rsquo;s code also sets department heads and teacher assignments. A view-only code, if set, can read but not save.</p>
+    <p class="hint" style="margin-top:14px">Each department head signs in with their own email and passcode: they see, add and change only the records of their department&rsquo;s teachers. The School Head&rsquo;s sign-in also sets department heads, teacher assignments and sign-ins. A view-only sign-in, if set, can read but not save.</p>
   </div>
   <div class="card">
     <h2>Backup</h2>
@@ -965,7 +966,7 @@ table.rate .finds li{margin:2px 0}
   <div class="card">
     <h2>One record for the whole school</h2>
     <ol class="steps">
-      <li>The School Head gives each department head designate the site&rsquo;s address and the department heads&rsquo; access code. They enter the code once under <b>Connection</b>; after that they can add, change and delete entries.</li>
+      <li>The School Head gives each department head designate the site&rsquo;s address, their email and a 4-digit passcode. They sign in once under <b>Connection</b>; after that they can add, change and delete entries.</li>
       <li>Everything saved here goes to one shared record, so the School Head sees every department&rsquo;s plans, observations and coaching as soon as they are saved.</li>
       <li>Set the department of each teacher once in Personnel &amp; Departments. The forms then fill in the department by themselves.</li>
       <li>Names and positions are picked from the PSIPOP list. For someone not yet on the PSIPOP, choose &ldquo;Not in the list&rdquo; and type the name and position.</li>
@@ -1558,7 +1559,7 @@ function recDept(coll,o){ if(o&&o.dept) return String(o.dept); var n=coll==='coa
 function lockDept(){
   var d=S.myDept;
   $$('#pl-dept,#o-dept,#c-dept,#ot-dept,#lp-dept,#rp-dept,#h-dept,#r-dept').forEach(function(sel){
-    if(d){ if(sel.options.length!==1||sel.value!==d){ sel.innerHTML='<option value="'+esc(d)+'">'+esc(d)+'</option>'; sel.value=d; } sel.disabled=true; sel.title='Your access code is for the '+d+' Department'; }
+    if(d){ if(sel.options.length!==1||sel.value!==d){ sel.innerHTML='<option value="'+esc(d)+'">'+esc(d)+'</option>'; sel.value=d; } sel.disabled=true; sel.title='You are signed in for the '+d+' Department'; }
     else if(sel.disabled&&sel.dataset.locked){ sel.disabled=false; }
     if(d) sel.dataset.locked='1';
   });
@@ -1568,12 +1569,12 @@ function banner(msg,kind){ $('#banner').innerHTML=msg?'<div class="notice '+(kin
 function connUI(){
   var c=$('#conn');
   c.className='conn '+(S.mode==='shared'?'live':S.mode==='local'?'local':'');
-  $('#conntext').textContent=S.mode==='shared'?(S.role==='admin'?'Shared record \u00b7 School Head':S.myDept?'Shared record \u00b7 '+S.myDept+' Department':S.canWrite?'Shared record \u00b7 can save':'Shared record \u00b7 read only'):S.mode==='local'?'This browser only':S.mode==='locked'?'Access code needed':S.mode==='offline'?'Cannot reach the record':'Connecting\u2026';
+  $('#conntext').textContent=S.mode==='shared'?(S.role==='admin'?'Shared record \u00b7 School Head':S.myDept?'Shared record \u00b7 '+S.myDept+' Department':S.canWrite?'Shared record \u00b7 can save':'Shared record \u00b7 read only'):S.mode==='local'?'This browser only':S.mode==='locked'?'Sign-in needed':S.mode==='offline'?'Cannot reach the record':'Connecting\u2026';
   if(S.mode==='local') banner('<b>Not connected to a shared record.</b> Entries saved now stay in this browser only. To share one record with the department heads, set up the Google Sheet as described in the README, then open <button class="link" type="button" data-go="settings">Connection</button>.','ask');
-  else if(S.mode==='locked') banner('<b>Enter the school&rsquo;s access code</b> to open the shared supervision record. '+(Store.lastErr==='code'?'The code you entered was not accepted. ':'')+'<button class="btn small" type="button" data-go="settings">Enter access code</button>','ask');
+  else if(S.mode==='locked') banner('<b>Sign in</b> with your email and 4-digit passcode to open the shared supervision record. '+(Store.lastErr==='locked_out'?'Too many wrong passcodes; wait 15 minutes. ':Store.lastErr==='code'?'The email and passcode were not accepted. ':'')+'<button class="btn small" type="button" data-go="settings">Sign in</button>','ask');
   else if(S.mode==='offline') banner('<b>The shared record could not be reached.</b> Check the internet connection, then reload the page.','warn');
   else if(S.mode==='shared' && S.myDept) banner('<b>'+esc(S.myDept)+' Department.</b> You see and save only the records of teachers in your department.','info');
-  else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for the department heads&rsquo; access code.','ask');
+  else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for a department head sign-in.','ask');
   else banner('');
   $$('#pl-save,#o-save,#o-notes-save,#sm-save,#ot-save,#ot-del,#lp-save,#lp-del,#c-save,#pl-del,#o-del,#c-del').forEach(function(b){ b.disabled=!S.canWrite; });
   var st=$('#set-state'); if(st) st.textContent=$('#conntext').textContent;
@@ -1583,10 +1584,10 @@ function connUI(){
 }
 function saveErr(e){
   var c=e&&e.code;
-  if(c==='readonly'||c==='admin'){ toast(c==='admin'?'Only the School Head\u2019s code can change departments.':'Not saved: this access code can only read the record.'); return; }
-  if(c==='code'){ toast('Not saved: the access code was not accepted.'); return; }
+  if(c==='readonly'||c==='admin'){ toast(c==='admin'?'Only the School Head can change departments.':'Not saved: this sign-in can only read the record.'); return; }
+  if(c==='code'){ toast('Not saved: your sign-in was not accepted. Sign in again under Connection.'); return; }
   if(c==='mt'){ toast('Not saved: Master Teachers\u2019 plans and supervisory records are for the School Head only.'); return; }
-  if(c==='dept'){ toast('Not saved: this record belongs to another department. Your access code is for the '+(S.myDept||'other')+' Department only.'); return; }
+  if(c==='dept'){ toast('Not saved: this record belongs to another department. You are signed in for the '+(S.myDept||'other')+' Department only.'); return; }
   if(c==='too_large'){ toast('Not saved: this entry is too long for one row. Shorten the notes and try again.'); return; }
   if(c==='locked'||c==='offline'){ toast('Not saved: the shared record is not connected.'); return; }
   toast('Not saved ('+(c||'no connection')+'). Check the connection and try again.');
@@ -1659,7 +1660,7 @@ var LEDES={
   people:['Personnel & Departments','The PSIPOP roster of the school, each teacher\u2019s department, and the department head designates.'],
   library:['Annex Files A\u2013F','The original templates and tools of the instructional supervision package.'],
   help:['How It Works','How the shared record works and how the forms are filled.'],
-  settings:['Connection','The shared Google Sheet record, your access code, and backups.']
+  settings:['Connection','The shared Google Sheet record, your sign-in, and backups.']
 };
 var SUBS={obs:{notes:'Classroom Observation Notes Form',cot:'COT Rating',walk:'Walk-through Observation'},
   reports:{plans:'Supervisory Plans',notes:'Classroom Observation Notes Form',cot:'Classroom Observation\u2013COT Rating',lp:'Lesson Plan Monitoring Reports',ots:'On-the-Spot Test Reports',pmcf:'Performance Monitoring and Coaching Forms',monthly:'Monthly Supervisory Report'}};
@@ -3067,37 +3068,42 @@ $('#lib').addEventListener('click',async function(e){
 });
 
 /* ================================================================== CONNECTION, BACKUP, PRINT */
-$('#set-url').value=API.url; $('#set-code').value=API.code;
+$('#set-url').value=API.url; $('#set-code').value=API.code; (function(){ var c=String(API.code||''), k=c.lastIndexOf('|'); if(k>0){ $('#set-email').value=c.slice(0,k); } })();
 if(CFG.apiUrl){ $('#set-url').readOnly=true; }
 $('#set-save').addEventListener('click',function(){
-  var u=$('#set-url').value.trim(), c=$('#set-code').value.trim();
+  var em=$('#set-email').value.trim().toLowerCase(), pn=$('#set-pin').value.trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ toast('Type your email address.'); $('#set-email').focus(); return; }
+  if(!/^\d{4}$/.test(pn)){ toast('The passcode is 4 digits.'); $('#set-pin').focus(); return; }
+  var u=$('#set-url').value.trim(), c=em+'|'+pn; $('#set-pin').value='';
   if(u && !/^https:\/\/script\.google\.com\/(a\/macros\/[^\/]+|macros)\/s\/.+\/exec/.test(u)){ toast('The web app address should end in /exec, as Apps Script shows it after deploying.'); $('#set-url').focus(); return; }
   if(!CFG.apiUrl) ls('apiUrl',u); ls('code',c);
   API.url=CFG.apiUrl||u; API.code=c; S.mode='connecting'; connUI();
-  Store.init().then(function(){ COLLS.forEach(function(k){ Store._emit(k); }); toast(S.mode==='shared'?'Connected to the shared record':S.mode==='locked'?'That access code was not accepted':'Not connected'); });
+  Store.init().then(function(){ COLLS.forEach(function(k){ Store._emit(k); }); toast(S.mode==='shared'?'Signed in':S.mode==='locked'?(Store.lastErr==='locked_out'?'Too many wrong passcodes. Wait 15 minutes, then try again.':'That email and passcode were not accepted'):'Not connected'); });
 });
-$('#set-forget').addEventListener('click',function(){ ls('code',''); API.code=''; $('#set-code').value=''; S.mode='locked'; S.canWrite=false; S.canEdit=false; Store.cache={}; COLLS.forEach(function(k){ Store._emit(k); }); connUI(); toast('Access code removed from this device'); });
+$('#set-forget').addEventListener('click',function(){ ls('code',''); API.code=''; $('#set-code').value=''; $('#set-pin').value=''; S.mode='locked'; S.canWrite=false; S.canEdit=false; Store.cache={}; COLLS.forEach(function(k){ Store._emit(k); }); connUI(); toast('Access code removed from this device'); });
 var CODES=null;
 async function loadCodes(){
   if(!(S.mode==='shared'&&S.role==='admin')){ $('#pp-codes-card').hidden=true; return; }
   $('#pp-codes-card').hidden=false;
-  try{ var r=await Store.get('codes'); if(!r.ok) throw 0; CODES=r.codes||[]; }catch(e){ CODES=null; $('#pp-codes').innerHTML='<tbody><tr><td class="mini">The access codes could not be loaded. The Google Sheet may still run the old Apps Script; deploy the new Code.gs first.</td></tr></tbody>'; return; }
+  try{ var r=await Store.get('codes'); if(!r.ok) throw 0; CODES=r.codes||[]; }catch(e){ CODES=null; $('#pp-codes').innerHTML='<tbody><tr><td class="mini">The sign-ins could not be loaded. The Google Sheet may still run the old Apps Script; deploy the new Code.gs first.</td></tr></tbody>'; return; }
   drawCodes();
 }
 function drawCodes(){
   var by={}; (CODES||[]).forEach(function(c){ if(c.role==='dept') by[c.department]=c; });
-  $('#pp-codes').innerHTML='<thead><tr><th>Department</th><th>Department head</th><th>Access code</th><th></th></tr></thead><tbody>'+DEPTS.map(function(dp,i){ var c=by[dp]||{};
-    return '<tr><td><b>'+esc(dp)+'</b></td><td>'+esc((S.cfg.heads||{})[dp]||'Not set')+'</td><td><input type="text" id="pp-c'+i+'" data-cdept="'+esc(dp)+'" value="'+esc(c.code||'')+'" autocomplete="off" spellcheck="false" style="font-family:var(--mono);max-width:180px"></td><td><button class="btn ghost small" type="button" data-cgen="'+i+'">New code</button></td></tr>'; }).join('')+'</tbody>';
+  $('#pp-codes').innerHTML='<thead><tr><th>Department</th><th>Department head</th><th>Email address</th><th>Passcode</th><th></th></tr></thead><tbody>'+DEPTS.map(function(dp,i){ var c=by[dp]||{};
+    return '<tr><td><b>'+esc(dp)+'</b></td><td>'+esc((S.cfg.heads||{})[dp]||'Not set')+'</td><td><input type="email" id="pp-e'+i+'" data-edept="'+esc(dp)+'" value="'+esc(c.email||'')+'" placeholder="name@deped.gov.ph" autocomplete="off" spellcheck="false" style="min-width:200px"></td><td><input type="text" id="pp-c'+i+'" data-cdept="'+esc(dp)+'" value="'+esc(c.pin||'')+'" inputmode="numeric" maxlength="4" autocomplete="off" style="font-family:var(--mono);width:80px;letter-spacing:.2em"></td><td><button class="btn ghost small" type="button" data-cgen="'+i+'">New passcode</button></td></tr>'; }).join('')+'</tbody>';
 }
-$('#pp-codes').addEventListener('click',function(e){ var b=e.target.closest('[data-cgen]'); if(!b) return; var ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', c=''; var a=new Uint32Array(8); crypto.getRandomValues(a); for(var i=0;i<8;i++) c+=ch[a[i]%ch.length]; $('#pp-c'+b.dataset.cgen).value=c; });
+$('#pp-codes').addEventListener('click',function(e){ var b=e.target.closest('[data-cgen]'); if(!b) return; var a=new Uint32Array(1); crypto.getRandomValues(a); $('#pp-c'+b.dataset.cgen).value=('000'+(a[0]%10000)).slice(-4); });
 $('#pp-codes-save').addEventListener('click',async function(){
   var rows=[], seen={}, bad='';
-  $$('#pp-codes [data-cdept]').forEach(function(inp){ var v=inp.value.trim(); if(!v) return; if(v.length<6) bad='Codes need at least 6 letters or numbers ('+inp.dataset.cdept+').'; if(seen[v]) bad='Each department needs a different code.'; seen[v]=1; rows.push({code:v,role:'dept',department:inp.dataset.cdept,name:(S.cfg.heads||{})[inp.dataset.cdept]||''}); });
+  DEPTS.forEach(function(dp,i){ var em=$('#pp-e'+i).value.trim().toLowerCase(), pn=$('#pp-c'+i).value.trim(); if(!em&&!pn) return;
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) bad='Type a valid email for '+dp+'.'; else if(!/^\d{4}$/.test(pn)) bad='The passcode for '+dp+' must be 4 digits.'; else if(seen[em]) bad=em+' is used twice. Each department head needs their own email.';
+    seen[em]=1; rows.push({email:em,pin:pn,role:'dept',department:dp,name:(S.cfg.heads||{})[dp]||''}); });
   if(bad){ toast(bad); return; }
   (CODES||[]).forEach(function(c){ if(c.role==='edit'||c.role==='view') rows.push(c); });
   this.disabled=true;
-  try{ await Store.post({action:'codes',codes:rows}); CODES=rows.concat((CODES||[]).filter(function(c){return c.role==='admin'})); toast('Access codes saved'); $('#pp-codes-state').textContent='Saved '+longDate(TODAY)+'.'; }
-  catch(e){ toast(e&&e.code==='duplicate'?'That code is already used by someone else.':e&&e.code==='short'?'Codes need at least 6 letters or numbers.':'Not saved ('+((e&&e.code)||'no connection')+').'); }
+  try{ await Store.post({action:'codes',codes:rows}); CODES=rows.concat((CODES||[]).filter(function(c){return c.role==='admin'})); toast('Sign-ins saved'); $('#pp-codes-state').textContent='Saved '+longDate(TODAY)+'.'; }
+  catch(e){ toast(e&&e.code==='duplicate'?'That email is already used by someone else.':e&&e.code==='email'?'One of the email addresses is not valid.':e&&e.code==='pin'?'Passcodes must be 4 digits.':'Not saved ('+((e&&e.code)||'no connection')+').'); }
   this.disabled=false;
 });
 function restoreUI(){ var ok=(S.mode==='shared'&&S.role==='admin')||S.mode==='local'; $('#set-restore-l').hidden=!ok; $('#set-restore-hint').hidden=!ok; }
