@@ -156,6 +156,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--in
 label.f>input,label.f>select,label.f>textarea,label.f .dfield{text-transform:none;letter-spacing:normal;font-size:14.5px;color:var(--ink)}
 label.f.wide{grid-column:1/-1}
 .cmonths:empty{display:none}
+.cpull{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 10px;padding:10px 12px;border:1px solid var(--gold,#c9a227);border-radius:8px;background:rgba(201,162,39,.08);font-size:13.5px}
 .cmonths{margin:12px 0 4px;padding:10px 12px;background:var(--seal-soft);border-radius:2px;font-size:13.5px;color:var(--ink);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .cmonths .mchip{all:unset;cursor:pointer;padding:4px 10px;border-radius:999px;border:1px solid var(--seal);color:var(--seal);font-size:13px;font-weight:600;background:var(--surface,#fff)}
 .cmonths .mchip.on{background:var(--seal);color:#fff}
@@ -543,6 +544,27 @@ table.rate .finds li{margin:2px 0}
     <div id="pl-list"></div>
     <div class="row" style="margin-top:12px"><button class="btn ghost small" id="pl-new" type="button">Start a new plan</button></div>
   </div>
+  <div class="card" id="ip-card">
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">IDP</span> Supervisory plans from the teachers&rsquo; IDPs</h2><label class="btn ghost" style="cursor:pointer">Upload IDPs (Word or Excel)<input type="file" id="ip-file" accept=".docx,.xlsx,.xlsm" multiple hidden></label><span class="mini" id="ip-msg"></span></div>
+    <p class="hint" style="max-width:none;margin-top:10px">Upload the Individual Development Plans (Word .docx, Excel .xlsx or the e-SAT .xlsm). For the school year chosen at the top right, the system writes (1) a supervisory plan for each teacher for the whole school year, from their development needs and timelines; (2) the Monthly Supervisory Plan of a department, gathering every teacher&rsquo;s focus for that month; and (3) the Annual Supervisory Plan of the school.</p>
+    <div id="ip-review"></div>
+    <div class="row" style="margin-top:10px"><button class="btn gold" id="ip-save" type="button" hidden>Save the teachers&rsquo; supervisory plans</button></div>
+    <div id="ip-list" style="margin-top:12px"></div>
+    <div class="row" id="ip-actions" style="margin-top:12px;gap:10px;flex-wrap:wrap" hidden>
+      <button class="btn" id="ip-month" type="button">(2) Fill the Monthly Supervisory Plan below for the month and department in Step 1</button>
+      <button class="btn ghost" id="ip-annual" type="button">(3) Annual Supervisory Plan of the school</button>
+      <select id="ip-annual-dept" style="max-width:220px"></select>
+    </div>
+    <div id="ip-viewbar" class="row" style="margin-top:12px;gap:10px" hidden><b id="ip-viewtitle"></b><button class="btn" id="ip-vpdf" type="button">Download PDF</button><button class="btn ghost" id="ip-vdoc" type="button">Download Word (.docx)</button><button class="btn ghost" id="ip-vclose" type="button">Close</button></div>
+    <div class="leafwrap" id="ip-viewwrap" hidden><div class="leaf folio" id="ip-leaf"></div></div>
+  </div>
+  <div class="card" id="pg-card">
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">OPTIONAL</span> Generate the plan from classroom observations</h2><label class="btn ghost" style="cursor:pointer">Upload COT Rating Sheets / Notes Forms<input type="file" id="pg-file" accept=".docx,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*" multiple hidden></label><span class="mini" id="pg-msg"></span></div>
+    <p class="hint" style="max-width:none;margin-top:10px">Upload filled COT Rating Sheets and Observation Notes Forms (PDF, Word or a photo), or tick observations already saved here. The system reads the ratings and the notes, finds the indicators that need support, and writes plan rows: key result area, objective, activities, success indicator, means of verification and time frame. Check the ratings it read, then click Generate.</p>
+    <div id="pg-saved"></div>
+    <div id="pg-out"></div>
+    <div class="row" style="margin-top:12px"><button class="btn gold" id="pg-go" type="button" hidden>Generate plan rows</button><span class="mini" id="pg-state"></span></div>
+  </div>
   <div class="card" data-step="1">
     <h2><span class="step">STEP 1</span> Month, department and signatories</h2>
     <div class="lines">
@@ -610,6 +632,7 @@ table.rate .finds li{margin:2px 0}
     <h2><span class="step">STEP 3</span> Observation notes <span class="tag">Annex E-4</span></h2>
     <p class="hint">Type what you see while the lesson runs: what the teacher and the learners do, with the time. The notes print on the Classroom Observation Notes Form.</p>
     <div class="f nted" style="margin-top:12px"><div class="ntbar"><span>Observation notes</span><button type="button" class="btn ghost small" id="o-bold" title="Bold the selected words (Ctrl+B)" aria-label="Bold"><b>B</b> Bold</button><span class="ntip">Select words, then click Bold or press Ctrl+B. Click again to remove.</span></div><div id="o-notes-ed" class="noted" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Observation notes" spellcheck="true" data-ph="8:00 Teacher greets the class and checks attendance.&#10;8:04 Review: learners answer three questions on the board.&#10;8:10 Motivation: picture of the barangay market; teacher asks what they notice about prices&hellip;"></div><textarea id="o-notes" hidden rows="12" placeholder="8:00 Teacher greets the class and checks attendance.&#10;8:04 Review: learners answer three questions on the board.&#10;8:10 Motivation: picture of the barangay market; teacher asks what they notice about prices&hellip;"></textarea></div>
+    <label class="row" id="o-pmcf-line" style="gap:8px;font-size:14px;margin-top:12px" hidden><input type="checkbox" id="o-cap-pmcf" checked> Add this walk-through as a coaching entry on the teacher&rsquo;s PMCF (bolded words become the feedback)</label>
     <div class="row" style="margin-top:12px">
       <button class="btn" id="o-notes-pdf" type="button">Official Annex E-4 (PDF)</button>
       <button class="btn ghost" id="o-notes-doc" type="button">Download Word (.docx)</button>
@@ -687,6 +710,7 @@ table.rate .finds li{margin:2px 0}
       <label class="fline"><span class="lk">PMCF year</span><span class="lv"><input type="number" id="c-year" min="2024" max="2035"></span></label>
     </div>
     <div class="cmonths" id="c-months1"></div>
+    <div class="cpull" data-cpull hidden></div>
   </div>
   <div class="card" data-step="2">
     <h2><span class="step">STEP 2</span> Coaching and feedback entry</h2>
@@ -711,6 +735,7 @@ table.rate .finds li{margin:2px 0}
   <div class="card" data-step="3">
     <h2><span class="step">STEP 3</span> Performance Monitoring and Coaching Form <span class="tag" id="c-count">0 entries</span></h2>
     <div class="cmonths" id="c-months3"></div>
+    <div class="cpull" data-cpull hidden></div>
     <p class="hint" id="c-loghint">All saved entries for this teacher in the chosen month, oldest first. Open an entry to change it.</p>
     <div id="c-log"></div>
     <div class="row" style="margin-top:12px"><button class="btn" id="c-pdf" type="button">Official Annex D (PDF)</button><button class="btn ghost" id="c-doc" type="button">Download Word (.docx)</button><button class="btn ghost" id="c-dl" type="button" hidden>Download Excel (Annex D)</button></div>
@@ -944,7 +969,7 @@ table.rate .finds li{margin:2px 0}
     <div class="grid2">
       <label class="f wide">Web app address<input type="text" id="set-url" placeholder="https://script.google.com/macros/s/&hellip;/exec" autocomplete="off" spellcheck="false"></label>
       <label class="f">Email address<input type="email" id="set-email" autocomplete="username" spellcheck="false" placeholder="name@deped.gov.ph"></label>
-      <label class="f">4-digit passcode<input type="password" id="set-pin" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;" style="max-width:140px;letter-spacing:.3em"></label><input type="hidden" id="set-code">
+      <label class="f">4-digit passcode<span class="row" style="gap:8px;flex-wrap:nowrap"><input type="password" id="set-pin" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="off" data-lpignore="true" placeholder="0000" style="max-width:120px;letter-spacing:.3em"><button class="btn ghost small" type="button" id="set-pin-show">Show</button></span></label><input type="hidden" id="set-code">
     </div>
     <div class="row" style="margin-top:14px">
       <button class="btn" id="set-save" type="button">Sign in</button>
@@ -1487,7 +1512,7 @@ function setPerson(id,name,pos){
 }
 
 /* ------------------------------------------------------------------ shared record (Google Sheet through Apps Script) */
-var S={obs:[],ots:[],lp:[],coach:[],plans:[],cfg:{heads:{},assign:{}},sy:ls('sy')||'2026-2027',canWrite:true,canEdit:false,mode:'connecting',role:'',myDept:''};
+var S={obs:[],ots:[],lp:[],coach:[],plans:[],tplans:[],cfg:{heads:{},assign:{}},sy:ls('sy')||'2026-2027',canWrite:true,canEdit:false,mode:'connecting',role:'',myDept:''};
 var CFG=window.CANHS_IS||{};
 var API={url:String(CFG.apiUrl||ls('apiUrl')||'').trim(), code:ls('code')||''};
 var COLLS=['obs','coach','plans','config'];
@@ -1501,7 +1526,9 @@ var Store={
       if(!API.code){ S.mode='locked'; S.canWrite=false; S.canEdit=false; connUI(); return; }
       try{
         var res=await self.get('all');
-        if(!res.ok){ S.mode='locked'; self.lastErr=res.error||''; S.canWrite=false; S.canEdit=false; connUI(); return; }
+        if(!res.ok){ S.mode='locked'; self.lastErr=res.error||''; S.canWrite=false; S.canEdit=false;
+          if(res.error==='code'){ try{ var pg=await self.get('ping'); self.diag=pg&&pg.version?(pg.hasHead?'ok':'nohead'):'old'; self.diagSheet=pg&&pg.sheet||''; }catch(e){ self.diag='old'; } }
+          connUI(); return; }
         S.mode='shared'; S.role=res.role; S.myDept=res.role==='dept'?String(res.dept||''):''; S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
         self.apply(res.data); connUI();
         clearInterval(self.timer); self.timer=setInterval(function(){ self.refresh(); },30000);
@@ -1553,7 +1580,7 @@ var Store={
 };
 function isMTName(n){ var p=byName(n); return !!(p&&p.g==='mt')||(S.cfg.mts||[]).indexOf(n)>=0; }
 function mtHidden(){ return S.mode==='shared'&&S.role!=='admin'; }
-function recIsMT(coll,o){ var pos=coll==='plans'?o.prepPos:coll==='coach'?o.rateePos:o.teacherPos, who=coll==='plans'?o.prep:coll==='coach'?o.ratee:o.teacher; return /^\s*master\s+teacher/i.test(String(pos||''))||isMTName(who); }
+function recIsMT(coll,o){ var tp=coll==='plans'&&o.kind==='tplan', pos=tp?o.teacherPos:coll==='plans'?o.prepPos:coll==='coach'?o.rateePos:o.teacherPos, who=tp?o.teacher:coll==='plans'?o.prep:coll==='coach'?o.ratee:o.teacher; return /^\s*master\s+teacher/i.test(String(pos||''))||isMTName(who); }
 function recDept(coll,o){ if(o&&o.dept) return String(o.dept); var n=coll==='coach'?o.ratee:o.teacher; return (n&&(S.cfg.assign||{})[n])||''; }
 /* a department head sees and picks only their own department */
 function lockDept(){
@@ -1571,7 +1598,7 @@ function connUI(){
   c.className='conn '+(S.mode==='shared'?'live':S.mode==='local'?'local':'');
   $('#conntext').textContent=S.mode==='shared'?(S.role==='admin'?'Shared record \u00b7 School Head':S.myDept?'Shared record \u00b7 '+S.myDept+' Department':S.canWrite?'Shared record \u00b7 can save':'Shared record \u00b7 read only'):S.mode==='local'?'This browser only':S.mode==='locked'?'Sign-in needed':S.mode==='offline'?'Cannot reach the record':'Connecting\u2026';
   if(S.mode==='local') banner('<b>Not connected to a shared record.</b> Entries saved now stay in this browser only. To share one record with the department heads, set up the Google Sheet as described in the README, then open <button class="link" type="button" data-go="settings">Connection</button>.','ask');
-  else if(S.mode==='locked') banner('<b>Sign in</b> with your email and 4-digit passcode to open the shared supervision record. '+(Store.lastErr==='locked_out'?'Too many wrong passcodes; wait 15 minutes. ':Store.lastErr==='code'?'The email and passcode were not accepted. ':'')+'<button class="btn small" type="button" data-go="settings">Sign in</button>','ask');
+  else if(S.mode==='locked') banner('<b>Sign in</b> with your email and 4-digit passcode to open the shared supervision record. '+(Store.lastErr==='locked_out'?'Too many wrong passcodes; wait 15 minutes. ':Store.lastErr==='code'?(Store.diag==='old'?'<br><b>The web app is still running the old Apps Script.</b> In Apps Script: Deploy &rsaquo; Manage deployments &rsaquo; pencil &rsaquo; Version: <b>New version</b> &rsaquo; Deploy. Then sign in again. ':Store.diag==='nohead'?'<br><b>The Google Sheet'+(Store.diagSheet?' &ldquo;'+esc(Store.diagSheet)+'&rdquo;':'')+' has no School Head sign-in yet.</b> In Apps Script, run <b>setMyLogin</b> with your email and passcode. ':'The email and passcode were not accepted; check them in the Access tab of the Google Sheet'+(Store.diagSheet?' &ldquo;'+esc(Store.diagSheet)+'&rdquo;':'')+'. '):'')+'<button class="btn small" type="button" data-go="settings">Sign in</button>','ask');
   else if(S.mode==='offline') banner('<b>The shared record could not be reached.</b> Check the internet connection, then reload the page.','warn');
   else if(S.mode==='shared' && S.myDept) banner('<b>'+esc(S.myDept)+' Department.</b> You see and save only the records of teachers in your department.','info');
   else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for a department head sign-in.','ask');
@@ -1671,7 +1698,7 @@ function go(p,sub){
   var prevSub=curSub[p];
   if(SUBS[p]){ if(sub&&SUBS[p][sub]) curSub[p]=sub; ls('sub-'+p,curSub[p]); }
   obsSub=curSub.obs;
-  if(p==='obs'){ var wk=obsSub==='walk'; $('#o-walk-line').hidden=!wk; $('#o-no-line').hidden=wk; $('#o-stage-line').hidden=wk;
+  if(p==='obs'){ var wk=obsSub==='walk'; $('#o-walk-line').hidden=!wk; $('#o-pmcf-line').hidden=!wk; $('#o-no-line').hidden=wk; $('#o-stage-line').hidden=wk;
     if(prevSub&&(prevSub==='walk')!==wk&&!obsLoading&&typeof obs!=='undefined'&&obs.id&&typeof newObs==='function') newObs();
     $$('#p-obs [data-ov]').forEach(function(c){ c.hidden=c.dataset.ov.split(' ').indexOf(obsSub)<0; }); var ob=$('#p-obs'); wizGo(ob,prevSub!==obsSub?1:+ob.dataset.cur); }
   if(p==='reports') renderReports();
@@ -1792,6 +1819,352 @@ function renderPlanList(){
 }
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-open-plan]'); if(b) openPlan(b.dataset.openPlan); });
 
+/* ---------- IS Plan from COT ratings and observation notes ---------- */
+var PG=[];   // observations to plan from: {src, teacher, pos, stage, sy, date, ratings[], notes, kind}
+var PLAN_T={
+  1:['content knowledge within and across learning areas','Pre-observation conference on the lesson content; review of the DLL for content accuracy and integration across learning areas; model lesson or co-teaching with the department head or Master Teacher'],
+  2:['positive use of ICT in teaching and learning','Coaching on purposeful use of ICT; sharing of ready-made digital resources in the LAC session; demonstration of an ICT-integrated lesson'],
+  3:['teaching strategies for literacy and numeracy','LAC session on literacy and numeracy strategies (think-aloud, talk frames, structured reading/solving routines); co-planning of one literacy/numeracy activity per week; follow-up walk-through'],
+  4:['strategies that develop critical and creative thinking and higher-order thinking skills','Coaching on higher-order questioning (question ladder: recall, explain, compare, evaluate); co-planning of HOTS questions in the DLL; demonstration teaching of a HOTS lesson'],
+  5:['use of Mother Tongue, Filipino and English to facilitate learning','Coaching on purposeful language use; preparation of a bilingual word wall of key terms; peer observation of a model class'],
+  6:['verbal and non-verbal classroom communication','Coaching on clear instructions, wait time and checking for understanding; peer observation; video review of a short lesson segment'],
+  7:['safe and secure learning environment','Review of classroom routines and safety procedures; posting of class agreements and safety rules; walk-through to check consistent implementation'],
+  8:['learning environment that promotes fairness, respect and care','Coaching on equitable participation (randomized calling, moving around the room); review of class agreements; walk-through on learner participation'],
+  9:['classroom structure for individual and group exploration','Coaching on group work set-up (role cards, time limits, extension tasks); co-planning of one group activity; follow-up observation'],
+  10:['supportive environment that nurtures participation and collaboration','Coaching on cooperative learning structures; sharing of collaboration strategies in the LAC session; walk-through on learner participation'],
+  11:['strategies that keep learners motivated and productive','Coaching on motivation and engagement strategies; review of lesson pacing; peer observation'],
+  12:['positive and non-violent discipline','Orientation/LAC session on positive discipline; coaching on class agreements and private redirection; coordination with the class adviser'],
+  13:['differentiated, developmentally appropriate learning experiences','LAC session on differentiated instruction (tiered tasks, flexible grouping); co-planning of tiered activities based on assessment results; follow-up observation'],
+  14:['learner-centered culture responsive to learners\u2019 backgrounds','Coaching on contextualization and localization of examples; sharing of localized materials in the department; walk-through'],
+  15:['strategies responsive to learners with disabilities, giftedness and talents','LAC session on inclusive strategies; coordination with the SPED/guidance focal person; co-planning of adapted activities'],
+  16:['strategies responsive to learners in difficult circumstances','Coaching on support strategies for learners in difficult circumstances; coordination with the guidance office and adviser; follow-up monitoring'],
+  17:['culturally appropriate strategies for learners from indigenous groups','LAC session on culturally responsive teaching; integration of local and IP contexts in the DLL; walk-through'],
+  18:['developmentally sequenced teaching and learning process','Review of the DLL with realistic time allocation per lesson part; coaching on lesson flow from review to generalization and exit ticket; follow-up observation'],
+  19:['selection and use of teaching and learning resources, including ICT','Coaching on preparing readable, purposeful materials (slides, worksheets); sharing of resources in the LAC session; review of materials before the lesson'],
+  20:['diagnostic, formative and summative assessment strategies','LAC session on formative assessment (exit tickets, show-me boards, quick checks); review of assessment items against the competencies; use of results to plan remediation'],
+  21:['timely, accurate and constructive feedback','Coaching on written and oral feedback (one strength, one next step); review of checked learner outputs; follow-up on returned outputs']
+};
+var DOMAINS={1:'Content Knowledge and Pedagogy',2:'Learning Environment',3:'Diversity of Learners',4:'Curriculum and Planning',5:'Assessment and Reporting'};
+function pgStageOf(pos,text){ var s=stageOf(pos||''); if(s) return s; var U=String(text||'').toUpperCase(); return /\bMASTER TEACHER (III|IV|V)\b|\bMT ?(III|IV|V)\b/.test(U)?'d':/\bMASTER TEACHER I\b|\bMT ?I\b/.test(U)?'h':/\bTEACHER I ?[-\u2013] ?III\b|\bTI ?[-\u2013] ?TIII\b/.test(U)?'b':/\bTEACHER IV ?[-\u2013] ?VII\b|\bTIV ?[-\u2013] ?TVII\b/.test(U)?'p':''; }
+async function pgRead(file){
+  var n=file.name.toLowerCase(), out={text:'',lines:[],tables:[]};
+  if(/\.docx$/.test(n)){
+    var z=await JSZip.loadAsync(await file.arrayBuffer()), f=z.file('word/document.xml'); if(!f) throw new Error('docx');
+    var doc=new DOMParser().parseFromString(await f.async('string'),'application/xml'), WN='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+    var q=function(el,t){ return Array.prototype.slice.call(el.getElementsByTagNameNS(WN,t)); }, kids=function(el,t){ return Array.prototype.filter.call(el.childNodes,function(x){return x.localName===t}); };
+    var ptxt=function(p){ return q(p,'t').map(function(t){return t.textContent}).join(''); };
+    out.lines=q(doc,'p').map(ptxt); out.text=out.lines.join('\n');
+    out.tables=q(doc,'tbl').map(function(tb){ return kids(tb,'tr').map(function(tr){ return kids(tr,'tc').map(function(tc){ return q(tc,'p').map(ptxt).join('\n').trim(); }); }); });
+    return out;
+  }
+  var pages=[];
+  if(/\.pdf$/.test(n)||file.type==='application/pdf'){
+    await loadLib(LIB.pdf); pdfjsLib.GlobalWorkerOptions.workerSrc=LIB.pdfWorker;
+    var pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+    for(var p=1;p<=pdf.numPages;p++){
+      $('#pg-msg').textContent='Reading '+file.name+', page '+p+' of '+pdf.numPages+'\u2026';
+      var page=await pdf.getPage(p), vp=page.getViewport({scale:1}), tc=await page.getTextContent();
+      var items=tc.items.map(function(it){ var t=it.transform, h=Math.abs(t[3])||it.height||8; return {s:it.str,x:t[4],y:vp.height-t[5]-h,w:it.width,h:h}; }).filter(function(it){return it.s.trim()});
+      if(items.reduce(function(a,b){return a+b.s.length},0)<30){ var v2=page.getViewport({scale:2.2}), cv=document.createElement('canvas'); cv.width=v2.width; cv.height=v2.height; await page.render({canvasContext:cv.getContext('2d'),viewport:v2}).promise; $('#pg-msg').textContent='Recognizing text on page '+p+'\u2026'; items=(await ocrItems(cv)).items; }
+      pages.push(items);
+    }
+  } else { $('#pg-msg').textContent='Recognizing text in '+file.name+'\u2026'; pages.push((await ocrItems(file)).items); }
+  pages.forEach(function(items){ var L=posLines(items); out.lines=out.lines.concat(L.map(function(l){return l.text})); out.pl=(out.pl||[]).concat([L]); });
+  out.text=out.lines.join('\n'); return out;
+}
+var MARK_RX=/^[\u2713\u2714\u2611\u221a\u2705xX\/vV\u2022\u25cf*]{1,2}$/;
+function pgRatings(doc,codes){
+  var r=codes.map(function(){return ''});
+  // Word tables: a header row of levels, then one row per indicator with a mark in its level column
+  (doc.tables||[]).forEach(function(tb){ var head=null;
+    tb.forEach(function(row){ var lv=row.map(function(c){ var t=c.replace(/\s+/g,''); return /^[1-9]$/.test(t)?t:/^NO\*?$/i.test(t)?'NO':''; });
+      if(lv.filter(Boolean).length>=4){ head=lv; return; }
+      if(!head) return; var m=/\((\d\.\d\.\d)\)/.exec(row.join(' ')); if(!m) return; var k=codes.indexOf(m[1]); if(k<0) return;
+      row.forEach(function(c,ci){ var t=c.replace(/\s+/g,''); if(head[ci]&&t&&(MARK_RX.test(t)||t===head[ci])) r[k]=head[ci]; }); }); });
+  // PDF / picture: level headings across one line, each indicator line carries a mark under one of them
+  (doc.pl||[]).forEach(function(L){ var cols=null;
+    L.forEach(function(line,li){ var hs=line.items.filter(function(it){ return /^([1-9]|NO\*?)$/i.test(it.s.trim()); });
+      if(hs.length>=4&&!/\(\d\.\d\.\d\)/.test(line.text)){ cols=hs.map(function(it){ return {v:/^NO/i.test(it.s.trim())?'NO':it.s.trim(),x:it.x+(it.w||0)/2}; }); return; }
+      if(!cols) return; var m=/\((\d\.\d\.\d)\)/.exec(line.text+' '+((L[li+1]||{}).text||'')); if(!m) return; var k=codes.indexOf(m[1]); if(k<0||r[k]) return;
+      var x0=cols[0].x-20, band=L.slice(Math.max(0,li-1),li+2);
+      band.forEach(function(ln){ ln.items.forEach(function(it){ var t=it.s.trim(), cx=it.x+(it.w||0)/2; if(cx<x0||!t||t.length>2) return; if(!(MARK_RX.test(t)||/^[1-9]$/.test(t))) return;
+        var best=cols.reduce(function(a,c){ return Math.abs(c.x-cx)<Math.abs(a.x-cx)?c:a; }); if(Math.abs(best.x-cx)<30) r[k]=best.v; }); }); }); });
+  return r;
+}
+function pgNotes(doc){
+  var t=doc.text, a=t.search(/DIRECTIONS FOR THE OBSERVERS/i); if(a<0) return '';
+  var rest=t.slice(a).replace(/DIRECTIONS FOR THE OBSERVERS:?/i,'').replace(/Write your observations[^\n]*?(necessary\.)?\n?/i,'').replace(/^\s*necessary\.\s*/i,'');
+  var b=rest.search(/Signature over Printed Name/i); if(b>=0) rest=rest.slice(0,b);
+  return rest.split('\n').map(function(l){return l.trim()}).filter(function(l){ return l&&!IMP_SKIP.test(l)&&!/^Page \d+$/i.test(l)&&!/OBSERVATION NOTES FORM|PERFORMANCE MANAGEMENT|^FOR TEACHERS$|^OBSERVER:|^TEACHER OBSERVED:|^SUBJECT & GRADE|^OBSERVATION:/i.test(l); }).join('\n').replace(/\n(?!\s*\d{1,2}[:.]\d{2})/g,' ');
+}
+function pgFromDoc(doc,name){
+  var T=doc.text, U=T.toUpperCase(), kind=/OBSERVATION NOTES FORM/.test(U)&&!/RATING SHEET|INTER-OBSERVER/.test(U)?'notes':/RATING SHEET|INTER-OBSERVER|INDICATORS/.test(U)?'cot':'notes';
+  var tm=/TEACHER OBSERVED:\s*([^\n]*)/i.exec(T), raw=tm?tm[1].replace(/\s{2,}.*$|TIME STARTED.*$|TERM.*$/i,'').replace(/[_|]+/g,' ').trim().toUpperCase():'', who=tm?(findPersonIn(tm[1].replace(/TIME STARTED.*$|TERM.*$/i,''))||impPerson(raw)):null;
+  var dm=/DATE:\s*([^\n]*)/i.exec(T), date=dm?impDate(dm[1],''):'', sm=/S\.?Y\.?\s*(\d{4}\s*-\s*\d{4})/i.exec(T), sy=sm?sm[1].replace(/\s/g,''):(date?syOfMonth(date.slice(0,7)):S.sy);
+  var p=who||{n:raw,p:''}, rec={src:name,kind:kind,teacher:p.n,pos:p.p,stage:pgStageOf(p.p,T),sy:SYS.indexOf(sy)>=0?sy:S.sy,date:date,ratings:[],notes:''};
+  var codes=cotSet(rec.sy).map(function(t){return splitInd(t).code});
+  if(kind==='cot') rec.ratings=pgRatings(doc,codes); else rec.notes=pgNotes(doc);
+  // a matching observation saved here wins: its ratings and notes are exact
+  var sv=S.obs.filter(function(o){ return o.teacher===rec.teacher&&(!date||o.date===date)&&o.no!==3; })[0];
+  if(sv){ if(!rec.ratings.some(Boolean)) rec.ratings=(sv.ratings||[]).slice(); if(!rec.notes) rec.notes=sv.notes||''; if(!rec.stage) rec.stage=sv.stage||''; rec.saved=sv.id; }
+  return rec;
+}
+function pgMerge(list){ // one entry per teacher and date: the rating sheet and the notes form of the same observation go together
+  var out=[]; list.forEach(function(r){ var m=out.filter(function(o){ return o.teacher&&o.teacher===r.teacher&&(!o.date||!r.date||o.date===r.date); })[0];
+    if(!m){ out.push(r); return; } if(r.ratings.some(Boolean)&&!m.ratings.some(Boolean)) m.ratings=r.ratings; if(r.notes&&!m.notes) m.notes=r.notes; m.date=m.date||r.date; m.stage=m.stage||r.stage; m.src+=', '+r.src; });
+  return out; }
+function pgSavedList(){
+  var dp=$('#pl-dept').value, list=S.obs.filter(function(o){ return o.sy===S.sy&&o.no!==3&&(!dp||(o.dept||deptOf(o.teacher))===dp); }).sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
+  $('#pg-saved').innerHTML=list.length?'<details style="margin:8px 0"><summary style="cursor:pointer;font-weight:600">Use observations saved here ('+list.length+')</summary><div style="margin-top:6px">'+list.map(function(o){ return '<label class="row" style="gap:8px;font-size:14px;margin:3px 0"><input type="checkbox" data-pgsaved="'+esc(o.id)+'"> '+esc(o.teacher)+' &middot; '+esc(obsKind(o))+' observation &middot; '+esc(longDate(o.date))+(o.subject?' &middot; '+esc(o.subject):'')+'</label>'; }).join('')+'</div></details>':'';
+}
+function pgRender(){
+  if(!PG.length){ $('#pg-out').innerHTML=''; $('#pg-go').hidden=true; return; }
+  $('#pg-go').hidden=false;
+  $('#pg-out').innerHTML=PG.map(function(r,i){ var ind=cotSet(r.sy), st=STAGES[r.stage], sc=st?st.scale:[1,2,3,4,5,6,7,8,9];
+    var a=r.notes?analyzeNotes(r.notes,r.sy,r.stage):null;
+    return '<div class="prow" style="margin-top:10px"><div class="ph"><b>'+esc(r.teacher||'Teacher not read')+'</b><span class="mini">'+esc(longDate(r.date)||'no date')+' &middot; '+esc(r.src)+'</span><button class="btn ghost small" type="button" data-pgrm="'+i+'">Remove</button></div>'+
+      '<div class="lines" style="max-width:none"><label class="fline"><span class="lk">Teacher</span><span class="lv"><input type="text" list="imp-people" data-pgi="'+i+'" data-pgf="teacher" value="'+esc(r.teacher)+'"></span></label>'+
+      '<label class="fline"><span class="lk">Career stage</span><span class="lv"><select data-pgi="'+i+'" data-pgf="stage"><option value="">Choose&hellip;</option>'+Object.keys(STAGES).map(function(k){return '<option value="'+k+'"'+(k===r.stage?' selected':'')+'>'+esc(STAGES[k].label)+'</option>'}).join('')+'</select></span></label></div>'+
+      '<table class="ind" style="margin-top:6px;font-size:13px"><thead><tr><th>COT indicator</th><th style="width:120px">Rating</th><th style="width:130px">In the notes</th></tr></thead><tbody>'+ind.map(function(t,k){ var p=splitInd(t), v=r.ratings[k]||'', it=a&&a.items[k];
+        return '<tr><td>'+(k+1)+'. '+esc(shortText(p.body,90))+' <span class="mini">('+esc(p.code)+')</span></td><td><select data-pgi="'+i+'" data-pgk="'+k+'"><option value="">Not rated</option>'+sc.map(function(x){return '<option'+(String(x)===v?' selected':'')+'>'+x+'</option>'}).join('')+'<option value="NO"'+(v==='NO'?' selected':'')+'>Not Observed</option></select></td><td class="mini">'+(a?(it.ev.length?it.ev.length+' entr'+(it.ev.length===1?'y':'ies')+(it.neg?' &middot; gaps noted':''):'none'):'no notes')+'</td></tr>'; }).join('')+'</tbody></table></div>'; }).join('');
+}
+$('#pg-file').addEventListener('change',async function(){
+  var files=[].slice.call(this.files); this.value=''; if(!files.length) return; var got=[], bad=[];
+  for(var i=0;i<files.length;i++){ try{ got.push(pgFromDoc(await pgRead(files[i]),files[i].name)); }catch(e){ bad.push(files[i].name); } }
+  PG=pgMerge(PG.concat(got)); pgRender();
+  $('#pg-msg').textContent=got.length+' file'+(got.length===1?'':'s')+' read'+(bad.length?'; could not read '+bad.join(', '):'')+'. Check the ratings below.';
+});
+$('#pg-saved').addEventListener('change',function(e){ var t=e.target; if(!t.dataset.pgsaved) return; var o=S.obs.filter(function(x){return x.id===t.dataset.pgsaved})[0]; if(!o) return;
+  if(t.checked){ PG.push({src:'saved observation',kind:'saved',teacher:o.teacher,pos:o.teacherPos,stage:o.stage||stageOf(o.teacherPos),sy:o.sy||S.sy,date:o.date,ratings:(o.ratings||[]).slice(),notes:o.notes||'',saved:o.id}); }
+  else PG=PG.filter(function(r){ return r.saved!==o.id||r.kind!=='saved'; });
+  pgRender(); });
+$('#pg-out').addEventListener('change',function(e){ var t=e.target, i=t.dataset.pgi; if(i==null) return; var r=PG[+i];
+  if(t.dataset.pgk!=null) r.ratings[+t.dataset.pgk]=t.value; else if(t.dataset.pgf==='teacher'){ var p=impPerson(t.value); r.teacher=p?p.n:t.value.toUpperCase(); r.pos=p?p.p:r.pos; if(p&&!r.stage) r.stage=stageOf(p.p); pgRender(); } else { r[t.dataset.pgf]=t.value; pgRender(); } });
+$('#pg-out').addEventListener('click',function(e){ var b=e.target.closest('[data-pgrm]'); if(!b) return; PG.splice(+b.dataset.pgrm,1); pgRender(); });
+function pgPlanRows(){
+  var mo=+$('#pl-month').value, yr=+$('#pl-year').value, last=new Date(yr,mo,0).getDate(), tf=MONTHS[mo-1]+' 1, '+yr+' \u2013 '+MONTHS[mo-1]+' '+last+', '+yr;
+  var need={}; // rubric topic -> {n, code, teachers:[{t,from,to,why}]}
+  PG.forEach(function(r){ var ind=cotSet(r.sy), k=SYS.indexOf(r.sy), st=STAGES[r.stage], sc=st?st.scale:[1,2,3,4,5,6,7,8,9], a=r.notes?analyzeNotes(r.notes,r.sy,r.stage):null;
+    var nums=r.ratings.map(function(v){ return v==='NO'?sc[0]:(+v||0); }), rated=nums.filter(Boolean), avg=rated.length?rated.reduce(function(x,y){return x+y},0)/rated.length:0;
+    ind.forEach(function(t,i){ var p=splitInd(t), n=RUB.M[k<0?1:k][i], v=r.ratings[i], num=nums[i], it=a&&a.items[i], why='';
+      if(v==='NO') why='Not observed during the lesson';
+      else if(num&&num<=sc[1]) why='Rated Level '+num+' (low on the '+(st?st.short:'COT')+' scale)';
+      else if(num&&rated.length>3&&num<avg-0.5&&num<sc[3]) why='Rated Level '+num+', below the teacher\u2019s other indicators';
+      else if(!num&&it&&!it.ev.length) why='No evidence of this indicator in the observation notes';
+      else if(!num&&it&&it.neg) why='The observation notes record gaps in this practice';
+      if(!why) return;
+      var key=n+'|'+p.code; need[key]=need[key]||{n:n,code:p.code,body:p.body,list:[]};
+      need[key].list.push({t:r.teacher||'the teacher',from:num||'',to:num?Math.min(num+1,sc[4]):'',why:why,date:r.date}); }); });
+  var keys=Object.keys(need).sort(function(a,b){ return need[b].list.length-need[a].list.length||need[a].code.localeCompare(need[b].code); });
+  var rows=keys.map(function(k){ var x=need[k], T=PLAN_T[x.n]||[x.body.toLowerCase(),'Coaching and follow-up observation'], who=x.list.map(function(l){return l.t}).filter(function(v,i,a){return a.indexOf(v)===i});
+    var whoTxt=who.length>3?who.length+' teachers':who.join(', '), lv=x.list.filter(function(l){return l.from}).map(function(l){return l.to}).sort()[0];
+    return {kra:'Instructional supervision \u2013 '+(DOMAINS[x.code.charAt(0)]||'Teaching and learning')+' (PPST '+x.code+')',
+      obj:'To help '+whoTxt+' strengthen their '+T[0]+(lv?' to at least Level '+lv:'')+'.',
+      act:T[1]+'.',
+      ind:(who.length>1?'All '+who.length+' teachers':who[0])+' '+(lv?'rated at least Level '+lv+' on PPST '+x.code+' in the next classroom observation':'show clear evidence of PPST '+x.code+' in the next classroom observation')+'; agreements recorded in the PMCF.',
+      mov:'COT Rating Sheet and Observation Notes; PMCF; DLL/lesson plan; LAC attendance and output',
+      time:tf, status:'', rem:x.list.map(function(l){ return l.t+': '+l.why+(l.date?' ('+longDate(l.date)+')':''); }).join('; ')};
+  });
+  if(PG.length) rows.push({kra:'Instructional supervision \u2013 Follow-up classroom observation',obj:'To check the improvement of the observed teachers on the indicators above.',act:'Post-observation conference with each teacher; follow-up observation or walk-through; recording of agreements and progress in the PMCF.',ind:'Follow-up observation done for every teacher in this plan.',mov:'COT Rating Sheet; Observation Notes; PMCF',time:tf,status:'',rem:PG.map(function(r){return r.teacher}).filter(Boolean).join(', ')});
+  return rows;
+}
+$('#pg-go').addEventListener('click',function(){
+  var miss=PG.filter(function(r){ return !r.ratings.some(Boolean)&&!r.notes; });
+  if(miss.length){ toast('Set the ratings for '+(miss[0].teacher||'each observation')+' first.'); return; }
+  var rows=pgPlanRows(); if(!rows.length){ toast('No plan rows: every indicator is rated well.'); return; }
+  var keep=plan.rows.filter(function(r){ return PCOLS.some(function(c){return String(r[c[0]]).trim()}); });
+  plan.rows=keep.concat(rows.map(function(r){ return Object.assign(blankRow(),r); }));
+  var dps=PG.map(function(r){ return deptOf(r.teacher); }).filter(Boolean); if(!$('#pl-dept').value&&dps.length) $('#pl-dept').value=dps[0];
+  drawPlanRows(); planLeaf(); wizGo($('#p-plan'),2);
+  $('#pg-state').textContent=rows.length+' plan row'+(rows.length===1?'':'s')+' written from '+PG.length+' observation'+(PG.length===1?'':'s')+'. Review and edit them in Step 2, then save.';
+  toast(rows.length+' plan rows added'); $('#pl-rows').scrollIntoView({behavior:'smooth',block:'start'});
+});
+$('#pl-dept').addEventListener('change',pgSavedList);
+
+/* ---------- supervisory plans from IDPs ---------- */
+var STRANDS={'1.1':'content knowledge and its application within and across curriculum areas','1.2':'research-based knowledge and principles of teaching and learning','1.3':'positive use of ICT','1.4':'strategies for promoting literacy and numeracy','1.5':'strategies for developing critical and creative thinking and higher-order thinking skills','1.6':'Mother Tongue, Filipino and English in teaching and learning','1.7':'classroom communication strategies',
+  '2.1':'learner safety and security','2.2':'fair learning environment','2.3':'management of classroom structure and activities','2.4':'support for learner participation','2.5':'promotion of purposive learning','2.6':'management of learner behavior',
+  '3.1':'learners’ gender, needs, strengths, interests and experiences','3.2':'learners’ linguistic, cultural, socio-economic and religious backgrounds','3.3':'learners with disabilities, giftedness and talents','3.4':'learners in difficult circumstances','3.5':'learners from indigenous groups',
+  '4.1':'planning and management of the teaching and learning process','4.2':'learning outcomes aligned with learning competencies','4.3':'relevance and responsiveness of learning programs','4.4':'professional collaboration to enrich teaching practice','4.5':'teaching and learning resources, including ICT',
+  '5.1':'design, selection, organization and use of assessment strategies','5.2':'monitoring and evaluation of learner progress and achievement','5.3':'feedback to improve learning','5.4':'communication of learner needs, progress and achievement to key stakeholders','5.5':'use of assessment data to enhance teaching and learning',
+  '6.1':'learning environments responsive to community contexts','6.2':'engagement of parents and the wider school community','6.3':'professional ethics','6.4':'school policies and procedures',
+  '7.1':'philosophy of teaching','7.2':'dignity of teaching as a profession','7.3':'professional links with colleagues','7.4':'professional reflection and learning to improve practice','7.5':'professional development goals'};
+var DOMAINS7={1:'Content Knowledge and Pedagogy',2:'Learning Environment',3:'Diversity of Learners',4:'Curriculum and Planning',5:'Assessment and Reporting',6:'Community Linkages and Professional Engagement',7:'Personal Growth and Professional Development'};
+var STRAND_RX=[['1.2',/research-based/i],['1.6',/mother tongue/i],['1.7',/verbal and non-?\s*(teaching )?verbal|classroom communication/i],['1.4',/literacy and numeracy/i],['1.5',/critical and creative|higher-order/i],['3.5',/indigenous/i],['3.4',/difficult circumstances/i],['3.3',/disabilit|giftedness/i],['3.2',/learner-centered culture|linguistic, cultural/i],['3.1',/differentiated/i],
+  ['2.6',/learner behavio|non-violent/i],['2.1',/safe and secure/i],['2.2',/fairness, respect|fair learning/i],['2.3',/classroom structure/i],['2.4',/nurture and inspire|participate, cooperate/i],['2.5',/motivate learners|successful strategies that maintain/i],
+  ['4.1',/developmentally sequenced/i],['4.2',/learning outcomes|achievable and appropriate/i],['4.3',/learning programs?/i],['4.4',/collegial discussion|feedback from colleagues|professional collaboration/i],['5.1',/diagnostic, formative and summative|assessment strategies/i],['5.2',/monitor(ed)? and evaluat(e|ed) learner progress/i],['5.3',/timely, accurate and constructive feedback|providing timely/i],['5.4',/communicat\w* promptly|key stakeholders|learners’? ?needs, progress/i],['5.5',/assessment data/i],
+  ['6.1',/community contexts|responsive to (the )?community/i],['6.2',/parents\/? ?guardians|wider school community/i],['6.4',/school policies/i],['6.3',/personal teaching practice|professional ethics|code of ethics/i],['7.1',/philosophy of teaching/i],['7.2',/dignity of teaching/i],['7.3',/professional networks/i],['7.4',/personal professional improvement|professional reflection/i],['7.5',/professional development goals/i],
+  ['4.5',/teaching and learning resources|select, develop, organi[sz]e/i],['1.3',/\bICT\b/i],['1.1',/knowledge of content|content knowledge/i]];
+var STRAND_N={'1.1':1,'1.3':2,'1.4':3,'1.5':4,'1.6':5,'1.7':6,'2.1':7,'2.2':8,'2.3':9,'2.4':10,'2.5':11,'2.6':12,'3.1':13,'3.2':14,'3.3':15,'3.4':16,'3.5':17,'4.1':18,'4.5':19,'5.1':20,'5.3':21};
+var SUP_ACT={'1.2':'Coaching on research-based and evidence-informed strategies; sharing of action research findings in the LAC session','4.2':'Review of DLL objectives against the learning competencies; coaching on writing SMART learning outcomes','4.3':'Coaching on contextualized and responsive learning programs; review of the learning program plan','4.4':'Monitoring of LAC participation; peer observation and feedback sessions','5.2':'Review of class records and learner progress monitoring tools; coaching on tracking learner progress','5.4':'Monitoring of parent-teacher conferences and release of report cards; review of communication logs','5.5':'Review of item analysis and assessment results; coaching on using data for remediation and enrichment',
+  '6.1':'Coaching on community-based contextualization; walk-through on use of local contexts','6.2':'Monitoring of parent-teacher conferences and home-school partnership activities','6.3':'Reflection and coaching session on professional ethics (RA 4670, Code of Ethics for Professional Teachers)','6.4':'Orientation and monitoring of compliance with school policies (child protection, classroom policies)','7.1':'Mentoring session on the teacher’s philosophy of teaching and its application in class','7.2':'Mentoring and LAC session on professionalism and the dignity of teaching','7.3':'Monitoring of participation in LAC, subject-area organizations and professional networks','7.4':'Reflection sessions and review of the personal professional improvement plan','7.5':'Mid-year and end-of-year review of the IDP and professional development goals with the teacher'};
+var MOV_D={1:'COT Rating Sheet and Observation Notes; DLL/lesson plan; PMCF',2:'COT Rating Sheet and Observation Notes; walk-through notes; PMCF',3:'COT Rating Sheet and Observation Notes; learner profiles; differentiated materials; PMCF',4:'DLL/lesson plan; Lesson Plan Monitoring Tool; LAC attendance and output; PMCF',5:'Assessment tools and results (On-the-Spot Test, item analysis); class records; PMCF',6:'Parent-teacher conference records; communication logs; PMCF',7:'Updated IDP; reflection journal; certificates of training/LAC; PMCF'};
+function ipXlsx(z){ // a small reader: sheet name -> rows of cell text
+  return (async function(){
+    var ss=[], sx=z.file('xl/sharedStrings.xml'); if(sx){ var d=new DOMParser().parseFromString(await sx.async('string'),'application/xml'); ss=[].map.call(d.getElementsByTagName('si'),function(si){ return [].map.call(si.getElementsByTagName('t'),function(t){return t.textContent}).join(''); }); }
+    var wb=new DOMParser().parseFromString(await z.file('xl/workbook.xml').async('string'),'application/xml'), rel=new DOMParser().parseFromString(await z.file('xl/_rels/workbook.xml.rels').async('string'),'application/xml');
+    var tgt={}; [].forEach.call(rel.getElementsByTagName('Relationship'),function(r){ tgt[r.getAttribute('Id')]=r.getAttribute('Target'); });
+    var out=[];
+    for(var sh of [].slice.call(wb.getElementsByTagName('sheet'))){
+      var rid=sh.getAttribute('r:id')||sh.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id'), path=String(tgt[rid]||'').replace(/^\/?(xl\/)?/,'xl/'), f=z.file(path); if(!f) continue;
+      var d=new DOMParser().parseFromString(await f.async('string'),'application/xml'), rows=[];
+      [].forEach.call(d.getElementsByTagName('row'),function(r){ var a=[]; [].forEach.call(r.getElementsByTagName('c'),function(c){ var ref=c.getAttribute('r')||'', col=(function(c){ var n=0; for(var i=0;i<c.length;i++) n=n*26+(c.charCodeAt(i)-64); return n; })(ref.replace(/\d+/g,''))-1, t=c.getAttribute('t'), v=c.getElementsByTagName('v')[0], val='';
+          if(t==='s'&&v) val=ss[+v.textContent]||''; else if(t==='inlineStr') val=[].map.call(c.getElementsByTagName('t'),function(x){return x.textContent}).join(''); else if(v) val=v.textContent;
+          if(col>=0) a[col]=String(val); }); rows[(+r.getAttribute('r')||rows.length+1)-1]=a; });
+      out.push({name:sh.getAttribute('name'),rows:rows.map(function(r){ return r||[]; })});
+    }
+    return out; })();
+}
+function ipDocxTables(doc){ var WN='http://schemas.openxmlformats.org/wordprocessingml/2006/main', q=function(el,t){ return [].slice.call(el.getElementsByTagNameNS(WN,t)); }, kids=function(el,t){ return [].filter.call(el.childNodes,function(x){return x.localName===t}); };
+  return q(doc,'tbl').map(function(tb){ return kids(tb,'tr').map(function(tr){ var a=[]; kids(tr,'tc').forEach(function(tc){ var pr=kids(tc,'tcPr')[0], sp=pr&&kids(pr,'gridSpan')[0], n=sp?+sp.getAttributeNS(WN,'val')||1:1, vm=pr&&kids(pr,'vMerge')[0], cont=vm&&(vm.getAttributeNS(WN,'val')||'')!=='restart';
+      var txt=cont?'':q(tc,'p').map(function(p){ return q(p,'t').map(function(t){return t.textContent}).join(''); }).join('\n').trim(); a.push(txt); for(var i=1;i<n;i++) a.push(''); }); return a; }); }); }
+function ipGridItems(rows,ctx){ // rows of cells -> development-need items
+  var hi=-1; for(var i=0;i<rows.length;i++){ if((rows[i]||[]).some(function(c){ return /development needs?/i.test(c||''); })){ hi=i; break; } } if(hi<0) return [];
+  var find=function(rx,from,to){ for(var r=from;r<=to&&r<rows.length;r++){ var row=rows[r]||[]; for(var c=0;c<row.length;c++) if(rx.test(row[c]||'')) return c; } return -1; };
+  var cs=find(/^\s*strengths?\s*$/i,hi,hi+3), cn=find(/development needs?/i,hi,hi), co=find(/learning objectives?/i,hi,hi+4), ci=find(/^\s*interventions?\s*$/i,hi,hi+4), ct=find(/timeline/i,hi,hi+3), cr=find(/resources/i,hi,hi+3);
+  var last=hi; for(var r=hi;r<Math.min(rows.length,hi+5);r++) if((rows[r]||[]).some(function(c){ return /learning objectives?|intervention/i.test(c||''); })) last=r;
+  var cols=[['str',cs],['need',cn],['obj',co],['int',ci],['time',ct],['res',cr]].filter(function(x){return x[1]>=0}).sort(function(a,b){return a[1]-b[1]});
+  var out=[], area='Functional Competencies';
+  for(var r2=last+1;r2<rows.length;r2++){ var row=rows[r2]||[], vals=row.map(function(c){return String(c||'').trim()}).filter(Boolean);
+    if(!vals.length) continue;
+    if(/prepared by|checked by|approved by|noted by|approving authority/i.test(vals.join(' '))||vals.some(function(v){ return /^(RATER|RATEE|SIGNATURE)\b/i.test(v); })) break;
+    if(vals.every(function(v){ return /^(#REF!|TRUE|FALSE|-|0)$/i.test(v); })) continue;
+    if(vals.length===1&&/competenc|standards|^[A-C]\./i.test(vals[0])){ area=/core|behavior/i.test(vals[0])?'Core Behavioral Competencies':/leader/i.test(vals[0])?'Leadership Competencies':'Functional Competencies'; continue; }
+    var it={area:area}; cols.forEach(function(c,k){ var end=k+1<cols.length?cols[k+1][1]:c[1]+1, parts=[]; for(var x=c[1];x<end;x++){ var t=String(row[x]||'').trim(); if(t&&!/^(#REF!|TRUE|FALSE)$/i.test(t)&&parts.indexOf(t)<0) parts.push(t); } it[c[0]]=parts.join(' ').replace(/\s*\n\s*/g,' ').trim(); });
+    if(!it.need&&!it.obj) continue; if(!it.obj&&!it.int&&String(it.need||'').length<25&&it.need===String(it.need).toUpperCase()) continue; if(/^(#REF!|-)$/.test(it.need||'')) continue;
+    it.sheet=ctx.sheet||''; out.push(it); }
+  return out;
+}
+function ipCode(txt,stageDigit){ var m=/(\d)\s*\.\s*\.?\s*(\d)\s*\.\s*(\d)/.exec(txt||''); if(m) return {strand:m[1]+'.'+m[2],code:m[1]+'.'+m[2]+'.'+m[3]};
+  for(var i=0;i<STRAND_RX.length;i++) if(STRAND_RX[i][1].test(txt||'')) return {strand:STRAND_RX[i][0],code:STRAND_RX[i][0]+'.'+(stageDigit||2)};
+  return null; }
+function ipSyMonths(sy){ var y=+String(sy).slice(0,4), out=[]; for(var m=6;m<=12;m++) out.push(y+'-'+pad(m)); for(var m2=1;m2<=3;m2++) out.push((y+1)+'-'+pad(m2)); return out; }
+function ipTiming(it,sy){ // which school years and which months the IDP row names
+  var T=(it.time||'')+' '+(it.sheet||''), U=T.toUpperCase(), sys={}, months=[];
+  var sm=/(\d{4})\s*[-–—]\s*(\d{4})/g, mm;
+  while((mm=sm.exec(T))){ var a=+mm[1], b=+mm[2]; if(b-a===1) sys[a+'-'+b]=1; else if(b>a) for(var y=a;y<b;y++) sys[y+'-'+(y+1)]=1; }
+  var mre=new RegExp('\\b('+IMP_MON.map(function(m){return m.slice(0,3)}).join('|')+')[A-Z]*\\.?\\s*(\\d{4})?','g'), found=[];
+  while((mm=mre.exec(U))){ var mi=IMP_MON.map(function(m){return m.slice(0,3)}).indexOf(mm[1]); if(mi>=0) found.push({m:mi+1,y:mm[2]?+mm[2]:0}); }
+  if(found.length>=2&&found[0].y&&found[found.length-1].y){ var s0=syOfMonth(found[0].y+'-'+pad(found[0].m)), s1=syOfMonth(found[found.length-1].y+'-'+pad(found[found.length-1].m)); for(var y2=+s0.slice(0,4);y2<=+s1.slice(0,4);y2++) sys[y2+'-'+(y2+1)]=1; }
+  else if(found.length===1){ var f=found[0], yy=f.y||(f.m>=6?+sy.slice(0,4):+sy.slice(0,4)+1); var key=yy+'-'+pad(f.m); sys[syOfMonth(key)]=1; months=[key]; }
+  else if(found.length>=2&&!found[0].y){ found.forEach(function(f){ var yy=f.m>=6?+sy.slice(0,4):+sy.slice(0,4)+1; months.push(yy+'-'+pad(f.m)); }); }
+  var any=Object.keys(sys).length; if(!any) sys[sy]=1;
+  var everyTerm=/EVERY\s+TERM|EACH\s+TERM|QUARTER|PER\s+TERM/.test(U);
+  return {inSy:!!sys[sy], months:months.filter(function(k){ return syOfMonth(k)===sy; }), term:everyTerm, wide:!months.length};
+}
+async function ipParse(file){
+  var n=file.name.toLowerCase(), grids=[], texts=[];
+  var z=await JSZip.loadAsync(await file.arrayBuffer());
+  if(/\.docx$/.test(n)){ var f=z.file('word/document.xml'); if(!f) throw new Error('docx'); var doc=new DOMParser().parseFromString(await f.async('string'),'application/xml'), WN='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+    texts=[].map.call(doc.getElementsByTagNameNS(WN,'p'),function(p){ return [].map.call(p.getElementsByTagNameNS(WN,'t'),function(t){return t.textContent}).join(''); });
+    ipDocxTables(doc).forEach(function(t){ grids.push({sheet:'',rows:t}); }); }
+  else { (await ipXlsx(z)).forEach(function(sh){ if(/idp|\d{4}\s*-\s*\d{4}|sheet/i.test(sh.name)||sh.rows.some(function(r){return r.some(function(c){return /development needs?/i.test(c||'')})})) grids.push({sheet:/\d{4}\s*-\s*\d{4}/.test(sh.name)?sh.name:'',rows:sh.rows}); sh.rows.forEach(function(r){ texts.push(r.filter(Boolean).join('   ')); }); }); }
+  var items=[]; grids.forEach(function(g){ items=items.concat(ipGridItems(g.rows,{sheet:g.sheet})); });
+  // the teacher: from "Prepared by", else from the file name
+  var who=null, k=texts.findIndex(function(t){ return /prepared by/i.test(t); });
+  if(k>=0){ for(var j=k;j<Math.min(texts.length,k+4)&&!who;j++){ var seg=String(texts[j]).replace(/prepared by:?/i,'').split(/\t|\s{3,}/).map(function(x){return x.trim()}).filter(Boolean)[0]||''; if(seg) who=findPersonIn(seg)||impPerson(seg); } }
+  if(!who){ var base=file.name.replace(/\.[^.]+$/,'').replace(/[_]+/g,' ').replace(/IDP|eSAT|SY|REV\s*\d+|New Version|\d{4}\s*-\s*\d{4}|\(\d+\)/gi,' ').replace(/[^A-Za-zÑñ ,.-]/g,' ').replace(/\s+/g,' ').trim();
+    var U=' '+impNorm(base)+' ', c=PEOPLE.filter(function(p){ var w=impNorm(p.n).split(' '), last=w[w.length-1]; return U.indexOf(' '+last+' ')>=0&&U.indexOf(' '+w[0]+' ')>=0; });
+    if(c.length!==1) c=PEOPLE.filter(function(p){ var w=impNorm(p.n).split(' '); return U.indexOf(' '+w[w.length-1]+' ')>=0; });
+    if(c.length===1) who=c[0]; else who={n:base.toUpperCase(),p:''}; }
+  return {file:file.name,teacher:who.n,pos:who.p||'',items:items};
+}
+function ipRows(rec,sy){ // a teacher's supervisory plan for one school year
+  var digit=/^master teacher/i.test(rec.pos||'')?3:2, months=ipSyMonths(sy), pool=months.filter(function(k){ return !/-06$|-12$/.test(k); }), load={};
+  var mlabel=function(k){ var a=k.split('-'); return MONTHS[+a[1]-1]+' '+a[0]; };
+  var rows=[];
+  rec.items.forEach(function(it){ var tm=ipTiming(it,sy); if(!tm.inSy) return;
+    var c=ipCode(it.need,digit), core=it.area!=='Functional Competencies'||!c;
+    var ms=tm.months.length?tm.months:tm.term?[sy.slice(0,4)+'-08',sy.slice(0,4)+'-11',(+sy.slice(0,4)+1)+'-02']:[pool.slice().sort(function(a,b){ return (load[a]||0)-(load[b]||0); })[0]];
+    ms.forEach(function(k){ load[k]=(load[k]||0)+1; });
+    var dom=c?+c.strand.charAt(0):7, needTxt=shortText(String(it.need||'').replace(/^(PPST\s*)?\d\s*\.\s*\.?\d\s*\.\s*\d\s*\)?\s*[—–-]?\s*/i,''),160);
+    if(!needTxt&&!it.obj) return; if(!needTxt) needTxt=shortText(it.obj,120);
+    if(/^\(?(recommended developmental intervention|learning objectives?|action plan|interventions?|timeline|resources needed|strengths?|development needs?)\)?$/i.test(needTxt)) return;
+    if(PEOPLE.some(function(pp){ return impNorm(pp.n)===impNorm(needTxt); })) return;
+    if(core){ var cm=null; for(var q=0;q<CORE_C.length&&!cm;q++) if(CORE_C[q][1].test(needTxt)) cm=CORE_C[q][0]; if(!cm) for(var q2=0;q2<CORE_C.length&&!cm;q2++) if(CORE_C[q2][1].test(it.obj||'')) cm=CORE_C[q2][0]; it._cname=cm||(needTxt.length<40?needTxt:'Other competencies'); }
+    var act=core?'Coaching and mentoring on '+(needTxt||'the competency')+'; monitoring of agreements in the PMCF':(STRAND_N[c.strand]&&PLAN_T[STRAND_N[c.strand]]?PLAN_T[STRAND_N[c.strand]][1]:SUP_ACT[c.strand]||'Coaching and follow-up monitoring');
+    rows.push({key:core?'core:'+impNorm(it._cname):c.strand,area:it.area,strand:c?c.strand:'',code:c?c.code:'',month:ms[0],months:ms,
+      kra:core?(it.area==='Leadership Competencies'?'Leadership Competency':'Core Behavioral Competency')+' \u2013 '+it._cname:(DOMAINS7[dom]||'Teaching and learning')+' (PPST '+c.code+')',
+      obj:'To support '+rec.teacher+' on '+(core?'the '+(it.area==='Leadership Competencies'?'leadership':'core behavioral')+' competency \u201c'+needTxt+'\u201d':'PPST '+c.code+' ('+(STRANDS[c.strand]||needTxt)+')')+(it.obj?'. IDP objective: '+shortText(it.obj,180):'')+'.',
+      act:act+'.'+(it.int?'\nIDP intervention: '+shortText(it.int,200):''),
+      ind:core?'Agreed targets on '+needTxt+' met, as recorded in the PMCF and the mid-year/end-year IDP review.':'Clear evidence of PPST '+c.code+' in the teacher’s practice'+(dom<=3?', rated at least Proficient level in the classroom observation':'')+'; IDP development need marked as met.',
+      mov:core?'PMCF; IDP review; accomplishment reports':(MOV_D[dom]||'PMCF; IDP review')+(it.res?'\nResources: '+shortText(it.res,120):''),
+      time:ms.map(mlabel).join(', '),status:'',rem:'From the IDP'+(it.time?' (timeline: '+shortText(it.time,60)+')':'')});
+  });
+  rows.sort(function(a,b){ return a.month.localeCompare(b.month); });
+  return rows;
+}
+var CORE_C=[['Self-Management',/self[- ]?man|sel-?mnag|time management|organi[sz]ational skill/i],['Professionalism and Ethics',/professional\w* and ethic|ethic|integrity/i],['Results Focus',/results?\s*focus|learner outcomes|performance metrics/i],['Teamwork',/team\s*work|collaborat/i],['Service Orientation',/service/i],['Innovation',/innovat|creative/i],['Gender Sensitivity',/gender/i],['Leading People',/leading people|lead(ing)? (others|teams?)/i],['People Performance Management',/performance management/i],['People Development',/people development|coach(ing)? others/i]];
+var IPQ=[]; // uploaded, not yet saved
+function ipRender(){
+  var sy=S.sy;
+  $('#ip-review').innerHTML=IPQ.length?'<table class="ind" style="margin-top:10px;font-size:13px"><thead><tr><th>File</th><th>Teacher</th><th>Department</th><th class="c">Development needs read</th><th class="c">Plan rows for SY '+esc(sy)+'</th></tr></thead><tbody>'+IPQ.map(function(r,i){
+    return '<tr><td>'+esc(r.file)+'</td><td><input type="text" list="imp-people" data-ipi="'+i+'" value="'+esc(r.teacher)+'" style="min-width:220px"></td><td>'+esc(deptOf(r.teacher)||'Not set')+'</td><td class="c">'+r.items.length+'</td><td class="c">'+ipRows(r,sy).length+'</td></tr>'; }).join('')+'</tbody></table>':'';
+  $('#ip-save').hidden=!IPQ.length;
+  var list=(S.tplans||[]).filter(function(p){ return p.sy===sy; }).sort(function(a,b){ return lastFirst(a.teacher).localeCompare(lastFirst(b.teacher)); });
+  $('#ip-list').innerHTML=list.length?'<p class="mini" style="margin:4px 0">(1) Supervisory plans per teacher, SY '+esc(sy)+': '+list.length+'</p>'+list.map(function(p){ return '<div class="listrow"><div class="what"><b>'+esc(lastFirst(p.teacher))+'</b> &middot; '+esc(p.dept||deptOf(p.teacher)||'No department')+'<div>'+p.rows.length+' plan rows &middot; from '+esc(p.source||'IDP')+'</div></div><button class="btn ghost small" type="button" data-ipview="'+esc(p.id)+'">View</button></div>'; }).join(''):'';
+  $('#ip-actions').hidden=!list.length;
+  if(!$('#ip-annual-dept').options.length||$('#ip-annual-dept').dataset.v!==String(S.myDept)){ $('#ip-annual-dept').innerHTML=S.myDept?'<option>'+esc(S.myDept)+'</option>':'<option value="">Whole school</option>'+DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join(''); $('#ip-annual-dept').dataset.v=String(S.myDept); }
+}
+$('#ip-file').addEventListener('change',async function(){
+  var files=[].slice.call(this.files); this.value=''; if(!files.length) return; var bad=[];
+  for(var i=0;i<files.length;i++){ $('#ip-msg').textContent='Reading '+files[i].name+'…'; try{ var r=await ipParse(files[i]); var same=IPQ.filter(function(x){return x.teacher===r.teacher})[0]; if(same){ var seen={}; same.items=same.items.concat(r.items).filter(function(it){ var k=impNorm(it.need).slice(0,60)+'|'+impNorm(it.time); if(seen[k]) return false; seen[k]=1; return true; }); same.file+=', '+r.file; } else IPQ.push(r); }catch(e){ bad.push(files[i].name); } }
+  $('#ip-msg').textContent=IPQ.length+' IDP'+(IPQ.length===1?'':'s')+' read'+(bad.length?'; could not read '+bad.join(', '):'')+'. Check the teachers, then save.';
+  ipRender();
+});
+$('#ip-review').addEventListener('change',function(e){ var t=e.target; if(t.dataset.ipi==null) return; var p=impPerson(t.value), r=IPQ[+t.dataset.ipi]; r.teacher=p?p.n:t.value.toUpperCase(); r.pos=p?p.p:''; ipRender(); });
+function ipId(sy,n){ return 'tp_'+sy.replace(/\D/g,'')+'_'+impNorm(n).replace(/\s+/g,'_'); }
+$('#ip-save').addEventListener('click',async function(){
+  var sy=S.sy, ok=0, fail=0; this.disabled=true;
+  for(var i=0;i<IPQ.length;i++){ var r=IPQ[i], p=byName(r.teacher), rows=ipRows(r,sy); if(!rows.length) continue;
+    var d={kind:'tplan',sy:sy,teacher:r.teacher,teacherPos:p?p.p:r.pos,dept:deptOf(r.teacher),source:r.file,items:r.items,rows:rows,savedAt:new Date().toISOString()};
+    try{ await Store.put('plans',ipId(sy,r.teacher),d); ok++; }catch(e){ fail++; saveErr(e); } }
+  this.disabled=false; if(ok){ IPQ=[]; toast(ok+' teacher plan'+(ok===1?'':'s')+' saved for SY '+sy); } ipRender();
+});
+function ipLeaf(title,sub,rows,cols,sig){
+  var W=cols.map(function(c){return c[2]});
+  return LH_HTML()+'<img class="lh-bot" src="'+LH_BOT+'" alt=""><h4>'+esc(title)+'</h4><h4 style="font-weight:400">'+esc(sub)+'</h4>'+
+    '<table class="plantbl" style="margin-top:8pt"><colgroup>'+W.map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+cols.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+
+    (rows.length?rows.map(function(r){return '<tr>'+cols.map(function(c){return '<td style="white-space:pre-wrap">'+esc(r[c[0]]||'')+'</td>'}).join('')+'</tr>'}).join(''):'<tr><td colspan="'+cols.length+'" style="text-align:center">No rows.</td></tr>')+'</table>'+
+    '<div class="psig"><div><div>Prepared by:</div><b>'+esc(sig.prep||'')+'</b><div>'+esc(sig.prepPos||'')+'</div><div>'+esc(longDate(TODAY))+'</div></div><div><div>Approved by:</div><b>'+esc(PRINCIPAL.n)+'</b><div>'+esc(PRINCIPAL.p)+'</div></div></div>';
+}
+var IPCOLS=[['time','Month',1],['kra','Key Result Areas',1.3],['obj','Objectives',1.6],['act','Enabling Projects and/or Activities',1.9],['ind','Success Indicators',1.4],['mov','Means of Verification',1.4],['status','Accomplishment / Status',1.1],['rem','Remarks',1.1]];
+var IP_VIEW={title:''};
+function ipShow(title,html){ $('#ip-leaf').innerHTML=html; $('#ip-viewtitle').textContent=title; IP_VIEW.title=title; $('#ip-viewbar').hidden=false; $('#ip-viewwrap').hidden=false; if(typeof fitSoon==='function') fitSoon(); $('#ip-viewbar').scrollIntoView({behavior:'smooth',block:'start'}); }
+$('#ip-list').addEventListener('click',function(e){ var b=e.target.closest('[data-ipview]'); if(!b) return; var p=(S.tplans||[]).filter(function(x){return x.id===b.dataset.ipview})[0]; if(!p) return;
+  var hd=(S.cfg.heads||{})[p.dept||deptOf(p.teacher)]||'', hp=byName(hd);
+  ipShow('Supervisory Plan '+p.teacher+' SY '+p.sy, ipLeaf('INSTRUCTIONAL SUPERVISORY PLAN FOR THE TEACHER','SY '+p.sy+' · '+p.teacher+(p.teacherPos?', '+p.teacherPos:'')+(p.dept?' · '+p.dept+' Department':''),p.rows,IPCOLS,{prep:hd,prepPos:hp?hp.p:'Department Head'})); });
+$('#ip-vclose').addEventListener('click',function(){ $('#ip-viewbar').hidden=true; $('#ip-viewwrap').hidden=true; });
+$('#ip-vpdf').addEventListener('click',function(){ EXP.pdf($('#ip-leaf').outerHTML,safeName(IP_VIEW.title)); });
+$('#ip-vdoc').addEventListener('click',function(){ EXP.word($('#ip-leaf').outerHTML,safeName(IP_VIEW.title)); });
+function ipGroup(rows,withMonths){ var g={}, order=[];
+  rows.forEach(function(r){ var k=r.key; if(!g[k]){ g[k]={r:r,teachers:[],months:{},ints:[]}; order.push(k); } var x=g[k]; if(x.teachers.indexOf(r.teacher)<0) x.teachers.push(r.teacher); (r.months||[r.month]).forEach(function(m){ x.months[m]=1; }); });
+  return order.map(function(k){ var x=g[k], r=x.r, n=x.teachers.length, who=n>4?n+' teachers':x.teachers.map(lastFirst).join('; ');
+    var focus=r.strand?(STRANDS[r.strand]||''):r.kra.replace(/^.*?–\s*/,'').toLowerCase();
+    var ms=Object.keys(x.months).sort().map(function(k2){ var a=k2.split('-'); return MONTHS[+a[1]-1]+' '+a[0]; });
+    return {key:k,strand:r.strand,kra:r.strand?r.kra.replace(/PPST \d\.\d\.\d/,'PPST '+r.strand):r.kra,obj:'To support '+(n>1?n+' teachers':x.teachers[0])+' on '+(r.strand?'PPST '+r.strand+' ('+focus+')':'\u201c'+r.kra.replace(/^.*?\u2013\s*/,'')+'\u201d')+'.',act:r.act.split('\nIDP intervention:')[0],ind:(n>1?'All '+n+' teachers: ':'')+r.ind,mov:r.mov.split('\nResources:')[0],time:withMonths?ms.join(', '):'',status:'',rem:'Teachers: '+who,n:n}; })
+    .sort(function(a,b){ return String(a.strand||'9').localeCompare(String(b.strand||'9'))||b.n-a.n; });
+}
+$('#ip-month').addEventListener('click',function(){
+  var mo=+$('#pl-month').value, yr=+$('#pl-year').value, dp=$('#pl-dept').value, key=yr+'-'+pad(mo);
+  if(!dp){ toast('Choose the department in Step 1 first.'); wizGo($('#p-plan'),1); $('#pl-dept').focus(); return; }
+  var sy=syOfMonth(key), rows=[];
+  (S.tplans||[]).filter(function(p){ return p.sy===sy&&(p.dept||deptOf(p.teacher))===dp; }).forEach(function(p){ p.rows.forEach(function(r){ if((r.months||[r.month]).indexOf(key)>=0) rows.push(Object.assign({teacher:p.teacher},r)); }); });
+  if(!rows.length){ toast('No teacher in '+dp+' has an IDP focus in '+MONTHS[mo-1]+' '+yr+'.'); return; }
+  var last=new Date(yr,mo,0).getDate(), tf=MONTHS[mo-1]+' 1, '+yr+' – '+MONTHS[mo-1]+' '+last+', '+yr;
+  var g=ipGroup(rows,false).map(function(r){ return Object.assign(blankRow(),{kra:r.kra,obj:r.obj,act:r.act,ind:r.ind,mov:r.mov,time:tf,status:'',rem:r.rem}); });
+  var keep=plan.rows.filter(function(r){ return PCOLS.some(function(c){return String(r[c[0]]).trim()}); });
+  plan.rows=keep.concat(g); drawPlanRows(); planLeaf(); wizGo($('#p-plan'),2);
+  toast(g.length+' rows from the IDPs of '+dp+' teachers for '+MONTHS[mo-1]+' '+yr); $('#pl-rows').scrollIntoView({behavior:'smooth',block:'start'});
+});
+$('#ip-annual').addEventListener('click',function(){
+  var sy=S.sy, dp=$('#ip-annual-dept').value, rows=[];
+  (S.tplans||[]).filter(function(p){ return p.sy===sy&&(!dp||(p.dept||deptOf(p.teacher))===dp); }).forEach(function(p){ p.rows.forEach(function(r){ rows.push(Object.assign({teacher:p.teacher},r)); }); });
+  if(!rows.length){ toast('No saved teacher plans for SY '+sy+(dp?' in '+dp:'')+'.'); return; }
+  var g=ipGroup(rows,true), hd=dp?(S.cfg.heads||{})[dp]:'', hp=byName(hd||'');
+  ipShow('Annual Supervisory Plan SY '+sy+(dp?' '+dp:''), ipLeaf('ANNUAL INSTRUCTIONAL SUPERVISORY PLAN','SY '+sy+(dp?' · '+dp+' Department':' · Castor Alviar National High School'),g,IPCOLS,{prep:dp?hd:PRINCIPAL.n,prepPos:dp?(hp?hp.p:'Department Head'):PRINCIPAL.p}));
+});
+
 /* ================================================================== CLASSROOM OBSERVATION */
 var obs={id:'',ratings:[],finds:[]};
 var STAGE_FILE={b:'TI-TIII',p:'TIV-TVII',h:'MTI-MTII',d:'MTIII-MTV'};
@@ -1807,7 +2180,7 @@ function readObs(){
   var observers=[o1,o2,o3].filter(function(p){return p.n});
   return {sy:obsSy(),teacher:t.n,teacherPos:t.p,stage:$('#o-stage').value,dept:$('#o-dept').value,subject:subjectValue(),date:getDate('o-date'),
     no:obsSub==='walk'?3:+($('input[name=o-no]:checked')||{value:1}).value,noOther:obsSub==='walk'?WALK:$('#o-noother').value.trim(),quarter:$('#o-q').value,t1:$('#o-t1').value.trim(),t2:$('#o-t2').value.trim(),
-    observers:observers,ratings:obs.ratings.slice(),finds:obs.finds.map(function(a){return (a||[]).slice()}),comments:$('#o-comments').value,notes:$('#o-notes').value,sum:obs.sum?JSON.parse(JSON.stringify(obs.sum)):null};
+    observers:observers,ratings:obs.ratings.slice(),finds:obs.finds.map(function(a){return (a||[]).slice()}),comments:$('#o-comments').value,notes:$('#o-notes').value,sum:obs.sum?JSON.parse(JSON.stringify(obs.sum)):null,capPmcf:obsSub==='walk'?$('#o-cap-pmcf').checked:undefined,coachId:obs.coachId||''};
 }
 function shortLevel(r,L){ if(!r) return ''; var s=r.l[L-1]||''; s=s.replace(/^The teacher\s+/,''); return s.length>72?s.slice(0,70).replace(/\s+\S*$/,'')+'\u2026':s; }
 var obsPage=0;
@@ -2226,7 +2599,11 @@ $('#o-save').addEventListener('click',async function(){
   var miss=d.no===3?0:d.ratings.filter(function(r){return r===''}).length;
   var id=obs.id||uid('o'); d.savedAt=new Date().toISOString();
   this.disabled=true;
-  try{ await Store.put('obs',id,d); obs.id=id; obs.sy=d.sy; $('#o-del').hidden=false; $('#o-state').textContent='Saved '+longDate(TODAY)+(miss?' \u00b7 '+miss+' indicator'+(miss===1?'':'s')+' still unrated':'')+'.'; toast('Observation saved'+(miss?'; '+miss+' indicator'+(miss===1?' is':'s are')+' still unrated':'')); }
+  try{ obs.id=id;
+    if(isWalk(d)&&d.capPmcf!==false){ var cid=obs.coachId||uid('c'), ce=walkCoachEntry(d,id); ce.savedAt=d.savedAt; await Store.put('coach',cid,ce); obs.coachId=cid; }
+    else if(obs.coachId){ await Store.del('coach',obs.coachId); obs.coachId=''; }
+    d.coachId=obs.coachId||'';
+    await Store.put('obs',id,d); obs.sy=d.sy; $('#o-del').hidden=false; if(isWalk(d)&&d.coachId){ $('#o-state').textContent='Saved '+longDate(TODAY)+' · added to the PMCF of '+d.teacher+' for '+monthLabel(d.date.slice(0,7))+'.'; toast('Walk-through saved and added to the PMCF'); } else { $('#o-state').textContent='Saved '+longDate(TODAY)+(miss?' \u00b7 '+miss+' indicator'+(miss===1?'':'s')+' still unrated':'')+'.'; toast('Observation saved'+(miss?'; '+miss+' indicator'+(miss===1?' is':'s are')+' still unrated':'')); } }
   catch(e){ saveErr(e); }
   this.disabled=!S.canWrite;
 });
@@ -2235,11 +2612,21 @@ $('#o-dl').addEventListener('click',async function(){
   var miss=d.ratings.filter(function(r){return r===''}).length; if(miss) toast(miss+' indicator'+(miss===1?' is':'s are')+' not rated; '+(miss===1?'its row stays':'their rows stay')+' blank on the form.');
   try{ await offerFile((d.observers.length>1?'COT IOA Form ':'COT Rating Sheet ')+obsFileBase(d)+'.docx',await cotFile(d)); }catch(e){ toast('The official template file was not found on the site; downloading the Word copy made from the preview instead.'); EXP.word(cotSheetHTML(d),(d.observers.length>1?'COT IOA Form ':'COT Rating Sheet ')+obsFileBase(d)); }
 });
-$('#o-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ await Store.del('obs',obs.id); toast('Observation deleted'); newObs(); }catch(e){ saveErr(e); } }); });
+$('#o-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ if(obs.coachId) await Store.del('coach',obs.coachId); await Store.del('obs',obs.id); toast('Observation deleted'); newObs(); }catch(e){ saveErr(e); } }); });
 $('#o-new').addEventListener('click',newObs);
 $('#o-notes-save').addEventListener('click',function(){ $('#o-save').click(); });
 $('#sm-save').addEventListener('click',function(){ $('#o-save').click(); });
 /* ---------- notes with bold: stored as plain text, **bold** marks the highlighted words ---------- */
+function walkCoachEntry(d,id){
+  var ents=noteEntries(d.notes), obsd=[], fb=[];
+  ents.forEach(function(e){ var first=true; e.sents.forEach(function(t){ var segs=noteSegs(t), b=segs.filter(function(g){return g.b}).map(function(g){return g.t}).join(' ').replace(/^\s*\[|\]\s*$/g,'').trim(), pl=segs.filter(function(g){return !g.b}).map(function(g){return g.t}).join('').replace(/\s+/g,' ').trim();
+    if(b) fb.push(b.replace(/\s+/g,' ')); if(pl&&/[a-z]/i.test(pl)) { obsd.push((e.time&&first?e.time+' – ':'')+pl); first=false; } }); });
+  var ob=(d.observers||[])[0]||{}, tm=[d.t1,d.t2].filter(Boolean).join(' – ');
+  return {ratee:d.teacher,rateePos:d.teacherPos,desig:'',rater:ob.n||'',raterPos:ob.p||'',appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:d.date,month:(d.date||'').slice(0,7),sy:d.date?syOfMonth(d.date.slice(0,7)):d.sy,dept:d.dept,
+    cls:clsOf(d.subject,''),incident:'Walk-through observation'+(tm?' ('+tm+')':'')+(obsd.length?': '+obsd.join(' '):'.'),
+    impact:fb.length?'The observed practices need follow-through to improve learner engagement and attainment of the lesson objectives.':'The observed practices support the learners\u2019 attainment of the lesson objectives.',
+    mech:['Walk-through Observation'],feedback:fb.join('\n')+(d.comments&&!fb.length?d.comments:''),progress:'',source:'walk',obsId:id};
+}
 function plainNotes(s){ return String(s||'').replace(/\*\*([^\n]+?)\*\*/g,'$1'); }
 function noteSegs(line){ var out=[]; String(line).split(/(\*\*[^\n]+?\*\*)/).forEach(function(x){ if(!x) return; var m=/^\*\*([^\n]+?)\*\*$/.exec(x); out.push(m?{t:m[1],b:true}:{t:x,b:false}); }); return out; }
 function richNotes(s){ return String(s||'').split('\n').map(function(l){ return noteSegs(l).map(function(g){ return g.b?'<b>'+esc(g.t)+'</b>':esc(g.t); }).join(''); }).join('\n'); }
@@ -2311,7 +2698,7 @@ function notesEdLoad(){
   $('#o-notes').addEventListener('change',function(){ notesEdLoad(); obsLeafSoon(); });
 })();
 function newObs(){
-  obs={id:'',ratings:[],finds:[],sum:null}; obsPage=0;
+  obs={id:'',ratings:[],finds:[],sum:null,coachId:''}; obsPage=0; $('#o-cap-pmcf').checked=true;
   setPerson('o-teacher',''); $('#o-stage').value=''; $('#o-dept').value=''; setSubject(''); setDate('o-date',TODAY);
   $('#o-no1').checked=true; $('#o-noother').value=''; $('#o-noother').hidden=true; $('#o-q').value='Term 1'; $('#o-t1').value=''; $('#o-t2').value='';
   var me=ls('observer'); setPerson('o-ob1',me?me.n:'',me?me.p:''); setPerson('o-ob2',''); setPerson('o-ob3','');
@@ -2320,7 +2707,7 @@ function newObs(){
 }
 function openObs(id,sub){
   var o=S.obs.filter(function(x){return x.id===id})[0]; if(!o) return;
-  obsPage=0; obs={id:id,sum:o.sum||null,sy:o.sy,ratings:(o.ratings||[]).map(String),finds:(o.finds||[]).map(function(a){return (a||[]).slice()})};
+  obsPage=0; $('#o-cap-pmcf').checked=o.capPmcf!==false; obs={id:id,coachId:o.coachId||'',sum:o.sum||null,sy:o.sy,ratings:(o.ratings||[]).map(String),finds:(o.finds||[]).map(function(a){return (a||[]).slice()})};
   setPerson('o-teacher',o.teacher,o.teacherPos); $('#o-stage').value=o.stage||''; $('#o-dept').value=o.dept||''; setSubject(o.subject||''); setDate('o-date',o.date||'');
   $('#o-no'+(o.no===2?2:1)).checked=true; $('#o-noother').value=o.noOther||'';  $('#o-q').value=/^Term/.test(o.quarter||'')?o.quarter:'Term 1'; $('#o-t1').value=o.t1||''; $('#o-t2').value=o.t2||'';
   var ob=o.observers||[]; ['o-ob1','o-ob2','o-ob3'].forEach(function(k,i){ setPerson(k,ob[i]?ob[i].n:'',ob[i]?ob[i].p:''); });
@@ -2444,8 +2831,34 @@ function renderCoachMonths(){
   $('#c-months1').innerHTML=html; $('#c-months3').innerHTML=html;
 }
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-cmonth]'); if(!b) return; setMonth(b.dataset.cmonth); $('#c-month').dispatchEvent(new Event('change')); });
+function pmcfPending(r,mk2){
+  if(!r) return [];
+  var ids={}, have={}; S.coach.forEach(function(c){ ids[c.id]=1; if(c.lpId) have[c.lpId]=1; if(c.otsId) have[c.otsId]=1; if(c.obsId) have[c.obsId]=1; });
+  var ok=function(o){ return o.teacher===r&&String(o.date||'').slice(0,7)===mk2&&o.capPmcf!==false&&!have[o.id]&&!(o.coachId&&ids[o.coachId]); };
+  return (S.lp||[]).filter(ok).map(function(o){return {k:'lp',o:o}})
+    .concat(S.obs.filter(function(o){return isWalk(o)&&ok(o)}).map(function(o){return {k:'walk',o:o}}))
+    .concat((S.ots||[]).filter(ok).map(function(o){return {k:'ots',o:o}}));
+}
+function pmcfEntryOf(x){
+  var o=JSON.parse(JSON.stringify(x.o)), id=o.id, ce;
+  if(x.k==='lp'){ ce=lpCoachEntry(o,lpCalc(o)); ce.lpId=id; }
+  else if(x.k==='ots'){ ce=otCoachEntry(o,otCalc(o)); ce.otsId=id; }
+  else ce=walkCoachEntry(o,id);
+  ce.savedAt=new Date().toISOString(); return ce;
+}
+function renderCoachPull(){
+  var r=getPerson('c-ratee').n, pend=pmcfPending(r,monthKey()), boxes=$$('[data-cpull]');
+  var nm={lp:'Lesson Plan Monitoring',walk:'Walk-through Observation',ots:'On-the-Spot Test'};
+  boxes.forEach(function(box){ if(!pend.length||!S.canWrite){ box.hidden=true; box.innerHTML=''; return; }
+    box.hidden=false; box.innerHTML='<span>'+pend.length+' saved record'+(pend.length===1?' is':'s are')+' not on this PMCF yet: '+esc(pend.map(function(x){return nm[x.k]+' ('+longDate(x.o.date)+')'}).join('; '))+'.</span><button class="btn gold small" type="button" data-cpull-go>Add '+(pend.length===1?'it':'them')+' to the PMCF</button>'; });
+  if(!pend.length||!S.canWrite) return;
+  $$('[data-cpull-go]').forEach(function(bt){ bt.onclick=async function(){ this.disabled=true; var n=0;
+    try{ for(var i=0;i<pend.length;i++){ var x=pend[i], cid=uid('c'); await Store.put('coach',cid,pmcfEntryOf(x)); var rec=Object.assign({},x.o); var rid=rec.id; delete rec.id; rec.coachId=cid; await Store.put('obs',rid,rec); n++; } toast(n+' entr'+(n===1?'y':'ies')+' added to the PMCF'); }
+    catch(e){ saveErr(e); }
+    renderCoachLog(); }; });
+}
 function renderCoachLog(){
-  renderCoachMonths();
+  renderCoachMonths(); renderCoachPull();
   var list=coachEntries(), r=getPerson('c-ratee').n, ml=monthLabel(monthKey());
   $('#c-count').textContent=list.length+' entr'+(list.length===1?'y':'ies');
   $('#c-loghint').textContent='All saved entries for '+(r||'this teacher')+' in '+ml+', oldest first. Open an entry to change it.';
@@ -3068,12 +3481,15 @@ $('#lib').addEventListener('click',async function(e){
 });
 
 /* ================================================================== CONNECTION, BACKUP, PRINT */
+$('#set-pin').value='';
+$('#set-pin').addEventListener('input',function(){ var v=this.value.replace(/\D/g,'').slice(0,4); if(v!==this.value) this.value=v; });
+$('#set-pin-show').addEventListener('click',function(){ var i=$('#set-pin'), show=i.type==='password'; i.type=show?'text':'password'; this.textContent=show?'Hide':'Show'; });
 $('#set-url').value=API.url; $('#set-code').value=API.code; (function(){ var c=String(API.code||''), k=c.lastIndexOf('|'); if(k>0){ $('#set-email').value=c.slice(0,k); } })();
 if(CFG.apiUrl){ $('#set-url').readOnly=true; }
 $('#set-save').addEventListener('click',function(){
   var em=$('#set-email').value.trim().toLowerCase(), pn=$('#set-pin').value.trim();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ toast('Type your email address.'); $('#set-email').focus(); return; }
-  if(!/^\d{4}$/.test(pn)){ toast('The passcode is 4 digits.'); $('#set-pin').focus(); return; }
+  if(!/^\d{4}$/.test(pn)){ toast('Type the 4-digit passcode (numbers 0\u20139 only). Click Show to check what is typed.'); $('#set-pin').value=''; $('#set-pin').focus(); return; }
   var u=$('#set-url').value.trim(), c=em+'|'+pn; $('#set-pin').value='';
   if(u && !/^https:\/\/script\.google\.com\/(a\/macros\/[^\/]+|macros)\/s\/.+\/exec/.test(u)){ toast('The web app address should end in /exec, as Apps Script shows it after deploying.'); $('#set-url').focus(); return; }
   if(!CFG.apiUrl) ls('apiUrl',u); ls('code',c);
@@ -3117,7 +3533,7 @@ $('#set-restore').addEventListener('change',async function(){
   $('#set-restore-state').textContent='Restored '+n+' of '+jobs.length+' records.'; toast('Backup restored');
 });
 $('#set-backup').addEventListener('click',function(){
-  var data={exported:new Date().toISOString(),obs:S.obs.concat(S.ots||[],S.lp||[]),coach:S.coach,plans:S.plans,config:S.cfg};
+  var data={exported:new Date().toISOString(),obs:S.obs.concat(S.ots||[],S.lp||[]),coach:S.coach,plans:S.plans.concat(S.tplans||[]),config:S.cfg};
   offerFile('CANHS Instructional Supervision backup '+longDate(TODAY).replace(',','')+'.json',new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));
 });
 $('#o-notes-print').addEventListener('click',function(){
@@ -3557,7 +3973,7 @@ function monthlyRows(fm,fy,fd,q){
       rec:otRecLines(o,c).join('\n')}); });
   S.lp.forEach(function(o){ if(o.capRep===false||!ok(o.date,o.dept||deptOf(o.teacher),[o.teacher,o.mon])) return; var c=lpCalc(o);
     rows.push({date:o.date,teacher:o.teacher,subj:[o.subject,o.topic].filter(Boolean).join(' \u2013 '),act:'Lesson plan monitoring'+(o.term?' (Term '+o.term+')':''),by:o.mon,
-      find:c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%).'+(c.notYet.length?'\nNot yet: '+c.notYet.map(function(i){ return LPC[i].b.replace(/,$/,'')+((o.findings||[])[i]?' \u2013 '+o.findings[i]:''); }).join('; '):''),
+      find:c.yes+' of '+c.n+' criteria met ('+Math.round(c.pct)+'%).'+(c.notYet.length?'\nNot yet: '+c.notYet.map(function(i){ return LPC[i].b.replace(/,$/,'')+((o.findings||[])[i]?' \u2013 '+o.findings[i]:''); }).join('; '):''),
       rec:o.rec||''}); });
   S.coach.forEach(function(c){ if(c.source==='ots'||c.source==='lp'||!ok(c.date,c.dept||deptOf(c.ratee),[c.ratee,c.rater])) return;
     rows.push({date:c.date,teacher:c.ratee,subj:c.cls||'',act:(c.mech||[]).join(', ')||'Coaching and feedback',by:c.rater,find:c.incident||'',rec:c.feedback||''}); });
@@ -3650,7 +4066,7 @@ function lpSheetHTML(d){
     '<table style="width:100%;border-collapse:collapse;margin-top:8pt"><colgroup><col style="width:42%"><col style="width:9%"><col style="width:9%"><col></colgroup>'+
     '<tr><th style="'+TH+';text-align:left">I can say that in my lesson plan&hellip;</th><th style="'+TH+'">Yes</th><th style="'+TH+'">Not Yet</th><th style="'+TH+'">Findings/Remarks</th></tr>'+
     LPC.map(function(cr,i){ var r=d.ratings[i]; return '<tr><td style="'+TD+'"><b>'+esc(cr.b)+'</b>'+esc(cr.t)+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='Y'?'&#10003;':'')+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='N'?'&#10003;':'')+'</td><td style="'+TD+';white-space:pre-wrap;vertical-align:middle">'+esc(d.findings[i]||'')+'</td></tr>'; }).join('')+
-    '<tr><td style="'+TD+';text-align:right;font-weight:700">Total</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.yes:'')+'</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.no:'')+'</td><td style="'+TD+';vertical-align:middle">'+(c.rated?c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%)':'')+'</td></tr></table>'+
+    '<tr><td style="'+TD+';text-align:right;font-weight:700">Total</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.yes:'')+'</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.no:'')+'</td><td style="'+TD+';vertical-align:middle">'+(c.rated?c.yes+' of '+c.n+' criteria met ('+Math.round(c.pct)+'%)':'')+'</td></tr></table>'+
     '<div style="background:#E2EFD9;border:.75pt solid #808080;text-align:center;font-weight:700;padding:1pt;margin-top:8pt">Recommendations</div>'+
     '<div style="border:.75pt solid #808080;border-top:none;padding:4pt 8pt;min-height:56pt">'+recs.map(function(r){ return '<div>'+esc(r)+'</div>'; }).join('')+'</div>'+
     '<table class="lay" style="width:100%;border-collapse:collapse;margin-top:16pt"><tr>'+
@@ -3676,7 +4092,7 @@ function openLp(id){
 function lpCoachEntry(d,c){
   var ny=c.notYet.map(function(i){ return LPC[i].b.replace(/,$/,'')+(d.findings[i]?' ('+d.findings[i].replace(/\s+/g,' ').trim()+')':''); });
   return {ratee:d.teacher,rateePos:d.teacherPos,desig:'',rater:d.mon,raterPos:d.monPos,appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:d.date,month:d.date.slice(0,7),sy:d.date?syOfMonth(d.date.slice(0,7)):d.sy,dept:d.dept,
-    cls:clsOf(d.subject,''),incident:'Lesson plan monitoring'+(d.topic?' – '+d.topic:'')+(d.term?' (Term '+d.term+')':'')+': '+c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%).'+(ny.length?' Not yet: '+ny.join('; ')+'.':''),
+    cls:clsOf(d.subject,''),incident:'Lesson plan monitoring'+(d.topic?' – '+d.topic:'')+(d.term?' (Term '+d.term+')':'')+': '+c.yes+' of '+c.n+' criteria met ('+Math.round(c.pct)+'%).'+(ny.length?' Not yet: '+ny.join('; ')+'.':''),
     impact:ny.length?'The lesson plan needs revision in '+ny.length+' area'+(ny.length===1?'':'s')+' before it fully supports learning.':'The lesson plan fully supports the intended learning.',
     mech:['Checking of DLL'],feedback:d.rec||'',progress:'',source:'lp',lpId:lp.id};
 }
@@ -3721,7 +4137,7 @@ $('#lp-teacher').addEventListener('personchange',function(){ var dp=deptOf(getPe
 $('#lp-mon').addEventListener('personchange',function(){ lpLeafSoon(); });
 
 /* ================================================================== boot */
-function renderAll(){ lockDept(); if(typeof renderOtsList==='function') renderOtsList(); if(typeof renderLpList==='function') renderLpList(); if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
+function renderAll(){ lockDept(); if(typeof pgSavedList==='function') pgSavedList(); if(typeof ipRender==='function') ipRender(); if(typeof renderOtsList==='function') renderOtsList(); if(typeof renderLpList==='function') renderLpList(); if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
 function initSelects(){
   $('#g-sy').innerHTML=SYS.map(function(s){return '<option value="'+s+'"'+(s===S.sy?' selected':'')+'>SY '+s+'</option>'}).join('');
   $('#g-sy').addEventListener('change',function(){ S.sy=this.value; ls('sy',S.sy); if(!obs.id){ drawRate(); obsLeafSoon(); } if(!coach.id) renderCoachLog(); renderAll(); });
@@ -3742,7 +4158,7 @@ var startTab=ls('tab'); if(/^#(home|plan|obs|coach|reports|records|people|librar
 Store.init().then(function(){
   Store.watch('obs',function(l){ S.obs=l.filter(function(x){return x.kind!=='ots'&&x.kind!=='lp'}); S.ots=l.filter(function(x){return x.kind==='ots'}); S.lp=l.filter(function(x){return x.kind==='lp'}); renderAll(); });
   Store.watch('coach',function(l){ l.forEach(function(c){ if(c.mech) c.mech=c.mech.map(function(m){ return /^conduct of on-the-spot test$/i.test(m)?'On-the-Spot Test':m; }); }); S.coach=l; renderAll(); });
-  Store.watch('plans',function(l){ S.plans=l; renderAll(); });
+  Store.watch('plans',function(l){ S.plans=l.filter(function(x){return x.kind!=='tplan'}); S.tplans=l.filter(function(x){return x.kind==='tplan'}); renderAll(); });
   Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{},mts:(d&&d.mts)||[],roster:(d&&d.roster)||{}}; applyRoster(); refreshPeopleSelects(); if(S.mode==='shared'&&S.role==='admin'){ var mtl=PEOPLE.filter(function(p){return p.g==='mt'}).map(function(p){return p.n}).sort(); if(JSON.stringify(mtl)!==JSON.stringify((S.cfg.mts||[]).slice().sort())){ S.cfg.mts=mtl; saveCfgSoon(); } } $$('select[data-people="teach"]').forEach(function(x){ delete x.dataset.forDept; }); renderPeople(); renderAll(); });
 });
 })();
