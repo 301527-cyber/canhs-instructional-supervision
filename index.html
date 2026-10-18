@@ -678,7 +678,7 @@ table.rate .finds li{margin:2px 0}
     <div class="lines">
       <label class="fline"><span class="lk">Name of ratee</span><span class="lv"><select id="c-ratee" data-people="teach" data-pos="c-ratee-pos" data-other="c-ratee-other"></select><input type="text" id="c-ratee-other" class="other" placeholder="Type the full name" hidden></span></label>
       <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="c-ratee-pos" readonly></span></label>
-      <label class="fline"><span class="lk">Designation (if applicable)</span><span class="lv"><input type="text" id="c-desig" placeholder="Grade 8 Adviser"></span></label>
+      <label class="fline" hidden><span class="lk">Designation (if applicable)</span><span class="lv"><input type="text" id="c-desig" placeholder="Grade 8 Adviser"></span></label>
       <label class="fline"><span class="lk">Rater (conducted by)</span><span class="lv"><select id="c-rater" data-people="sup" data-pos="c-rater-pos" data-other="c-rater-other"></select><input type="text" id="c-rater-other" class="other" placeholder="Type the full name" hidden></span></label>
       <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="c-rater-pos" readonly></span></label>
       <label class="fline"><span class="lk">Approving authority</span><span class="lv"><select id="c-appr" data-people="sup" data-pos="c-appr-pos" data-other="c-appr-other"></select><input type="text" id="c-appr-other" class="other" placeholder="Type the full name" hidden></span></label>
@@ -733,8 +733,11 @@ table.rate .finds li{margin:2px 0}
       <label class="fline"><span class="lk">Department</span><span class="lv"><select id="ot-dept"></select></span></label>
       <label class="fline"><span class="lk">Learning area</span><span class="lv"><select id="ot-subj"></select><input type="text" id="ot-subj-other" class="other" placeholder="Type the learning area and grade" hidden></span></label>
       <label class="fline"><span class="lk">Section</span><span class="lv"><input type="text" id="ot-section" placeholder="Adorable" autocomplete="off"></span></label>
+      <label class="fline"><span class="lk">Topic</span><span class="lv"><input type="text" id="ot-topic" placeholder="e.g. The Writing Process" autocomplete="off"></span></label>
+      <label class="fline"><span class="lk">Competency</span><span class="lv"><input type="text" id="ot-comp" placeholder="The learning competency the test measures" autocomplete="off"></span></label>
       <div class="fline"><span class="lk">Term</span><span class="lv"><span class="seg" style="align-self:flex-start"><label><input type="radio" name="ot-term" value="1" checked>1</label><label><input type="radio" name="ot-term" value="2">2</label><label><input type="radio" name="ot-term" value="3">3</label></span></span></div>
       <label class="fline"><span class="lk">Date</span><span class="lv"><span class="dfield"><input type="text" class="date" id="ot-date" placeholder="October 14, 2026" autocomplete="off"></span></span></label>
+      <label class="fline"><span class="lk">Time</span><span class="lv"><input type="text" id="ot-time" placeholder="9:00 AM" autocomplete="off"></span></label>
       <label class="fline"><span class="lk">Monitored by</span><span class="lv"><select id="ot-mon" data-people="sup" data-pos="ot-mon-pos" data-other="ot-mon-other"></select><input type="text" id="ot-mon-other" class="other" placeholder="Type the full name" hidden></span></label>
       <label class="fline"><span class="lk">Position</span><span class="lv"><input type="text" id="ot-mon-pos" readonly></span></label>
     </div>
@@ -1074,7 +1077,8 @@ function walkLine(doc,p,text){
   var ts=all(p,'t'), put=false;
   ts.forEach(function(t){ var s=t.textContent, k=s.indexOf('OBSERVATION:');
     if(k>=0){ t.textContent=s.slice(0,k+12)+' '; t.setAttribute('xml:space','preserve'); return; }
-    if(!put){ t.textContent=text; put=true; var r=t.parentNode, rp=kids(r,'rPr')[0]; if(rp) kids(rp,'rFonts').forEach(function(x){rp.removeChild(x)}); } else t.textContent=''; });
+    if(!put){ t.textContent=' '+text; t.setAttribute('xml:space','preserve'); put=true; var r=t.parentNode, rp=kids(r,'rPr')[0]; if(rp) kids(rp,'rFonts').forEach(function(x){rp.removeChild(x)});
+      var br=r.cloneNode(true), bt=all(br,'t')[0]; bt.textContent='\u2611\ufe0e'; bt.setAttribute('xml:space','preserve'); setFont(doc,br,'Segoe UI Symbol'); r.parentNode.insertBefore(br,r); } else t.textContent=''; });
   if(!put){ var r=mk(doc,'r'), t=mk(doc,'t'); t.setAttribute('xml:space','preserve'); t.textContent=text; r.appendChild(t); p.appendChild(r); }
 }
 function checkBoxes(doc,p,which){
@@ -1095,17 +1099,22 @@ function cellText(doc,tc,text,o){
   r.appendChild(rpr); var t=mk(doc,'t'); t.setAttribute('xml:space','preserve'); t.textContent=text; r.appendChild(t); p.appendChild(r);
   return p;
 }
+function noteSplit(line){ var m=/^(\s*\d{1,2}[:.]\d{2}(?:\s*[AaPp]\.?\s?[Mm]\.?)?\s*(?:[-\u2013\u2014]|:(?!\d))?)\s*(.*)$/.exec(line); return m?{pre:m[1].trim(),txt:m[2]}:{pre:'',txt:line}; }
 function addParas(doc,afterP,lines,o){
   var ref=afterP.nextSibling, par=afterP.parentNode;
   lines.forEach(function(line){
-    var p=mk(doc,'p'), ppr=mk(doc,'pPr'), sp=mk(doc,'spacing'); setAttr(sp,'after','0'); setAttr(sp,'before','0'); ppr.appendChild(sp); p.appendChild(ppr);
+    var p=mk(doc,'p'), ppr=mk(doc,'pPr'), sp=mk(doc,'spacing'); setAttr(sp,'after','0'); setAttr(sp,'before','0');
+    if(o&&o.hang){ var tabs=mk(doc,'tabs'), tb=mk(doc,'tab'); setAttr(tb,'val','left'); setAttr(tb,'pos',String(o.hang)); tabs.appendChild(tb); ppr.appendChild(tabs); }
+    ppr.appendChild(sp);
+    if(o&&o.hang){ var ind=mk(doc,'ind'); setAttr(ind,'left',String(o.hang)); setAttr(ind,'hanging',String(o.hang)); ppr.appendChild(ind); var ps=noteSplit(line); line=ps.pre?ps.pre+'\t'+ps.txt:'\t'+ps.txt; }
+    p.appendChild(ppr);
     var segs=o&&o.rich?String(line).split(/(\*\*[^\n]+?\*\*)/).filter(Boolean).map(function(x){ var m=/^\*\*([^\n]+?)\*\*$/.exec(x); return m?{t:m[1],b:true}:{t:x}; }):[{t:line}];
     if(!segs.length) segs=[{t:''}];
     segs.forEach(function(g){
     var r=mk(doc,'r'), rpr=mk(doc,'rPr'), f=mk(doc,'rFonts'); ['ascii','hAnsi','cs','eastAsia'].forEach(function(k){setAttr(f,k,'Arial')}); rpr.appendChild(f);
     if(g.b){ rpr.appendChild(mk(doc,'b')); rpr.appendChild(mk(doc,'bCs')); }
     var sz=mk(doc,'sz'); setAttr(sz,'val',String((o&&o.sz)||18)); rpr.appendChild(sz); r.appendChild(rpr);
-    var t=mk(doc,'t'); t.setAttribute('xml:space','preserve'); t.textContent=g.t; r.appendChild(t); p.appendChild(r);
+    String(g.t).split('\t').forEach(function(part,pi){ if(pi) r.appendChild(mk(doc,'tab')); var t=mk(doc,'t'); t.setAttribute('xml:space','preserve'); t.textContent=part; r.appendChild(t); }); p.appendChild(r);
     });
     par.insertBefore(p,ref);
   });
@@ -1189,7 +1198,7 @@ function fillNotes(xml,d,DOMP,SER){
     all(tbl,'trHeight').forEach(function(h){ setAttr(h,'hRule','atLeast'); });
     var tc=all(tbl,'tc')[0], p0=all(tc,'p')[0];
     var lines=String(d.notes||'').split(/\r?\n/);
-    if(p0){ addParas(doc,p0,lines,{sz:20,rich:true}); }
+    if(p0){ var mx=lines.reduce(function(a,l){ var p=noteSplit(l); return p.pre?Math.max(a,p.pre.length):a; },0); addParas(doc,p0,lines,{sz:20,rich:true,hang:mx?Math.max(600,mx*115+140):0}); }
   }
   paras=kids(body,'p');
   paras.forEach(function(p,i){ var nx=paras[i+1]; if(nx && /Name of the Observer/.test(textOf(nx)) && /_{6,}/.test(textOf(p))) sigLine(doc,p,[(d.observers[0]||{}).n]); });
@@ -2027,7 +2036,7 @@ function obsKind(o){ return o.no===2?'2nd':o.no===3?(o.noOther||'Other'):'1st'; 
 function fcol(rows){ return '<div class="fc">'+rows.map(function(r){ return '<span class="fk">'+r[0]+'<i></i></span><span class="fv">'+esc(r[1]||'')+'</span>'; }).join('')+'</div>'; }
 function frow(k,v){ return '<div class="fr"><span class="fk">'+k+'<i></i></span><span class="fv">'+esc(v||'')+'</span></div>'; }
 function obsLine(d){ var box=function(n){return d.no===n?'&#9745;':'&#9744;'};
-  if(isWalk(d)) return '<div class="fobs"><b>OBSERVATION:</b> &nbsp;'+esc(d.noOther)+'</div>';
+  if(isWalk(d)) return '<div class="fobs"><b>OBSERVATION:</b> &#9745; '+esc(d.noOther)+'</div>';
   return '<div class="fobs"><b>OBSERVATION:</b> 1st '+box(1)+' &nbsp;&nbsp; 2nd '+box(2)+'</div>'; }
 function obsFields(d){
   return '<div class="fl"><div>'+fcol([['OBSERVER:',d.observers.map(function(o){return o.n}).join(', ')],['TEACHER OBSERVED:',d.teacher]])+frow('SUBJECT &amp; GRADE LEVEL TAUGHT:',String(d.subject||'').toUpperCase())+'</div>'+
@@ -2035,7 +2044,7 @@ function obsFields(d){
 }
 function notesSheetHTML(d){
   return '<div class="leaf page"><div class="hd"><img src="'+SEAL+'" alt="" style="width:46pt;height:46pt"></div><h4>PERFORMANCE MANAGEMENT AND EVALUATION SYSTEM (PMES)<br>FOR TEACHERS</h4><h4 style="margin-top:8pt">CLASSROOM OBSERVATION TOOL (COT) &ndash;<br>OBSERVATION NOTES FORM</h4>'+obsFields(d)+
-    '<p class="sec" style="margin-bottom:0">DIRECTIONS FOR THE OBSERVERS:</p><p>Write your observations on the teacher&rsquo;s classroom performance on the space provided. Use additional sheets whenever necessary.</p><div class="notes grow">'+richNotes(d.notes)+'</div>'+
+    '<p class="sec" style="margin-bottom:0">DIRECTIONS FOR THE OBSERVERS:</p><p>Write your observations on the teacher&rsquo;s classroom performance on the space provided. Use additional sheets whenever necessary.</p><div class="notes grow" style="white-space:normal">'+notesTable(d.notes)+'</div>'+
     '<div class="sigs bottom" style="justify-content:center"><div class="sig" style="max-width:220pt"><div class="nm">'+esc((d.observers[0]||{}).n||'\u00a0')+'</div><div class="lb">Signature over Printed Name of the Observer</div></div></div></div>';
 }
 function cotSheetHTML(d){
@@ -2102,18 +2111,21 @@ function notesPDF(d){
     field('TEACHER OBSERVED:',d.teacher,M,y0+19,350,lv); field('TIME STARTED:',d.t1,RX,y0+19,R,rv);
     field('SUBJECT & GRADE LEVEL TAUGHT:',String(d.subject||'').toUpperCase(),M,y0+38,350); field('TIME ENDED:',d.t2,RX,y0+38,R,rv);
     var y=y0+62; doc.setFont('helvetica','bold'); T('OBSERVATION:',M,y); doc.setFont('helvetica','normal');
-    if(isWalk(d)){ T(d.noOther,M+80,y); } else { T('1st',M+80,y); checkbox(M+96,y,d.no===1); T('2nd',M+122,y); checkbox(M+140,y,d.no===2); }
+    if(isWalk(d)){ checkbox(M+80,y,true); T(d.noOther,M+93,y); } else { T('1st',M+80,y); checkbox(M+96,y,d.no===1); T('2nd',M+122,y); checkbox(M+140,y,d.no===2); }
     return y;
   }
   doc.setFontSize(10); doc.setFont('helvetica','normal');
   var lines=[], maxW=R-M-16, fw=function(b){ doc.setFont('helvetica',b?'bold':'normal'); };
-  String(d.notes||'').split(/\r?\n/).forEach(function(par){
-    var ln=[], w=0;
+  var paras=String(d.notes||'').split(/\r?\n/).map(noteSplit); fw(false);
+  var preW=paras.reduce(function(a,p){ return p.pre?Math.max(a,doc.getTextWidth(pdfSafe(p.pre))):a; },0), gap=preW?6:0;
+  paras.forEach(function(pp){
+    var par=pp.txt, ln=[], w=0, first=true, avail=maxW-preW-gap;
+    var push=function(){ lines.push({pre:first?pp.pre:'',segs:ln}); first=false; };
     noteSegs(par).forEach(function(g){ pdfSafe(g.t).split(/(\s+)/).forEach(function(pc){ if(!pc) return; fw(g.b); var pw=doc.getTextWidth(pc), sp=/^\s+$/.test(pc);
       if(sp&&!ln.length) return;
-      if(!sp&&w+pw>maxW&&ln.length){ while(ln.length&&/^\s+$/.test(ln[ln.length-1].t)) ln.pop(); lines.push(ln); ln=[]; w=0; }
+      if(!sp&&w+pw>avail&&ln.length){ while(ln.length&&/^\s+$/.test(ln[ln.length-1].t)) ln.pop(); push(); ln=[]; w=0; }
       ln.push({t:pc,b:g.b}); w+=pw; }); });
-    lines.push(ln);
+    push();
   });
   fw(false);
   var LH=13.2, page=0, idx=0;
@@ -2127,7 +2139,7 @@ function notesPDF(d){
     var bottom=H-104, top=y; doc.setLineWidth(.7); doc.rect(M,top,R-M,bottom-top);
     doc.setFont('helvetica','normal'); doc.setFontSize(10);
     var ty=top+16, cap=Math.floor((bottom-top-14)/LH);
-    for(var k=0;k<cap&&idx<lines.length;k++,idx++){ var tx=M+8; lines[idx].forEach(function(g){ fw(g.b); doc.text(g.t,tx,ty); tx+=doc.getTextWidth(g.t); }); fw(false); ty+=LH; }
+    for(var k=0;k<cap&&idx<lines.length;k++,idx++){ var tx=M+8+preW+gap; if(lines[idx].pre){ fw(false); doc.text(pdfSafe(lines[idx].pre),M+8,ty); } lines[idx].segs.forEach(function(g){ fw(g.b); doc.text(g.t,tx,ty); tx+=doc.getTextWidth(g.t); }); fw(false); ty+=LH; }
     // signature
     var nm=(d.observers[0]||{}).n||'';
     doc.setLineWidth(.5); doc.line(W/2-95,H-72,W/2+95,H-72);
@@ -2177,6 +2189,16 @@ $('#sm-save').addEventListener('click',function(){ $('#o-save').click(); });
 function plainNotes(s){ return String(s||'').replace(/\*\*([^\n]+?)\*\*/g,'$1'); }
 function noteSegs(line){ var out=[]; String(line).split(/(\*\*[^\n]+?\*\*)/).forEach(function(x){ if(!x) return; var m=/^\*\*([^\n]+?)\*\*$/.exec(x); out.push(m?{t:m[1],b:true}:{t:x,b:false}); }); return out; }
 function richNotes(s){ return String(s||'').split('\n').map(function(l){ return noteSegs(l).map(function(g){ return g.b?'<b>'+esc(g.t)+'</b>':esc(g.t); }).join(''); }).join('\n'); }
+var TIME_RX=/^(\s*\d{1,2}[:.]\d{2}(?:\s*[AaPp]\.?\s?[Mm]\.?)?\s*(?:[-\u2013\u2014]|:(?!\d))?)\s*(.*)$/;
+function noteSplit(line){ var m=TIME_RX.exec(line); return m?{pre:m[1].trim(),txt:m[2]}:{pre:'',txt:line}; }
+function richLine(l){ return noteSegs(l).map(function(g){ return g.b?'<b>'+esc(g.t)+'</b>':esc(g.t); }).join(''); }
+function notesTable(s){
+  var L=String(s||'').split('\n'); if(!String(s||'').trim()) return '';
+  var cs='border:none;padding:0 0 1pt 0;vertical-align:top;line-height:1.35';
+  var mx=L.reduce(function(a,l){ var p=noteSplit(l); return Math.max(a,p.pre.length); },0), cw=Math.max(24,Math.round(mx*5.6+8));
+  return '<table style="width:100%;border-collapse:collapse;border:none;table-layout:fixed"><colgroup><col style="width:'+cw+'pt"><col></colgroup>'+L.map(function(l){ var p=noteSplit(l);
+    return '<tr><td style="'+cs+';white-space:nowrap;padding-right:5pt">'+esc(p.pre).replace(/ /g,'&nbsp;')+'</td><td style="'+cs+';white-space:pre-wrap">'+(richLine(p.txt)||'&nbsp;')+'</td></tr>'; }).join('')+'</table>';
+}
 function edToText(root){
   var lines=[[]], nl=function(){ lines.push([]); }, cur=function(){ return lines[lines.length-1]; };
   var isBlock=function(n){ return n.nodeType===1&&/^(DIV|P|LI|H[1-6]|BLOCKQUOTE|PRE)$/.test(n.nodeName); };
@@ -2643,7 +2665,7 @@ var CCOLS=[['date','DATE'],['incident','SIGNIFICANT INCIDENTS DESCRIPTION'],['im
 function cval(c,k){ return k==='date'?longDate(c.date):k==='mech'?(c.mech||[]).join(', '):(c[k]||''); }
 function coachLeaf(){
   var d=readCoach(), list=coachEntries(), mk2=monthKey();
-  $('#c-leaf').innerHTML=''+LH_HTML(1)+'<div style="height:10pt"></div><h4>PERFORMANCE MONITORING AND COACHING FORM (PMCF)</h4><p style="text-align:center;margin:0 0 4pt">'+esc(monthLabel(mk2))+'</p><div style="width:62%;margin:8pt 0 10pt">'+fcol([['Name of Ratee:',d.ratee],['Position:',d.rateePos],['Designation (if applicable):',d.desig]])+'</div>'+
+  $('#c-leaf').innerHTML=''+LH_HTML(1)+'<div style="height:10pt"></div><h4>PERFORMANCE MONITORING AND COACHING FORM (PMCF)</h4><p style="text-align:center;margin:0 0 4pt">'+esc(monthLabel(mk2))+'</p><div style="width:62%;margin:8pt 0 10pt">'+fcol([['Name of Ratee:',d.ratee],['Position:',d.rateePos]])+'</div>'+
     '<table class="pmcftbl"><colgroup>'+[1.10,1.82,1.76,1.41,2.70,1.90].map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+CCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+(list.length?list.map(function(c){return '<tr>'+CCOLS.map(function(k){return '<td style="white-space:pre-wrap">'+esc(cval(c,k[0]))+(k[0]==='incident'&&c.cls?' <i>('+esc(c.cls)+')</i>':'')+'</td>'}).join('')+'</tr>'}).join(''):'<tr>'+CCOLS.map(function(){return '<td style="height:40pt"></td>'}).join('')+'</tr>')+'</table>'+
     '<div class="sigs pmcf"><div class="sig"><div class="lb" style="text-align:left">Conducted by:</div><div style="height:22pt;line-height:22pt">&nbsp;</div><div class="nm" style="text-align:left;border-bottom:none;padding-top:0">'+esc(d.rater||'\u00a0')+'</div><div class="lb" style="text-align:left">'+esc(d.raterPos)+'</div></div><div class="sig"><div class="lb" style="text-align:left">Concurred by:</div><div style="height:22pt;line-height:22pt">&nbsp;</div><div class="nm" style="text-align:left;border-bottom:none;padding-top:0">'+esc(d.ratee||'\u00a0')+'</div><div class="lb" style="text-align:left">'+esc(d.rateePos)+'</div></div><div class="sig"><div class="lb" style="text-align:left">Approved by:</div><div style="height:22pt;line-height:22pt">&nbsp;</div><div class="nm" style="text-align:left;border-bottom:none;padding-top:0">'+esc(d.appr||'\u00a0')+'</div><div class="lb" style="text-align:left">'+esc(d.apprPos)+'</div></div></div>';
 }
@@ -3051,17 +3073,29 @@ var HDOCX=(function(){
       });
       x+='</w:tr>';
     });
-    return x+'</w:tbl>'+this.para(t,'',''); // Word needs a paragraph after a table
+    return x+'</w:tbl><w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="40" w:lineRule="exact"/><w:rPr><w:sz w:val="2"/></w:rPr></w:pPr></w:p>'; // Word needs a paragraph after a table; keep it tiny
   };
   async function build(leaf,pg){
     if(typeof JSZip==='undefined') throw new Error('zip');
-    var c=new Ctx(pg), body=c.block(leaf);
+    var fimg=leaf.querySelector('img[data-wfoot]'), fwrap=null;
+    if(fimg){ fwrap=document.createElement('div'); leaf.parentNode.appendChild(fwrap); fwrap.appendChild(fimg); }
+    var c=new Ctx(pg), body=c.block(leaf), ftr=fwrap?c.block(fwrap):'';
+    if(fwrap) fwrap.remove();
     var z=new JSZip(), m=pg.m, tw=function(v){return Math.round(v*20)};
     z.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/><Default Extension="gif" ContentType="image/gif"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
     z.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
     z.file('word/_rels/document.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+c.media.map(function(md){ return '<Relationship Id="'+md.id+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/'+md.name+'"/>'; }).join('')+'</Relationships>');
     c.media.forEach(function(md){ z.file('word/media/'+md.name,md.data,{base64:true}); });
     var sect='<w:sectPr><w:pgSz w:w="'+tw(pg.w)+'" w:h="'+tw(pg.h)+'"'+(pg.land?' w:orient="landscape"':'')+'/><w:pgMar w:top="'+tw(m[0])+'" w:right="'+tw(m[1])+'" w:bottom="'+tw(m[2])+'" w:left="'+tw(m[3])+'" w:header="360" w:footer="360" w:gutter="0"/></w:sectPr>';
+    if(ftr){
+      var NS=' xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
+      z.file('word/footer1.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr'+NS+'>'+ftr+'</w:ftr>');
+      var mrels=c.media.map(function(md){ return '<Relationship Id="'+md.id+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/'+md.name+'"/>'; }).join('');
+      z.file('word/_rels/footer1.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+mrels+'</Relationships>');
+      var dr=await z.file('word/_rels/document.xml.rels').async('string'); z.file('word/_rels/document.xml.rels',dr.replace('</Relationships>','<Relationship Id="rIdFtr1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>'));
+      var ct=await z.file('[Content_Types].xml').async('string'); z.file('[Content_Types].xml',ct.replace('</Types>','<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>'));
+      sect=sect.replace('<w:sectPr>','<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr1"/>');
+    }
     z.file('word/document.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><w:body>'+body+sect+'</w:body></w:document>');
     return z.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
   }
@@ -3144,7 +3178,7 @@ var EXP=(function(){
     q('div[style*="background"]').forEach(function(n){ var st=n.getAttribute('style')||'', full=/border\s*:/.test(st), t=boxTable(n.innerHTML); if(!full){ t.setAttribute('width','200'); t.setAttribute('align','center'); } var td=t.querySelector('td'); td.setAttribute('style',st+';text-align:center;font-weight:bold'+(full?'':';border:none')); n.replaceWith(t); });
     q('div[style*="border:"]').forEach(function(n){ var t=boxTable(n.innerHTML); var td=t.querySelector('td'); td.setAttribute('style',n.getAttribute('style')||''); n.replaceWith(t); });
     q('td,th').forEach(function(c){ if(c.style.whiteSpace==='pre-wrap'){ c.innerHTML=c.innerHTML.replace(/\n/g,'<br>'); } });
-    if(foot){ var f=foot.cloneNode(); f.removeAttribute('class'); leaf.appendChild(f); }
+    if(foot){ var f=foot.cloneNode(); f.removeAttribute('class'); f.setAttribute('data-wfoot','1'); leaf.appendChild(f); }
     return leaf.innerHTML;
   }
   var CSS='body{font-family:Arial,sans-serif;font-size:9.5pt;color:#000}p{margin:0 0 4pt}h4{font-size:11pt;font-weight:bold;text-align:center;margin:2pt 0}'+
@@ -3186,7 +3220,7 @@ function r1(x){ return Math.round(x*100)/100; }
 function fmt(x){ return (Math.round(x*100)/100).toString(); }
 function otRead(){
   var t=getPerson('ot-teacher'), m=getPerson('ot-mon'), sv=$('#ot-subj').value;
-  return {kind:'ots',sy:S.sy,teacher:t.n,teacherPos:t.p,dept:$('#ot-dept').value,subject:sv==='__other'?$('#ot-subj-other').value.trim():sv,section:$('#ot-section').value.trim(),
+  return {kind:'ots',sy:S.sy,teacher:t.n,teacherPos:t.p,dept:$('#ot-dept').value,subject:sv==='__other'?$('#ot-subj-other').value.trim():sv,section:$('#ot-section').value.trim(),topic:$('#ot-topic').value.trim(),competency:$('#ot-comp').value.trim(),time:$('#ot-time').value.trim(),
     term:+($('input[name=ot-term]:checked')||{value:1}).value,date:getDate('ot-date'),mon:m.n,monPos:m.p,
     present:num($('#ot-present').value),took:num($('#ot-took').value),
     counts:[0,1,2,3,4,5].map(function(s){ var el=$('#ot-c'+s); return el?num(el.value):0; }),
@@ -3198,15 +3232,16 @@ function otCalc(d){
   var sum=d.counts.reduce(function(a,b){return a+b},0), N=d.took||sum, points=d.counts.reduce(function(a,c,s){return a+c*s},0);
   var mean=N?points/N:0, mps=mean/5*100, passed=d.counts[4]+d.counts[5], dnm=d.counts[0]+d.counts[1]+d.counts[2]+d.counts[3];
   var items=d.items.map(function(it){ var p=N?it.correct/N*100:0; return {comp:it.comp,correct:it.correct,pct:p,lv:masteryOf(p)}; });
-  return {sum:sum,N:N,points:points,mean:mean,mps:mps,lv:masteryOf(mps),passed:passed,dnm:dnm,pctOf:function(c){return N?c/N*100:0},items:items,
+  var sm=sum?points/sum:0, sd=sum?Math.sqrt(d.counts.reduce(function(a,cn,sc){return a+cn*(sc-sm)*(sc-sm)},0)/sum):0;
+  return {sd:sd,sum:sum,N:N,points:points,mean:mean,mps:mps,lv:masteryOf(mps),passed:passed,dnm:dnm,pctOf:function(c){return N?c/N*100:0},items:items,
     correctTotal:d.items.reduce(function(a,b){return a+b.correct},0)};
 }
 function otAuto(d,c){
   var it=c.items.map(function(x,i){ return {n:i+1,comp:x.comp||'(competency not written)',pct:x.pct,lv:x.lv,has:x.correct>0||!!x.comp}; });
   var good=it.filter(function(x){return x.has&&Math.round(x.pct)>=66}), gap=it.filter(function(x){return x.has&&Math.round(x.pct)<35}), mid=it.filter(function(x){return x.has&&Math.round(x.pct)>=35&&Math.round(x.pct)<66});
-  var line=function(x){ return 'Item '+x.n+' – '+x.comp+' ('+fmt(x.pct)+'%, '+x.lv[1]+')'; };
+  var line=function(x){ return 'Item '+x.n+' – '+x.comp+' ('+Math.round(x.pct)+'%, '+x.lv[1]+')'; };
   return {
-    a1:'On the average, students answered '+fmt(c.mps)+'% of the items correctly, indicating that they have achieved '+fmt(c.mps)+'% mastery of the tested competencies ('+c.lv[1]+').',
+    a1:'On the average, students answered '+Math.round(c.mps)+'% of the items correctly, indicating that they have achieved '+Math.round(c.mps)+'% mastery of the tested competencies ('+c.lv[1]+').',
     a2:good.length?good.map(line).join('\n'):'None of the tested competencies reached Moving Towards Mastery (66% or more of the learners answering correctly).',
     a3:gap.length?gap.map(line).join('\n'):'No competency was mastered by less than 35% of the learners.',
     r3:gap.length?'Reteach '+gap.map(function(x){return 'Item '+x.n+(x.comp&&x.comp!=='(competency not written)'?' ('+x.comp+')':'')}).join(', ')+' using a different strategy, then give a short follow-up test.'
@@ -3218,7 +3253,7 @@ function otRecLines(d,c){ return ['Enrichment activities for '+c.passed+' learne
 function otBuildInputs(){
   $('#ot-scores').innerHTML=[5,4,3,2,1,0].map(function(s){ return '<label class="fline"><span class="lk">Score '+s+'</span><span class="lv"><span class="row" style="gap:12px;flex-wrap:nowrap"><input type="number" min="0" id="ot-c'+s+'" inputmode="numeric" style="max-width:160px" placeholder="0"><span class="calc" id="ot-p'+s+'"></span></span></span></label>'; }).join('');
   $('#ot-items').innerHTML=Array.apply(null,{length:OT_ITEMS}).map(function(_,i){ return '<div class="iitem"><div class="ih">Item '+(i+1)+'</div><div class="lines" style="max-width:none">'+
-    '<label class="fline"><span class="lk">Competency tested</span><span class="lv"><input type="text" id="ot-ic'+i+'" placeholder="e.g. Identifies the stages of the writing process"></span></label>'+
+    '<label class="fline"><span class="lk">Question</span><span class="lv"><input type="text" id="ot-ic'+i+'" placeholder="The question or task of this item"></span></label>'+
     '<label class="fline"><span class="lk">No. of correct responses</span><span class="lv"><input type="number" min="0" id="ot-ir'+i+'" inputmode="numeric" style="max-width:160px" placeholder="0"></span></label>'+
     '<div class="fline"><span class="lk">% of correct responses</span><span class="lv"><span class="calc" id="ot-ip'+i+'">&ndash;</span></span></div>'+
     '<div class="fline"><span class="lk">Mastery level</span><span class="lv"><span class="calc" id="ot-il'+i+'">&ndash;</span></span></div></div></div>'; }).join('');
@@ -3233,8 +3268,8 @@ function otRefresh(fromText){
   if(!d.took&&c.sum) w3.push('Type the number who took the test in Step 2. The percentages below use the '+c.sum+' learners counted here for now.');
   otWarn('ot-warn3',w3);
   $('#ot-tiles3').innerHTML='<div class="tile"><b>'+c.passed+'<small> · '+Math.round(c.pctOf(c.passed))+'%</small></b><span>Passed (got 4–5)</span></div><div class="tile"><b>'+c.dnm+'<small> · '+Math.round(c.pctOf(c.dnm))+'%</small></b><span>Did not meet expectation (0–3)</span></div>'+
-    '<div class="tile"><b>'+fmt(c.mean)+'<small> / 5</small></b><span>Mean score</span></div><div class="tile"><b>'+fmt(c.mps)+'<small>%</small></b><span>MPS · '+c.lv[1]+'</span></div>';
-  c.items.forEach(function(x,i){ var has=d.items[i].correct||d.items[i].comp; $('#ot-ip'+i).textContent=has?fmt(x.pct)+'%':'–'; $('#ot-il'+i).textContent=has?x.lv[1]+' ('+x.lv[0]+')':'–'; });
+    '<div class="tile"><b>'+fmt(c.mean)+'<small> / 5</small></b><span>Mean score</span></div><div class="tile"><b>'+Math.round(c.mps)+'<small>%</small></b><span>MPS · '+c.lv[1]+'</span></div><div class="tile"><b>'+(c.sum?c.sd.toFixed(2):'–')+'</b><span>Standard deviation (SD)</span></div>';
+  c.items.forEach(function(x,i){ var has=d.items[i].correct||d.items[i].comp; $('#ot-ip'+i).textContent=has?Math.round(x.pct)+'%':'–'; $('#ot-il'+i).textContent=has?x.lv[1]+' ('+x.lv[0]+')':'–'; });
   var w4=[]; d.items.forEach(function(it,i){ if(c.N&&it.correct>c.N) w4.push('Item '+(i+1)+': '+it.correct+' correct responses is more than the '+c.N+' learners who took the test.'); });
   if(c.correctTotal&&c.points&&c.correctTotal!==c.points) w4.push('The correct responses add up to '+c.correctTotal+', but the scores in Step 3 add up to '+c.points+' points. They should match; check the entries.');
   otWarn('ot-warn4',w4);
@@ -3245,44 +3280,58 @@ function otRefresh(fromText){
 }
 var otT; function otLeafSoon(){ clearTimeout(otT); otT=setTimeout(function(){ $('#ot-leafwrap').innerHTML=otSheetHTML(otRead()); },250); }
 function otSheetHTML(d){
-  var c=otCalc(d), box=function(on){ return on?'&#9745;':'&#9744;'; }, TD='style="border:.75pt solid #808080;padding:2pt 4pt"', TH='style="border:.75pt solid #808080;padding:2pt 3pt;background:#E2EFD9;font-weight:700;text-align:center"';
-  var cell=function(v,o){ return '<td '+TD.replace('"',(o&&o.c?'"text-align:center;':'"'))+'>'+(v===''||v==null?'&nbsp;':v)+'</td>'; };
-  var learners='<table style="width:100%;border-collapse:collapse"><tr><th '+TH+' colspan="2">Number of Learners&hellip;</th></tr>'+
-    [['present',d.present],['took the test',d.took],['passed<br>(got 4-5)',c.passed],['did not meet<br>expectation<br>(got 0-3)',c.dnm]].map(function(r){ return '<tr>'+cell(r[0])+cell(r[1]===''?'':String(r[1]),{c:1})+'</tr>'; }).join('')+'</table>';
-  var scores='<table style="width:100%;border-collapse:collapse"><tr><th '+TH+'>Score</th><th '+TH+'>No. of Learners</th><th '+TH+'>% of Learners</th></tr>'+
-    [5,4,3,2,1,0].map(function(s){ var n=d.counts[s]; return '<tr>'+cell(String(s),{c:1})+cell(n?String(n):'',{c:1})+cell(n?Math.round(c.pctOf(n)):'',{c:1})+'</tr>'; }).join('')+
-    '<tr><td colspan="3" '+TD+'>Mean Score: <b>'+(c.N?fmt(c.mean):'')+'</b><br>MPS: <b>'+(c.N?fmt(c.mps):'')+'</b></td></tr></table>';
-  var items='<table style="width:100%;border-collapse:collapse"><tr><th '+TH+'>Item No.</th><th '+TH+'>No. of Correct Response</th><th '+TH+'>% of Correct Response</th><th '+TH+'>Mastery Level</th></tr>'+
-    c.items.map(function(x,i){ var has=d.items[i].correct||d.items[i].comp; return '<tr>'+cell(String(i+1),{c:1})+cell(has?String(x.correct):'',{c:1})+cell(has?fmt(x.pct):'',{c:1})+cell(has?x.lv[0]:'',{c:1})+'</tr>'; }).join('')+
-    '<tr><td colspan="4" '+TD+' ><table style="border-collapse:collapse;border:none"><tr><td style="border:none;padding:0 6px 0 0;width:38px;white-space:nowrap;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">96-100</td><td style="border:none;padding:0 6px 0 0;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">Mastered (M)</td></tr><tr><td style="border:none;padding:0 6px 0 0;width:38px;white-space:nowrap;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">86-95</td><td style="border:none;padding:0 6px 0 0;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">Closely Approaching Mastery (CAM)</td></tr><tr><td style="border:none;padding:0 6px 0 0;width:38px;white-space:nowrap;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">66-85</td><td style="border:none;padding:0 6px 0 0;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">Moving Towards Mastery (MTM)</td></tr><tr><td style="border:none;padding:0 6px 0 0;width:38px;white-space:nowrap;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">35-65</td><td style="border:none;padding:0 6px 0 0;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">Average Mastery (A)</td></tr><tr><td style="border:none;padding:0 6px 0 0;width:38px;white-space:nowrap;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">15-34</td><td style="border:none;padding:0 6px 0 0;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">Low Mastery (L)</td></tr><tr><td style="border:none;padding:0 6px 0 0;width:38px;white-space:nowrap;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">5-14</td><td style="border:none;padding:0 6px 0 0;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">Very Low Mastery (VL)</td></tr><tr><td style="border:none;padding:0 6px 0 0;width:38px;white-space:nowrap;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">0-4</td><td style="border:none;padding:0 6px 0 0;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top">Absolutely Without Mastery (AWM)</td></tr></table></td></tr></table>';
-  var sec=function(t){ return '<div style="background:#E2EFD9;border:.75pt solid #808080;text-align:center;font-weight:700;padding:1pt;margin-top:6pt">'+t+'</div>'; };
-  var lines=function(t){ return '<div style="white-space:pre-wrap;padding:2pt 0 0 14pt">'+esc(t||'')+'</div>'; };
+  var c=otCalc(d), box=function(on){ return on?'&#9745;':'&#9744;'; }, B='border:.75pt solid #808080', G='background:#E2EFD9';
+  var td=function(v,st){ return '<td style="'+B+';padding:2pt 4pt;vertical-align:middle;'+(st||'')+'">'+(v===''||v==null?'&nbsp;':v)+'</td>'; };
+  var th=function(v,st){ return '<th style="'+B+';padding:2pt 3pt;'+G+';font-weight:700;text-align:center;vertical-align:middle;'+(st||'')+'">'+v+'</th>'; };
+  var C='text-align:center;';
+  var pm=/^(.*?)\s+(\d{1,2})$/.exec(String(d.subject||'').trim()), area=pm?pm[1]:(d.subject||''), grade=pm?pm[2]:'';
+  var gs=[grade,d.section].filter(Boolean).join('-');
+  var pc=function(n){ return Math.round(c.pctOf(n)); };
+  var scores='<table style="width:100%;border-collapse:collapse"><colgroup><col style="width:24%"><col style="width:36%"><col style="width:40%"></colgroup><tr>'+th('Score')+th('No. of Learners')+th('% of Learners')+'</tr>'+
+    [5,4,3,2,1,0].map(function(sc){ var n=d.counts[sc]; return '<tr>'+td(String(sc),C)+td(n?String(n):'',C)+td(n?String(pc(n)):'',C)+'</tr>'; }).join('')+
+    '<tr>'+td('Passed (got 4&ndash;5)',G,2).replace('<td','<td colspan="2"')+td(c.sum?'<b>'+c.passed+'</b> ('+pc(c.passed)+'%)':'',C)+'</tr>'+
+    '<tr>'+td('Did not meet expectation (got 0&ndash;3)',G+';line-height:1.15').replace('<td','<td colspan="2"')+td(c.sum?'<b>'+c.dnm+'</b> ('+pc(c.dnm)+'%)':'',C)+'</tr>'+
+    '<tr>'+td('Mean Score',G).replace('<td','<td colspan="2"')+td(c.N?'<b>'+fmt(c.mean)+'</b>':'',C)+'</tr>'+
+    '<tr>'+td('MPS',G).replace('<td','<td colspan="2"')+td(c.N?'<b>'+Math.round(c.mps)+'</b>':'',C)+'</tr>'+
+    '<tr>'+td('SD',G).replace('<td','<td colspan="2"')+td(c.sum?'<b>'+c.sd.toFixed(2)+'</b>':'',C)+'</tr></table>';
+  var LS='border:none;padding:0 5pt 0 0;font-size:7pt;font-style:italic;line-height:1.3;vertical-align:top;white-space:nowrap';
+  var leg=function(rows){ return '<table style="border-collapse:collapse;border:none;table-layout:fixed;width:100%"><colgroup><col style="width:30pt"><col></colgroup>'+rows.map(function(r){ return '<tr><td style="'+LS+'">'+r[0]+'</td><td style="'+LS+'">'+r[1]+'</td></tr>'; }).join('')+'</table>'; };
+  var legend='<table style="width:100%;border-collapse:collapse;border:none"><tr><td style="border:none;padding:0;vertical-align:top;width:52%">'+leg([['96-100','Mastered (M)'],['86-95','Closely Approaching Mastery (CAM)'],['66-85','Moving Towards Mastery (MTM)'],['35-65','Average Mastery (A)']])+'</td><td style="border:none;padding:0;vertical-align:top">'+leg([['15-34','Low Mastery (L)'],['5-14','Very Low Mastery (VL)'],['0-4','Absolutely Without Mastery (AWM)']])+'</td></tr></table>';
+  var items='<table style="width:100%;border-collapse:collapse"><colgroup><col style="width:9%"><col style="width:42%"><col style="width:16%"><col style="width:16%"><col style="width:17%"></colgroup><tr>'+th('Item No.')+th('Question')+th('No. of Correct Response')+th('% of Correct Response')+th('Mastery Level')+'</tr>'+
+    c.items.map(function(x,i){ var has=d.items[i].correct||d.items[i].comp; return '<tr style="height:22pt">'+td(String(i+1),C)+td(esc(d.items[i].comp||''),'font-size:8.5pt')+td(has?String(x.correct):'',C)+td(has?String(Math.round(x.pct)):'',C)+td(has?x.lv[0]:'',C)+'</tr>'; }).join('')+
+    '<tr><td colspan="5" style="'+B+';padding:2pt 4pt">'+legend+'</td></tr></table>';
+  var sec=function(t){ return '<div style="'+G+';'+B+';text-align:center;font-weight:700;padding:1pt;margin-top:6pt">'+t+'</div>'; };
+  var lines=function(t){ return '<div style="white-space:pre-wrap;padding:2pt 0 0 0">'+esc(t||'')+'</div>'; };
+  var numList=function(list){ var cs='border:none;padding:0;vertical-align:top'; return '<table style="width:100%;border-collapse:collapse;border:none;table-layout:fixed"><colgroup><col style="width:22pt"><col></colgroup>'+list.map(function(h,i){ return '<tr><td style="'+cs+';padding-left:6pt'+(i?';padding-top:3pt':'')+'">'+(i+1)+'.</td><td style="'+cs+(i?';padding-top:3pt':'')+'">'+h+'</td></tr>'; }).join('')+'</table>'; };
   var recs=otRecLines(d,c);
+  var F=function(k,v){ return frow(k,v); };
+  var L='border:none;padding:0;vertical-align:top';
+  var sig=function(lab,nm,pos){ return '<td class="lay" style="width:33.3%;'+L+';padding-right:12pt"><b>'+lab+'</b><div style="height:34pt;line-height:34pt">&nbsp;</div><div style="font-weight:700">'+(nm?esc(nm):'&nbsp;')+'</div><div>'+esc(pos||'')+'</div></td>'; };
   return '<div class="leaf page" style="padding-bottom:70pt">'+LH_HTML(1)+'<div style="height:6pt"></div><h4>ON THE SPOT TEST MONITORING AND EVALUATION TOOL<br>SY '+esc(d.sy)+'</h4>'+
-    '<table class="lay" style="width:100%;border-collapse:collapse;margin:6pt 0 0"><tr>'+
-      '<td class="lay" style="width:62%;border:none;padding:0">'+fcol([['Name of Teacher:',d.teacher],['Learning Area:',d.subject],['Section:',d.section]])+'</td>'+
-      '<td class="lay" style="border:none;padding:0 0 0 14pt;vertical-align:top">Term: '+box(d.term===1)+' 1 &nbsp; '+box(d.term===2)+' 2 &nbsp; '+box(d.term===3)+' 3<div style="margin-top:7pt">'+fcol([['Date:',longDate(d.date)]])+'</div></td></tr></table>'+
+    '<table class="lay" style="width:100%;border-collapse:collapse;margin:6pt 0 0">'+
+      '<colgroup><col style="width:27%"><col style="width:32%"><col style="width:26%"><col style="width:15%"></colgroup>'+
+      '<tr><td class="lay" colspan="2" style="'+L+';padding-right:18pt">'+F('Name of Teacher:',d.teacher)+'</td><td class="lay" colspan="2" style="'+L+';padding-top:2pt">Term: '+box(d.term===1)+' 1 &nbsp; '+box(d.term===2)+' 2 &nbsp; '+box(d.term===3)+' 3</td></tr>'+
+      '<tr><td class="lay" style="'+L+';padding-right:14pt">'+F('Learning Area:',area)+'</td><td class="lay" style="'+L+';padding-right:18pt;white-space:nowrap">'+F('Grade &amp; Section:',gs)+'</td><td class="lay" style="'+L+';padding-right:8pt;white-space:nowrap">'+F('Date:',longDate(d.date))+'</td><td class="lay" style="'+L+';white-space:nowrap">'+F('Time:',d.time)+'</td></tr>'+
+      '<tr><td class="lay" colspan="4" style="'+L+'">'+F('Topic:',d.topic)+'</td></tr>'+
+      '<tr><td class="lay" colspan="4" style="'+L+'">'+F('Competency:',d.competency)+'</td></tr></table>'+
     sec('Test Results Summary')+
-    '<table class="lay" style="width:100%;border-collapse:collapse;border:.75pt solid #808080;border-top:none"><tr>'+
-      '<td class="lay" style="width:24%;border:none;padding:4pt;vertical-align:top">'+learners+'</td>'+
-      '<td class="lay" style="width:31%;border:none;padding:4pt;vertical-align:top">'+scores+'</td>'+
-      '<td class="lay" style="border:none;padding:4pt;vertical-align:top">'+items+'</td></tr></table>'+
-    sec('Analysis')+
-    '<div style="border:.75pt solid #808080;border-top:none;padding:3pt 6pt">'+
-      '<div>1. '+esc(d.a1||'')+'</div><div style="margin-top:3pt">2. Competencies that students mastered, closely approaching mastery, or moving towards mastery:</div>'+lines(d.a2)+
-      '<div style="margin-top:3pt">3. Learning gaps (misconceptions, skills not mastered/competencies mastered by less than 35% of learners):</div>'+lines(d.a3)+'</div>'+
+    '<table class="lay" style="width:100%;border-collapse:collapse;'+B+';border-top:none"><tr>'+
+      '<td class="lay" style="width:33%;border:none;padding:6pt 4pt 4pt 6pt;vertical-align:top">'+scores+'</td>'+
+      '<td class="lay" style="border:none;padding:6pt 6pt 4pt 14pt;vertical-align:top">'+items+'</td></tr></table>'+
+    sec('Findings/Remarks')+
+    '<div style="'+B+';border-top:none;padding:3pt 6pt">'+
+      numList([esc(d.a1||''),'Competencies that students mastered, closely approaching mastery, or moving towards mastery:'+lines(d.a2),'Learning gaps (misconceptions, skills not mastered/competencies mastered by less than 35% of learners):'+lines(d.a3)])+'</div>'+
     sec('Recommendations')+
-    '<div style="border:.75pt solid #808080;border-top:none;padding:3pt 6pt">'+recs.map(function(r,i){ return '<div>'+(i+1)+'. '+esc(r)+'</div>'; }).join('')+'</div>'+
+    '<div style="'+B+';border-top:none;padding:3pt 6pt">'+recs.map(function(r,i){ return '<div>'+(i+1)+'. '+esc(r)+'</div>'; }).join('')+'</div>'+
     '<table class="lay" style="width:100%;border-collapse:collapse;margin-top:16pt"><tr>'+
-      '<td class="lay" style="width:50%;border:none;padding:0 20pt 0 0;vertical-align:top"><b>Monitored by:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left">'+esc(d.mon||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.monPos||'HT/MT/School Head')+'</div></div></td>'+
-      '<td class="lay" style="border:none;padding:0;vertical-align:top"><b>Conforme:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left">'+esc(d.teacher||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.teacherPos||'Teacher/Master Teacher')+'</div></div></td></tr></table>'+
+      sig('Monitored by:',d.mon,d.monPos||'Department Head')+sig('Conforme:',d.teacher,d.teacherPos||'Teacher')+sig('Noted:',PRINCIPAL.n,PRINCIPAL.p)+'</tr></table>'+
     '<img class="lh-bot" src="'+LH_BOT+'" alt=""></div>';
 }
 function otFillSubj(keep){ subjFill('ot-subj','ot-dept','Choose a learning area and grade',keep); }
 function otSetSubj(v){ otFillSubj(v&&subjDept(v)?v:''); if(!v){ $('#ot-subj').value=''; $('#ot-subj-other').hidden=true; return; } if(subjDept(v)){ $('#ot-subj').value=v; $('#ot-subj-other').hidden=true; } else { $('#ot-subj').value='__other'; $('#ot-subj-other').value=v; $('#ot-subj-other').hidden=false; } }
 function otClearEdits(){ ['a1','a2','a3','r3','r4'].forEach(function(k){ delete $('#ot-'+k).dataset.edited; }); }
 function newOts(){
-  ots={id:'',coachId:''}; setPerson('ot-teacher',''); $('#ot-dept').value=''; otSetSubj(''); $('#ot-section').value=''; $('input[name=ot-term][value="1"]').checked=true; setDate('ot-date',TODAY);
+  ots={id:'',coachId:''}; setPerson('ot-teacher',''); $('#ot-dept').value=''; otSetSubj(''); $('#ot-section').value=''; ['ot-topic','ot-comp','ot-time'].forEach(function(k){$('#'+k).value=''}); $('input[name=ot-term][value="1"]').checked=true; setDate('ot-date',TODAY);
   var me=ls('observer'); setPerson('ot-mon',me?me.n:'',me?me.p:'');
   ['ot-present','ot-took'].forEach(function(k){$('#'+k).value=''}); [0,1,2,3,4,5].forEach(function(s){$('#ot-c'+s).value=''});
   for(var i=0;i<OT_ITEMS;i++){ $('#ot-ic'+i).value=''; $('#ot-ir'+i).value=''; }
@@ -3291,7 +3340,7 @@ function newOts(){
 }
 function openOts(id){
   var o=S.ots.filter(function(x){return x.id===id})[0]; if(!o) return;
-  ots={id:id,coachId:o.coachId||''}; setPerson('ot-teacher',o.teacher,o.teacherPos); $('#ot-dept').value=o.dept||''; otSetSubj(o.subject||''); $('#ot-section').value=o.section||'';
+  ots={id:id,coachId:o.coachId||''}; setPerson('ot-teacher',o.teacher,o.teacherPos); $('#ot-dept').value=o.dept||''; otSetSubj(o.subject||''); $('#ot-section').value=o.section||''; $('#ot-topic').value=o.topic||''; $('#ot-comp').value=o.competency||''; $('#ot-time').value=o.time||'';
   var tr=$('input[name=ot-term][value="'+(o.term||1)+'"]'); if(tr) tr.checked=true; setDate('ot-date',o.date||''); setPerson('ot-mon',o.mon,o.monPos);
   $('#ot-present').value=o.present||''; $('#ot-took').value=o.took||''; [0,1,2,3,4,5].forEach(function(s){ $('#ot-c'+s).value=(o.counts||[])[s]||''; });
   for(var i=0;i<OT_ITEMS;i++){ var it=(o.items||[])[i]||{}; $('#ot-ic'+i).value=it.comp||''; $('#ot-ir'+i).value=it.correct||''; }
