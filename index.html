@@ -901,10 +901,29 @@ table.rate .finds li{margin:2px 0}
     <p class="hint" id="pp-hint">Set the department head designate for each learning area. Only the School Head and editors can change these.</p>
     <div class="scroll"><table class="ind" id="pp-heads" style="min-width:620px"></table></div>
   </div>
+  <div class="card" id="pp-codes-card" hidden>
+    <h2>Department access codes</h2>
+    <p class="hint">Give each department head their own code. With it they see and save only the plans, observations, on-the-spot tests, lesson plan monitoring and PMCFs of the teachers assigned to their department. They cannot open other departments&rsquo; records. The check is done by the Google Sheet, so the other records never reach their browser. Use at least 6 letters or numbers. Leave a code blank to block that department.</p>
+    <div class="scroll"><table class="ind" id="pp-codes" style="min-width:560px"></table></div>
+    <div class="row" style="margin-top:12px"><button class="btn gold" id="pp-codes-save" type="button">Save access codes</button><span class="mini" id="pp-codes-state"></span></div>
+  </div>
+  <div class="card" id="pp-add-card" hidden>
+    <h2>Add a teacher</h2>
+    <p class="hint">For new teachers and transferees not yet on the PSIPOP list. They appear at once in every form, the dashboard and the department lists.</p>
+    <div class="lines" style="max-width:none">
+      <label class="fline"><span class="lk">Last name</span><span class="lv"><input type="text" id="pp-new-last" placeholder="DELA CRUZ" autocomplete="off"></span></label>
+      <label class="fline"><span class="lk">First name and middle initial</span><span class="lv"><input type="text" id="pp-new-first" placeholder="JUAN P." autocomplete="off"></span></label>
+      <label class="fline"><span class="lk">Position</span><span class="lv"><select id="pp-new-pos"></select></span></label>
+      <label class="fline"><span class="lk">Department</span><span class="lv"><select id="pp-new-dept"></select></span></label>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn gold" id="pp-new-add" type="button">Add teacher</button></div>
+  </div>
   <div class="card">
     <h2>Personnel roster <span class="tag">PSIPOP as of October 6, 2026</span></h2>
+    <div class="row" style="margin:6px 0 10px"><input type="search" id="pp-q" placeholder="Search a name" style="max-width:260px" autocomplete="off"><span class="mini" id="pp-edit-hint"></span></div>
     <p class="hint">Names and positions come from the school&rsquo;s PSIPOP for FY 2026 (54 filled positions). Assign each teacher to a department so observations and coaching are counted in the right place.</p>
     <div class="scroll"><table class="ind" id="pp-roster" style="min-width:640px"></table></div>
+    <details id="pp-removed-box" style="margin-top:14px" hidden><summary style="cursor:pointer;font-weight:600">Removed personnel (<span id="pp-removed-n">0</span>)</summary><div class="scroll"><table class="ind" id="pp-removed" style="min-width:560px;margin-top:8px"></table></div></details>
   </div>
 </section>
 
@@ -931,12 +950,13 @@ table.rate .finds li{margin:2px 0}
       <button class="btn ghost" id="set-forget" type="button">Forget the code on this device</button>
       <span class="mini">Status: <b id="set-state">Connecting&hellip;</b></span>
     </div>
-    <p class="hint" style="margin-top:14px">Department heads use the department heads&rsquo; code: they can add and change entries. The School Head&rsquo;s code also sets department heads and teacher assignments. A view-only code, if set, can read but not save.</p>
+    <p class="hint" style="margin-top:14px">Each department head uses their department&rsquo;s own code: they see, add and change only the records of their department&rsquo;s teachers. The School Head&rsquo;s code also sets department heads and teacher assignments. A view-only code, if set, can read but not save.</p>
   </div>
   <div class="card">
     <h2>Backup</h2>
     <p class="hint">Download every plan, observation, coaching entry and setting shown on this site as one JSON file.</p>
-    <div class="row" style="margin-top:12px"><button class="btn ghost" id="set-backup" type="button">Download a backup (.json)</button></div>
+    <div class="row" style="margin-top:12px"><button class="btn ghost" id="set-backup" type="button">Download a backup (.json)</button><label class="btn ghost" id="set-restore-l" style="cursor:pointer" hidden>Restore a backup (.json)<input type="file" id="set-restore" accept=".json,application/json" hidden></label><span class="mini" id="set-restore-state"></span></div>
+    <p class="hint" id="set-restore-hint" hidden>School Head only. Restoring adds every record in the backup to the shared record; records with the same ID are replaced. Use it to move the records to a new Google Sheet.</p>
   </div>
 </section>
 
@@ -1417,6 +1437,16 @@ $('#calpop').addEventListener('click',function(e){
 });
 
 /* ------------------------------------------------------------------ people dropdowns (PSIPOP) */
+var BASE_PEOPLE=PEOPLE.map(function(p){ return Object.assign({},p); });
+var POSITIONS=['Teacher I','Teacher II','Teacher III','Teacher IV','Teacher V','Teacher VI','Teacher VII','Master Teacher I','Master Teacher II','Master Teacher III','Master Teacher IV','Master Teacher V','Head Teacher I','Head Teacher II','Head Teacher III','Head Teacher IV','Head Teacher V','Head Teacher VI'];
+function groupOf(pos){ pos=String(pos||''); return /principal|school head/i.test(pos)?'head':/^head teacher/i.test(pos)?'ht':/^master teacher/i.test(pos)?'mt':/^teacher\b/i.test(pos)?'t':/guidance|counsel/i.test(pos)?'gc':'adm'; }
+/* the School Head's changes to the PSIPOP list: added people, removed people, new positions (promotions) */
+function applyRoster(){
+  var r=(S&&S.cfg&&S.cfg.roster)||{}, rem=r.removed||{}, pos=r.pos||{};
+  var list=BASE_PEOPLE.concat(r.added||[]).filter(function(p){ return !rem[p.n]; }).map(function(p){ var q=Object.assign({},p); if(pos[p.n]){ q.p=pos[p.n].p; q.g=groupOf(q.p); } return q; });
+  PEOPLE.length=0; list.forEach(function(p){ PEOPLE.push(p); });
+}
+function refreshPeopleSelects(){ $$('select[data-people]').forEach(function(sel){ var v=sel.value; delete sel.dataset.forDept; fillPeople(sel); if(v&&sel.querySelector('option[value="'+v.replace(/"/g,'\\"')+'"]')) sel.value=v; else if(v&&v!=='__other'){ sel.value='__other'; syncPerson(sel); var o=$('#'+sel.dataset.other); if(o&&!o.value) o.value=v; } }); }
 var GROUPS={head:'School Head',ht:'Head Teachers',mt:'Master Teachers',t:'Teachers',gc:'Guidance',adm:'Administrative Staff'};
 var FILTERS={sup:['head','ht','mt','t'],teach:['t','mt','ht'],all:['head','ht','mt','t','gc','adm']};
 function byName(n){ for(var i=0;i<PEOPLE.length;i++) if(PEOPLE[i].n===n) return PEOPLE[i]; return null; }
@@ -1427,14 +1457,15 @@ function stageOf(pos){
   return r<=3?'b':'p';
 }
 function fillPeople(sel){
-  var f=FILTERS[sel.dataset.people]||FILTERS.all, h=sel.dataset.optional?'<option value="">(none)</option>':'<option value="">Choose a name&hellip;</option>';
+  var f=FILTERS[sel.dataset.people]||FILTERS.all, only=function(p){ if(sel.dataset.people==='teach'&&mtHidden()&&p.g==='mt') return false; if(sel.dataset.people==='teach'&&S.myDept) return (S.cfg.assign||{})[p.n]===S.myDept; return true; }, h=sel.dataset.optional?'<option value="">(none)</option>':'<option value="">Choose a name&hellip;</option>';
   f.forEach(function(g){
-    var list=PEOPLE.filter(function(p){return p.g===g}).sort(function(a,b){return a.s<b.s?-1:1});
+    var list=PEOPLE.filter(function(p){return p.g===g&&only(p)}).sort(function(a,b){return a.s<b.s?-1:1});
     if(!list.length) return;
     h+='<optgroup label="'+GROUPS[g]+'">'+list.map(function(p){return '<option value="'+esc(p.n)+'">'+esc(p.s)+'</option>'}).join('')+'</optgroup>';
   });
   h+='<option value="__other">Not in the list (type a name)&hellip;</option>';
   sel.innerHTML=h;
+  if(sel.dataset.bound) return; sel.dataset.bound='1';
   sel.addEventListener('change',function(){ syncPerson(sel); sel.dispatchEvent(new Event('personchange',{bubbles:true})); });
 }
 function syncPerson(sel){
@@ -1455,7 +1486,7 @@ function setPerson(id,name,pos){
 }
 
 /* ------------------------------------------------------------------ shared record (Google Sheet through Apps Script) */
-var S={obs:[],ots:[],lp:[],coach:[],plans:[],cfg:{heads:{},assign:{}},sy:ls('sy')||'2026-2027',canWrite:true,canEdit:false,mode:'connecting',role:''};
+var S={obs:[],ots:[],lp:[],coach:[],plans:[],cfg:{heads:{},assign:{}},sy:ls('sy')||'2026-2027',canWrite:true,canEdit:false,mode:'connecting',role:'',myDept:''};
 var CFG=window.CANHS_IS||{};
 var API={url:String(CFG.apiUrl||ls('apiUrl')||'').trim(), code:ls('code')||''};
 var COLLS=['obs','coach','plans','config'];
@@ -1470,7 +1501,7 @@ var Store={
       try{
         var res=await self.get('all');
         if(!res.ok){ S.mode='locked'; self.lastErr=res.error||''; S.canWrite=false; S.canEdit=false; connUI(); return; }
-        S.mode='shared'; S.role=res.role; S.canWrite=(res.role==='edit'||res.role==='admin'); S.canEdit=(res.role==='admin');
+        S.mode='shared'; S.role=res.role; S.myDept=res.role==='dept'?String(res.dept||''):''; S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
         self.apply(res.data); connUI();
         clearInterval(self.timer); self.timer=setInterval(function(){ self.refresh(); },30000);
         document.addEventListener('visibilitychange',function(){ if(!document.hidden) self.refresh(); });
@@ -1491,7 +1522,7 @@ var Store={
     if(S.mode!=='shared') return;
     try{ var res=await this.get('all'); if(res.ok) this.apply(res.data); }catch(e){}
   },
-  apply:function(data){ var self=this; COLLS.forEach(function(c){ self.cache[c]=(data&&data[c])||[]; self._emit(c); }); },
+  apply:function(data){ var self=this; COLLS.forEach(function(c){ var l=(data&&data[c])||[]; if(S.myDept&&c!=='config') l=l.filter(function(o){ return recDept(c,o)===S.myDept; }); if(mtHidden()&&c!=='config') l=l.filter(function(o){ return !recIsMT(c,o); }); self.cache[c]=l; self._emit(c); }); },
   lsKey:function(c){return 'local-'+c},
   watch:function(coll,cb){
     this.subs[coll]=cb;
@@ -1519,24 +1550,43 @@ var Store={
     if(S.mode==='shared'){ cb((this.cache[coll]||[]).slice()); return; }
     var all=ls(this.lsKey(coll))||{}; cb(Object.keys(all).map(function(k){var o=Object.assign({},all[k]);o.id=k;return o})); }
 };
+function isMTName(n){ var p=byName(n); return !!(p&&p.g==='mt')||(S.cfg.mts||[]).indexOf(n)>=0; }
+function mtHidden(){ return S.mode==='shared'&&S.role!=='admin'; }
+function recIsMT(coll,o){ var pos=coll==='plans'?o.prepPos:coll==='coach'?o.rateePos:o.teacherPos, who=coll==='plans'?o.prep:coll==='coach'?o.ratee:o.teacher; return /^\s*master\s+teacher/i.test(String(pos||''))||isMTName(who); }
+function recDept(coll,o){ if(o&&o.dept) return String(o.dept); var n=coll==='coach'?o.ratee:o.teacher; return (n&&(S.cfg.assign||{})[n])||''; }
+/* a department head sees and picks only their own department */
+function lockDept(){
+  var d=S.myDept;
+  $$('#pl-dept,#o-dept,#c-dept,#ot-dept,#lp-dept,#rp-dept,#h-dept,#r-dept').forEach(function(sel){
+    if(d){ if(sel.options.length!==1||sel.value!==d){ sel.innerHTML='<option value="'+esc(d)+'">'+esc(d)+'</option>'; sel.value=d; } sel.disabled=true; sel.title='Your access code is for the '+d+' Department'; }
+    else if(sel.disabled&&sel.dataset.locked){ sel.disabled=false; }
+    if(d) sel.dataset.locked='1';
+  });
+  $$('select[data-people="teach"]').forEach(function(sel){ var want=(d||'')+(mtHidden()?'|nomt':''); if(sel.dataset.forDept!==want){ var v=sel.value; fillPeople(sel); sel.dataset.forDept=want; if(v) sel.value=v; } });
+}
 function banner(msg,kind){ $('#banner').innerHTML=msg?'<div class="notice '+(kind||'info')+'">'+msg+'</div>':''; }
 function connUI(){
   var c=$('#conn');
   c.className='conn '+(S.mode==='shared'?'live':S.mode==='local'?'local':'');
-  $('#conntext').textContent=S.mode==='shared'?(S.role==='admin'?'Shared record \u00b7 School Head':S.canWrite?'Shared record \u00b7 can save':'Shared record \u00b7 read only'):S.mode==='local'?'This browser only':S.mode==='locked'?'Access code needed':S.mode==='offline'?'Cannot reach the record':'Connecting\u2026';
+  $('#conntext').textContent=S.mode==='shared'?(S.role==='admin'?'Shared record \u00b7 School Head':S.myDept?'Shared record \u00b7 '+S.myDept+' Department':S.canWrite?'Shared record \u00b7 can save':'Shared record \u00b7 read only'):S.mode==='local'?'This browser only':S.mode==='locked'?'Access code needed':S.mode==='offline'?'Cannot reach the record':'Connecting\u2026';
   if(S.mode==='local') banner('<b>Not connected to a shared record.</b> Entries saved now stay in this browser only. To share one record with the department heads, set up the Google Sheet as described in the README, then open <button class="link" type="button" data-go="settings">Connection</button>.','ask');
   else if(S.mode==='locked') banner('<b>Enter the school&rsquo;s access code</b> to open the shared supervision record. '+(Store.lastErr==='code'?'The code you entered was not accepted. ':'')+'<button class="btn small" type="button" data-go="settings">Enter access code</button>','ask');
   else if(S.mode==='offline') banner('<b>The shared record could not be reached.</b> Check the internet connection, then reload the page.','warn');
+  else if(S.mode==='shared' && S.myDept) banner('<b>'+esc(S.myDept)+' Department.</b> You see and save only the records of teachers in your department.','info');
   else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for the department heads&rsquo; access code.','ask');
   else banner('');
   $$('#pl-save,#o-save,#o-notes-save,#sm-save,#ot-save,#ot-del,#lp-save,#lp-del,#c-save,#pl-del,#o-del,#c-del').forEach(function(b){ b.disabled=!S.canWrite; });
   var st=$('#set-state'); if(st) st.textContent=$('#conntext').textContent;
+  if(typeof lockDept==='function') lockDept();
+  if(typeof loadCodes==='function'){ loadCodes(); restoreUI(); }
   renderPeople();
 }
 function saveErr(e){
   var c=e&&e.code;
   if(c==='readonly'||c==='admin'){ toast(c==='admin'?'Only the School Head\u2019s code can change departments.':'Not saved: this access code can only read the record.'); return; }
   if(c==='code'){ toast('Not saved: the access code was not accepted.'); return; }
+  if(c==='mt'){ toast('Not saved: Master Teachers\u2019 plans and supervisory records are for the School Head only.'); return; }
+  if(c==='dept'){ toast('Not saved: this record belongs to another department. Your access code is for the '+(S.myDept||'other')+' Department only.'); return; }
   if(c==='too_large'){ toast('Not saved: this entry is too long for one row. Shorten the notes and try again.'); return; }
   if(c==='locked'||c==='offline'){ toast('Not saved: the shared record is not connected.'); return; }
   toast('Not saved ('+(c||'no connection')+'). Check the connection and try again.');
@@ -2116,11 +2166,12 @@ function notesPDF(d){
   }
   doc.setFontSize(10); doc.setFont('helvetica','normal');
   var lines=[], maxW=R-M-16, fw=function(b){ doc.setFont('helvetica',b?'bold':'normal'); };
-  var paras=String(d.notes||'').split(/\r?\n/).map(noteSplit); fw(false);
-  var preW=paras.reduce(function(a,p){ return p.pre?Math.max(a,doc.getTextWidth(pdfSafe(p.pre))):a; },0), gap=preW?6:0;
+  var ents=noteEntries(d.notes), paras=[]; fw(false);
+  ents.forEach(function(e,ei){ (e.sents.length?e.sents:['']).forEach(function(t,k){ paras.push({pre:k?'':e.time,txt:t,ent:ei}); }); });
+  var timeW=paras.reduce(function(a,p){ return p.pre?Math.max(a,doc.getTextWidth(pdfSafe(p.pre))):a; },0), dashW=doc.getTextWidth('-'), preW=timeW+(timeW?4:0)+dashW, gap=5;
   paras.forEach(function(pp){
     var par=pp.txt, ln=[], w=0, first=true, avail=maxW-preW-gap;
-    var push=function(){ lines.push({pre:first?pp.pre:'',segs:ln}); first=false; };
+    var push=function(){ lines.push({pre:first?pp.pre:'',dash:first,segs:ln,ent:pp.ent}); first=false; };
     noteSegs(par).forEach(function(g){ pdfSafe(g.t).split(/(\s+)/).forEach(function(pc){ if(!pc) return; fw(g.b); var pw=doc.getTextWidth(pc), sp=/^\s+$/.test(pc);
       if(sp&&!ln.length) return;
       if(!sp&&w+pw>avail&&ln.length){ while(ln.length&&/^\s+$/.test(ln[ln.length-1].t)) ln.pop(); push(); ln=[]; w=0; }
@@ -2139,7 +2190,9 @@ function notesPDF(d){
     var bottom=H-104, top=y; doc.setLineWidth(.7); doc.rect(M,top,R-M,bottom-top);
     doc.setFont('helvetica','normal'); doc.setFontSize(10);
     var ty=top+16, cap=Math.floor((bottom-top-14)/LH);
-    for(var k=0;k<cap&&idx<lines.length;k++,idx++){ var tx=M+8+preW+gap; if(lines[idx].pre){ fw(false); doc.text(pdfSafe(lines[idx].pre),M+8,ty); } lines[idx].segs.forEach(function(g){ fw(g.b); doc.text(g.t,tx,ty); tx+=doc.getTextWidth(g.t); }); fw(false); ty+=LH; }
+    for(var k=0;k<cap&&idx<lines.length;k++,idx++){
+      // keep one time entry on one page: if it does not fit in what is left of this page but fits on a page, start it on the next page
+      if(k>0&&(idx===0||lines[idx-1].ent!==lines[idx].ent)){ var n=0; for(var q=idx;q<lines.length&&lines[q].ent===lines[idx].ent;q++) n++; if(n>cap-k&&n<=cap) break; } var tx=M+8+preW+gap; fw(false); if(lines[idx].pre) doc.text(pdfSafe(lines[idx].pre),M+8,ty); if(lines[idx].dash) doc.text('-',M+8+preW-dashW,ty); lines[idx].segs.forEach(function(g){ fw(g.b); doc.text(g.t,tx,ty); tx+=doc.getTextWidth(g.t); }); fw(false); ty+=LH; }
     // signature
     var nm=(d.observers[0]||{}).n||'';
     doc.setLineWidth(.5); doc.line(W/2-95,H-72,W/2+95,H-72);
@@ -2193,13 +2246,33 @@ var TIME_RX=/^(\s*\d{1,2}[:.]\d{2}(?:\s*[AaPp]\.?\s?[Mm]\.?)?\s*(?:[-\u2013\u201
 function noteSplit(line){ var m=TIME_RX.exec(line); return m?{pre:m[1].trim(),txt:m[2]}:{pre:'',txt:line}; }
 function richLine(l){ return noteSegs(l).map(function(g){ return g.b?'<b>'+esc(g.t)+'</b>':esc(g.t); }).join(''); }
 var NOTE_PT='10';
+var NOTE_ABBR=/(?:\b(?:Mr|Mrs|Ms|Dr|Sr|Jr|St|No|vs|etc|e\.g|i\.e|cf|Gr|Sec|Fig|pp|p)\.)$/i;
+function noteSentences(txt){
+  var out=[], cur='', re=/([.!?]+["\u201d'\u2019)\]]*(?:\*\*)?["\u201d'\u2019)\]]*)(\s+)(?=(?:\*\*)?["\u201c'\u2018(\[]*(?:\*\*)?[A-Z0-9])/g, last=0, m;
+  txt=String(txt||'').replace(/\s+/g,' ').trim(); if(!txt) return [];
+  while((m=re.exec(txt))){ var piece=txt.slice(last,m.index+m[1].length); if(NOTE_ABBR.test(piece.replace(/(\*\*|["\u201d'\u2019)\]])+$/,''))) continue; out.push((cur+piece).trim()); cur=''; last=m.index+m[0].length; }
+  out.push(txt.slice(last).trim());
+  out=out.filter(Boolean);
+  // keep bold marks balanced inside each sentence
+  var open=false; return out.map(function(x){ var y=(open?'**':'')+x, n=(y.match(/\*\*/g)||[]).length; if(n%2){ y+='**'; open=true; } else open=false; return y.replace(/\*\*\*\*/g,''); });
+}
+function noteEntries(s){
+  var ents=[], cur=null;
+  String(s||'').split('\n').forEach(function(l){ if(!l.trim()) return; var p=noteSplit(l);
+    if(p.pre){ cur={time:p.pre.replace(/\s*[-\u2013\u2014:]\s*$/,''),txt:p.txt}; ents.push(cur); }
+    else if(cur) cur.txt+=' '+p.txt.trim();
+    else { cur={time:'',txt:p.txt}; ents.push(cur); } });
+  return ents.map(function(e){ return {time:e.time,sents:noteSentences(e.txt)}; });
+}
 function notesTable(s){
-  var L=String(s||'').split('\n'); if(!String(s||'').trim()) return '';
-  var cs='border:none;padding:0 0 1pt 0;vertical-align:top;line-height:1.35';
-  var CW=function(t){ return String(t).split('').reduce(function(a,ch){ return a+(/[0-9]/.test(ch)?0.556:/[:. ]/.test(ch)?0.278:/[-]/.test(ch)?0.333:/[\u2013]/.test(ch)?0.556:/[\u2014]/.test(ch)?1:/[MW]/.test(ch)?0.833:/[A-Z]/.test(ch)?0.667:0.5); },0); };
-  var fs=parseFloat(NOTE_PT)||10, mx=L.reduce(function(a,l){ var p=noteSplit(l); return Math.max(a,CW(p.pre)); },0), cw=Math.max(14,Math.ceil(mx*fs+5));
-  return '<table style="width:100%;border-collapse:collapse;border:none;table-layout:fixed"><colgroup><col style="width:'+cw+'pt"><col></colgroup>'+L.map(function(l){ var p=noteSplit(l);
-    return '<tr><td style="'+cs+';white-space:nowrap;padding-right:4pt">'+esc(p.pre).replace(/ /g,'&nbsp;')+'</td><td style="'+cs+';white-space:pre-wrap">'+(richLine(p.txt)||'&nbsp;')+'</td></tr>'; }).join('')+'</table>';
+  if(!String(s||'').trim()) return '';
+  var ents=noteEntries(s), cs='border:none;padding:0 0 1pt 0;vertical-align:top;line-height:1.35';
+  var CW=function(t){ return String(t).split('').reduce(function(a,ch){ return a+(/[0-9]/.test(ch)?0.556:/[:. ]/.test(ch)?0.278:/[-]/.test(ch)?0.333:/[MW]/.test(ch)?0.833:/[A-Z]/.test(ch)?0.667:0.5); },0); };
+  var fs=parseFloat(NOTE_PT)||10, mx=ents.reduce(function(a,e){ return Math.max(a,CW(e.time)); },0), tw=Math.max(8,Math.ceil(mx*fs+4)), dw=Math.ceil(0.333*fs+5);
+  var rows=[];
+  ents.forEach(function(e){ var ss=e.sents.length?e.sents:['']; rows.push('<tbody style="break-inside:avoid;page-break-inside:avoid">');
+    ss.forEach(function(t,k){ rows.push('<tr><td style="'+cs+';white-space:nowrap">'+(k||!e.time?'&nbsp;':esc(e.time).replace(/ /g,'&nbsp;'))+'</td><td style="'+cs+'">-</td><td style="'+cs+';white-space:pre-wrap">'+(richLine(t)||'&nbsp;')+'</td></tr>'); }); rows.push('</tbody>'); });
+  return '<table style="width:100%;border-collapse:collapse;border:none;table-layout:fixed"><colgroup><col style="width:'+tw+'pt"><col style="width:'+dw+'pt"><col></colgroup>'+rows.join('')+'</table>';
 }
 function edToText(root){
   var lines=[[]], nl=function(){ lines.push([]); }, cur=function(){ return lines[lines.length-1]; };
@@ -2824,9 +2897,10 @@ function renderHome(){
     $('#h-q').addEventListener('input',renderHome);
     $('#h-depts').addEventListener('toggle',function(e){ var d=e.target; if(d.dataset&&d.dataset.dk!=null){ dashOpen[d.dataset.dk]=d.open; ls('dash-open',dashOpen); } },true);
   }
+  if(S.myDept&&$('#h-dept').value!==S.myDept) lockDept();
   var mk2=($('#h-year').value||TODAY.slice(0,4))+'-'+pad($('#h-month').value), fd=$('#h-dept').value, show=$('#h-show').value, q=$('#h-q').value.trim().toUpperCase(), sy=S.sy, map={};
   var mon=MONTHS[+$('#h-month').value-1];
-  PEOPLE.filter(function(p){return p.g==='t'||p.g==='mt'}).forEach(function(p){ map[p.n]={n:p.n,p:p.p,dept:deptOf(p.n),pm:0,o1:null,o2:null,t1:null,t2:null,wt:null}; });
+  PEOPLE.filter(function(p){return p.g==='t'||(p.g==='mt'&&!mtHidden())}).forEach(function(p){ map[p.n]={n:p.n,p:p.p,dept:deptOf(p.n),pm:0,o1:null,o2:null,t1:null,t2:null,wt:null}; });
   var get=function(n,dp,pos){ return map[n]||(map[n]={n:n,p:pos||'',dept:dp||deptOf(n),pm:0,o1:null,o2:null,t1:null,t2:null,wt:null}); };
   S.obs.forEach(function(o){ if(o.sy!==sy) return;
     if(o.no===3){ if(/walk/i.test(o.noOther||'')){ var w=get(o.teacher,o.dept,o.teacherPos); if(!w.wt||(o.date||'')<(w.wt.date||'')) w.wt={type:'obs',id:o.id,date:o.date}; } return; }
@@ -2916,14 +2990,51 @@ function renderPeople(){
     var h=heads[dp]||'', p=byName(h), cnt=PEOPLE.filter(function(x){return as[x.n]===dp}).length;
     return '<tr><td><b>'+dp+'</b></td><td><select id="pp-h'+i+'" data-head="'+esc(dp)+'"'+(ed?'':' disabled')+' aria-label="Head of '+dp+'"><option value="">Not set</option>'+sup.map(function(x){return '<option value="'+esc(x.n)+'"'+(x.n===h?' selected':'')+'>'+esc(x.s)+'</option>'}).join('')+'</select></td><td>'+esc(p?p.p:'')+'</td><td class="c">'+cnt+'</td></tr>';
   }).join('')+'</tbody>';
-  var order=['head','ht','mt','t','gc','adm'];
-  $('#pp-roster').innerHTML='<thead><tr><th>#</th><th>Name</th><th>Position</th><th>Department</th></tr></thead><tbody>'+PEOPLE.slice().sort(function(a,b){return (order.indexOf(a.g)-order.indexOf(b.g))||(a.s<b.s?-1:1)}).map(function(p,i){
+  var order=['head','ht','mt','t','gc','adm'], q=String(($('#pp-q')||{}).value||'').trim().toUpperCase(), rem=((S.cfg.roster||{}).removed)||{};
+  $('#pp-add-card').hidden=!ed; $('#pp-edit-hint').textContent=ed?'Change a position for a promotion, move a teacher to another department, or remove someone who resigned, retired or transferred.':'';
+  if(ed&&!$('#pp-new-pos').options.length){ $('#pp-new-pos').innerHTML=POSITIONS.map(function(x){return '<option>'+x+'</option>'}).join(''); $('#pp-new-dept').innerHTML=optList(DEPTS,'Choose a department'); }
+  var posSel=function(p,i){ var opts=POSITIONS.indexOf(p.p)<0?[p.p].concat(POSITIONS):POSITIONS; return '<select data-rpos="'+esc(p.n)+'" id="pp-p'+i+'" aria-label="Position of '+esc(p.n)+'">'+opts.map(function(x){return '<option'+(x===p.p?' selected':'')+'>'+esc(x)+'</option>'}).join('')+'</select>'; };
+  $('#pp-roster').innerHTML='<thead><tr><th>#</th><th>Name</th><th>Position</th><th>Department</th>'+(ed?'<th></th>':'')+'</tr></thead><tbody>'+PEOPLE.slice().sort(function(a,b){return (order.indexOf(a.g)-order.indexOf(b.g))||(a.s<b.s?-1:1)}).filter(function(p){ return !q||p.s.toUpperCase().indexOf(q)>=0||p.n.indexOf(q)>=0; }).map(function(p,i){
     var teach=['t','mt','ht'].indexOf(p.g)>=0;
-    return '<tr><td class="num">'+(i+1)+'</td><td><b>'+esc(p.s)+'</b></td><td>'+esc(p.p)+'</td><td>'+(teach?'<select data-assign="'+esc(p.n)+'" id="pp-a'+i+'"'+(ed?'':' disabled')+' aria-label="Department of '+esc(p.n)+'">'+optList(DEPTS,'Not set').replace('<option>'+esc(as[p.n]||'\u0000')+'</option>','<option selected>'+esc(as[p.n]||'')+'</option>')+'</select>':'<span class="mini">'+(p.g==='head'?'School Head':'Non-teaching')+'</span>')+'</td></tr>';
+    return '<tr><td class="num">'+(i+1)+'</td><td><b>'+esc(p.s)+'</b></td><td>'+(ed&&teach?posSel(p,i):esc(p.p))+'</td><td>'+(teach?'<select data-assign="'+esc(p.n)+'" id="pp-a'+i+'"'+(ed?'':' disabled')+' aria-label="Department of '+esc(p.n)+'">'+optList(DEPTS,'Not set').replace('<option>'+esc(as[p.n]||'\u0000')+'</option>','<option selected>'+esc(as[p.n]||'')+'</option>')+'</select>':'<span class="mini">'+(p.g==='head'?'School Head':'Non-teaching')+'</span>')+'</td>'+
+      (ed?'<td>'+(p.g==='head'?'':'<span class="rmv" data-rmv-wrap="'+esc(p.n)+'"><button class="btn ghost small" type="button" data-rmv="'+esc(p.n)+'">Remove</button></span>')+'</td>':'')+'</tr>';
   }).join('')+'</tbody>';
+  var rk=Object.keys(rem);
+  $('#pp-removed-box').hidden=!rk.length; $('#pp-removed-n').textContent=rk.length;
+  $('#pp-removed').innerHTML='<thead><tr><th>Name</th><th>Position</th><th>Reason</th><th>Date</th>'+(ed?'<th></th>':'')+'</tr></thead><tbody>'+rk.sort().map(function(n){ var r=rem[n]; return '<tr><td><b>'+esc(r.s||n)+'</b></td><td>'+esc(r.p||'')+'</td><td>'+esc(r.why||'')+'</td><td>'+esc(longDate(r.date||''))+'</td>'+(ed?'<td><button class="btn ghost small" type="button" data-restore="'+esc(n)+'">Restore</button></td>':'')+'</tr>'; }).join('')+'</tbody>';
 }
+function rosterSaved(){ applyRoster(); refreshPeopleSelects(); saveCfgSoon(); var y=window.scrollY; renderPeople(); window.scrollTo(0,y); renderAll(); }
+function rosterOf(){ S.cfg.roster=JSON.parse(JSON.stringify(S.cfg.roster||{})); var r=S.cfg.roster; r.added=r.added||[]; r.removed=r.removed||{}; r.pos=r.pos||{}; return r; }
+$('#pp-q').addEventListener('input',function(){ renderPeople(); });
+$('#pp-new-add').addEventListener('click',function(){
+  var last=$('#pp-new-last').value.trim().toUpperCase().replace(/\s+/g,' '), first=$('#pp-new-first').value.trim().toUpperCase().replace(/\s+/g,' '), pos=$('#pp-new-pos').value, dp=$('#pp-new-dept').value;
+  if(!last||!first){ toast('Type the last name and the first name.'); return; }
+  var n=first+' '+last; if(byName(n)){ toast(n+' is already on the roster.'); return; }
+  var r=rosterOf(); if(r.removed[n]){ delete r.removed[n]; }
+  else r.added.push({n:n,s:last+', '+first,p:pos,g:groupOf(pos)});
+  if(r.pos[n]) delete r.pos[n];
+  if(dp){ S.cfg.assign=Object.assign({},S.cfg.assign); S.cfg.assign[n]=dp; }
+  $('#pp-new-last').value=''; $('#pp-new-first').value=''; $('#pp-new-dept').value='';
+  rosterSaved(); toast(n+' added'+(dp?' to '+dp:''));
+});
+$('#p-people').addEventListener('click',function(e){
+  var b=e.target.closest('[data-rmv]');
+  if(b){ var w=b.parentNode, n=b.dataset.rmv; w.innerHTML='<select data-rmv-why aria-label="Reason"><option>Resigned</option><option>Retired</option><option>Transferred</option><option>Other</option></select> <button class="btn danger small" type="button" data-rmv-ok="'+esc(n)+'">Remove</button> <button class="btn ghost small" type="button" data-rmv-no>Cancel</button>'; return; }
+  b=e.target.closest('[data-rmv-no]'); if(b){ renderPeople(); return; }
+  b=e.target.closest('[data-rmv-ok]');
+  if(b){ var n2=b.dataset.rmvOk, p=byName(n2)||{}, why=b.parentNode.querySelector('[data-rmv-why]').value, r=rosterOf();
+    r.removed[n2]={why:why,date:TODAY,s:p.s||n2,p:p.p||''};
+    var hs=S.cfg.heads||{}; Object.keys(hs).forEach(function(k){ if(hs[k]===n2){ S.cfg.heads=Object.assign({},hs); delete S.cfg.heads[k]; } });
+    rosterSaved(); toast(n2+' removed ('+why.toLowerCase()+'). Their saved records are kept.'); return; }
+  b=e.target.closest('[data-restore]');
+  if(b){ var r2=rosterOf(); delete r2.removed[b.dataset.restore]; rosterSaved(); toast(b.dataset.restore+' restored'); }
+});
 $('#p-people').addEventListener('change',function(e){
   var t=e.target;
+  if(t.dataset.rpos!=null&&t.tagName==='SELECT'){ var r=rosterOf(), base=BASE_PEOPLE.filter(function(x){return x.n===t.dataset.rpos})[0], ad=r.added.filter(function(x){return x.n===t.dataset.rpos})[0];
+    if(ad){ ad.p=t.value; ad.g=groupOf(t.value); delete r.pos[t.dataset.rpos]; }
+    else if(base&&base.p===t.value) delete r.pos[t.dataset.rpos]; else r.pos[t.dataset.rpos]={p:t.value,date:TODAY};
+    rosterSaved(); toast(t.dataset.rpos+' is now '+t.value); return; }
   if(t.dataset.head!=null){ S.cfg.heads=Object.assign({},S.cfg.heads); if(t.value) S.cfg.heads[t.dataset.head]=t.value; else delete S.cfg.heads[t.dataset.head]; saveCfgSoon(); renderPeople(); renderHome(); }
   if(t.dataset.assign!=null){ S.cfg.assign=Object.assign({},S.cfg.assign); if(t.value) S.cfg.assign[t.dataset.assign]=t.value; else delete S.cfg.assign[t.dataset.assign]; saveCfgSoon(); renderHome(); var y=window.scrollY; renderPeople(); window.scrollTo(0,y); var n=$('[data-assign="'+t.dataset.assign.replace(/"/g,'\\"')+'"]'); if(n) n.focus(); }
 });
@@ -2966,8 +3077,41 @@ $('#set-save').addEventListener('click',function(){
   Store.init().then(function(){ COLLS.forEach(function(k){ Store._emit(k); }); toast(S.mode==='shared'?'Connected to the shared record':S.mode==='locked'?'That access code was not accepted':'Not connected'); });
 });
 $('#set-forget').addEventListener('click',function(){ ls('code',''); API.code=''; $('#set-code').value=''; S.mode='locked'; S.canWrite=false; S.canEdit=false; Store.cache={}; COLLS.forEach(function(k){ Store._emit(k); }); connUI(); toast('Access code removed from this device'); });
+var CODES=null;
+async function loadCodes(){
+  if(!(S.mode==='shared'&&S.role==='admin')){ $('#pp-codes-card').hidden=true; return; }
+  $('#pp-codes-card').hidden=false;
+  try{ var r=await Store.get('codes'); if(!r.ok) throw 0; CODES=r.codes||[]; }catch(e){ CODES=null; $('#pp-codes').innerHTML='<tbody><tr><td class="mini">The access codes could not be loaded. The Google Sheet may still run the old Apps Script; deploy the new Code.gs first.</td></tr></tbody>'; return; }
+  drawCodes();
+}
+function drawCodes(){
+  var by={}; (CODES||[]).forEach(function(c){ if(c.role==='dept') by[c.department]=c; });
+  $('#pp-codes').innerHTML='<thead><tr><th>Department</th><th>Department head</th><th>Access code</th><th></th></tr></thead><tbody>'+DEPTS.map(function(dp,i){ var c=by[dp]||{};
+    return '<tr><td><b>'+esc(dp)+'</b></td><td>'+esc((S.cfg.heads||{})[dp]||'Not set')+'</td><td><input type="text" id="pp-c'+i+'" data-cdept="'+esc(dp)+'" value="'+esc(c.code||'')+'" autocomplete="off" spellcheck="false" style="font-family:var(--mono);max-width:180px"></td><td><button class="btn ghost small" type="button" data-cgen="'+i+'">New code</button></td></tr>'; }).join('')+'</tbody>';
+}
+$('#pp-codes').addEventListener('click',function(e){ var b=e.target.closest('[data-cgen]'); if(!b) return; var ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', c=''; var a=new Uint32Array(8); crypto.getRandomValues(a); for(var i=0;i<8;i++) c+=ch[a[i]%ch.length]; $('#pp-c'+b.dataset.cgen).value=c; });
+$('#pp-codes-save').addEventListener('click',async function(){
+  var rows=[], seen={}, bad='';
+  $$('#pp-codes [data-cdept]').forEach(function(inp){ var v=inp.value.trim(); if(!v) return; if(v.length<6) bad='Codes need at least 6 letters or numbers ('+inp.dataset.cdept+').'; if(seen[v]) bad='Each department needs a different code.'; seen[v]=1; rows.push({code:v,role:'dept',department:inp.dataset.cdept,name:(S.cfg.heads||{})[inp.dataset.cdept]||''}); });
+  if(bad){ toast(bad); return; }
+  (CODES||[]).forEach(function(c){ if(c.role==='edit'||c.role==='view') rows.push(c); });
+  this.disabled=true;
+  try{ await Store.post({action:'codes',codes:rows}); CODES=rows.concat((CODES||[]).filter(function(c){return c.role==='admin'})); toast('Access codes saved'); $('#pp-codes-state').textContent='Saved '+longDate(TODAY)+'.'; }
+  catch(e){ toast(e&&e.code==='duplicate'?'That code is already used by someone else.':e&&e.code==='short'?'Codes need at least 6 letters or numbers.':'Not saved ('+((e&&e.code)||'no connection')+').'); }
+  this.disabled=false;
+});
+function restoreUI(){ var ok=(S.mode==='shared'&&S.role==='admin')||S.mode==='local'; $('#set-restore-l').hidden=!ok; $('#set-restore-hint').hidden=!ok; }
+$('#set-restore').addEventListener('change',async function(){
+  var f=this.files[0]; this.value=''; if(!f) return;
+  var data; try{ data=JSON.parse(await f.text()); }catch(e){ toast('That file is not a backup from this site.'); return; }
+  var jobs=[]; ['obs','coach','plans'].forEach(function(c){ (data[c]||[]).forEach(function(o){ if(!o||!o.id) return; var x=Object.assign({},o); var id=x.id; delete x.id; jobs.push([c,id,x]); }); });
+  if(data.config) jobs.push(['config','school',JSON.parse(JSON.stringify(data.config))]);
+  if(!jobs.length){ toast('No records found in that file.'); return; }
+  var n=0; for(var i=0;i<jobs.length;i++){ $('#set-restore-state').textContent='Restoring '+(i+1)+' of '+jobs.length+'\u2026'; try{ await Store.put(jobs[i][0],jobs[i][1],jobs[i][2]); n++; }catch(e){} }
+  $('#set-restore-state').textContent='Restored '+n+' of '+jobs.length+' records.'; toast('Backup restored');
+});
 $('#set-backup').addEventListener('click',function(){
-  var data={exported:new Date().toISOString(),obs:S.obs,coach:S.coach,plans:S.plans,config:S.cfg};
+  var data={exported:new Date().toISOString(),obs:S.obs.concat(S.ots||[],S.lp||[]),coach:S.coach,plans:S.plans,config:S.cfg};
   offerFile('CANHS Instructional Supervision backup '+longDate(TODAY).replace(',','')+'.json',new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));
 });
 $('#o-notes-print').addEventListener('click',function(){
@@ -3571,7 +3715,7 @@ $('#lp-teacher').addEventListener('personchange',function(){ var dp=deptOf(getPe
 $('#lp-mon').addEventListener('personchange',function(){ lpLeafSoon(); });
 
 /* ================================================================== boot */
-function renderAll(){ if(typeof renderOtsList==='function') renderOtsList(); if(typeof renderLpList==='function') renderLpList(); if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
+function renderAll(){ lockDept(); if(typeof renderOtsList==='function') renderOtsList(); if(typeof renderLpList==='function') renderLpList(); if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
 function initSelects(){
   $('#g-sy').innerHTML=SYS.map(function(s){return '<option value="'+s+'"'+(s===S.sy?' selected':'')+'>SY '+s+'</option>'}).join('');
   $('#g-sy').addEventListener('change',function(){ S.sy=this.value; ls('sy',S.sy); if(!obs.id){ drawRate(); obsLeafSoon(); } if(!coach.id) renderCoachLog(); renderAll(); });
@@ -3593,7 +3737,7 @@ Store.init().then(function(){
   Store.watch('obs',function(l){ S.obs=l.filter(function(x){return x.kind!=='ots'&&x.kind!=='lp'}); S.ots=l.filter(function(x){return x.kind==='ots'}); S.lp=l.filter(function(x){return x.kind==='lp'}); renderAll(); });
   Store.watch('coach',function(l){ l.forEach(function(c){ if(c.mech) c.mech=c.mech.map(function(m){ return /^conduct of on-the-spot test$/i.test(m)?'On-the-Spot Test':m; }); }); S.coach=l; renderAll(); });
   Store.watch('plans',function(l){ S.plans=l; renderAll(); });
-  Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{}}; renderPeople(); renderAll(); });
+  Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{},mts:(d&&d.mts)||[],roster:(d&&d.roster)||{}}; applyRoster(); refreshPeopleSelects(); if(S.mode==='shared'&&S.role==='admin'){ var mtl=PEOPLE.filter(function(p){return p.g==='mt'}).map(function(p){return p.n}).sort(); if(JSON.stringify(mtl)!==JSON.stringify((S.cfg.mts||[]).slice().sort())){ S.cfg.mts=mtl; saveCfgSoon(); } } $$('select[data-people="teach"]').forEach(function(x){ delete x.dataset.forDept; }); renderPeople(); renderAll(); });
 });
 })();
 </script>
