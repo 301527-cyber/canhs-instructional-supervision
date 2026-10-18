@@ -155,6 +155,11 @@ textarea{resize:vertical;line-height:1.4;width:100%}
 label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase;min-width:0}
 label.f>input,label.f>select,label.f>textarea,label.f .dfield{text-transform:none;letter-spacing:normal;font-size:14.5px;color:var(--ink)}
 label.f.wide{grid-column:1/-1}
+.cmonths:empty{display:none}
+.cmonths{margin:12px 0 4px;padding:10px 12px;background:var(--seal-soft);border-radius:2px;font-size:13.5px;color:var(--ink);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cmonths .mchip{all:unset;cursor:pointer;padding:4px 10px;border-radius:999px;border:1px solid var(--seal);color:var(--seal);font-size:13px;font-weight:600;background:var(--surface,#fff)}
+.cmonths .mchip.on{background:var(--seal);color:#fff}
+.cmonths .mchip:hover,.cmonths .mchip:focus-visible{box-shadow:0 0 0 2px var(--seal-soft);outline:none}
 .nted{display:flex;flex-direction:column;gap:6px}
 .ntbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
 .ntbar .btn b{font-size:15px;margin-right:2px}
@@ -681,6 +686,7 @@ table.rate .finds li{margin:2px 0}
       <label class="fline"><span class="lk">PMCF month</span><span class="lv"><select id="c-month"></select></span></label>
       <label class="fline"><span class="lk">PMCF year</span><span class="lv"><input type="number" id="c-year" min="2024" max="2035"></span></label>
     </div>
+    <div class="cmonths" id="c-months1"></div>
   </div>
   <div class="card" data-step="2">
     <h2><span class="step">STEP 2</span> Coaching and feedback entry</h2>
@@ -689,6 +695,7 @@ table.rate .finds li{margin:2px 0}
       <label class="fline"><span class="lk">Date</span><span class="lv"><span class="dfield"><input type="text" class="date" id="c-date" placeholder="October 14, 2026" autocomplete="off"></span></span></label>
       <label class="fline"><span class="lk">Department</span><span class="lv"><select id="c-dept"></select></span></label>
       <label class="fline top"><span class="lk">Significant incident description</span><span class="lv"><textarea id="c-incident" rows="3" placeholder="The PPST indicator or core competency involved, then what was observed."></textarea></span></label>
+      <label class="fline"><span class="lk">Learning area &amp; section</span><span class="lv"><input type="text" id="c-cls" placeholder="Values Education 8-Adorable" autocomplete="off"><small class="mini" style="display:block;margin-top:3px">Prints in italics after the incident, e.g. <i>(Values Education 8-Adorable)</i></small></span></label>
       <label class="fline top"><span class="lk">Impact on job</span><span class="lv"><textarea id="c-impact" rows="2"></textarea></span></label>
       <div class="fline top"><span class="lk">Coaching mechanisms</span><span class="lv"><span class="checks" id="c-mech"></span></span></div>
       <label class="fline top"><span class="lk">Feedback / recommendation</span><span class="lv"><textarea id="c-feedback" rows="2"></textarea></span></label>
@@ -703,6 +710,7 @@ table.rate .finds li{margin:2px 0}
   </div>
   <div class="card" data-step="3">
     <h2><span class="step">STEP 3</span> Performance Monitoring and Coaching Form <span class="tag" id="c-count">0 entries</span></h2>
+    <div class="cmonths" id="c-months3"></div>
     <p class="hint" id="c-loghint">All saved entries for this teacher in the chosen month, oldest first. Open an entry to change it.</p>
     <div id="c-log"></div>
     <div class="row" style="margin-top:12px"><button class="btn" id="c-pdf" type="button">Download PDF</button><button class="btn ghost" id="c-doc" type="button">Download Word (.docx)</button><button class="btn ghost" id="c-dl" type="button">Download Excel (Annex D)</button></div>
@@ -1200,7 +1208,7 @@ function fillPMCF(sheetXml,d){
   var byNum={}; rows.forEach(function(r){ byNum[rnum(r)]=r; });
   var cellStyle=function(r,ref){ var m=new RegExp('<c r="'+ref+'"[^>]*?s="(\\d+)"').exec(r); return m?m[1]:null; };
   var setCell=function(rowXml,ref,text){
-    var s=cellStyle(rowXml,ref), c='<c r="'+ref+'"'+(s?' s="'+s+'"':'')+' t="inlineStr"><is><t xml:space="preserve">'+xesc(text)+'</t></is></c>';
+    var s=cellStyle(rowXml,ref), body=typeof text==='object'&&text?text.rich:'<t xml:space="preserve">'+xesc(text)+'</t>', c='<c r="'+ref+'"'+(s?' s="'+s+'"':'')+' t="inlineStr"><is>'+body+'</is></c>';
     var re=new RegExp('<c r="'+ref+'"[^>]*?(?:/>|>[\\s\\S]*?</c>)');
     if(re.test(rowXml)) return rowXml.replace(re,c);
     // insert in column order
@@ -1228,8 +1236,10 @@ function fillPMCF(sheetXml,d){
     var e=d.rows[i]||{}, rn=14+i, rx=tpl.replace(/<row r="15"/,'<row r="'+rn+'"');
     rx=rx.replace(/r="([A-Z]+)15"/g,function(m,cl){return 'r="'+cl+rn+'"'});
     rx=rx.replace(/(<c r="[A-Z]+\d+"[^>]*?) t="s"><v>\d+<\/v><\/c>/g,'$1/>');
-    var vals={C:e.date||'',D:e.incident||'',E:e.impact||'',F:e.mech||'',G:e.feedback||'',I:e.progress||''};
-    var lines=1; Object.keys(vals).forEach(function(k){ rx=setCell(rx,k+rn,vals[k]); var L=String(vals[k]).split('\n').reduce(function(a,s){return a+Math.max(1,Math.ceil(s.length/(widths[k]*1.05)))},0); if(L>lines) lines=L; });
+    var rp=function(it){ var f=d.font||{}; return '<rPr>'+(f.name?'<rFont val="'+xesc(f.name)+'"/>':'')+(f.family?'<family val="'+f.family+'"/>':'')+(f.b?'<b/>':'')+(it?'<i/>':'')+(f.color||'')+(f.sz?'<sz val="'+f.sz+'"/>':'')+'</rPr>'; };
+    var inc=e.cls?{rich:'<r>'+rp(false)+'<t xml:space="preserve">'+xesc((e.incident||'')+' ')+'</t></r><r>'+rp(true)+'<t xml:space="preserve">'+xesc('('+e.cls+')')+'</t></r>',text:(e.incident||'')+' ('+e.cls+')'}:(e.incident||'');
+    var vals={C:e.date||'',D:inc,E:e.impact||'',F:e.mech||'',G:e.feedback||'',I:e.progress||''};
+    var lines=1; Object.keys(vals).forEach(function(k){ rx=setCell(rx,k+rn,vals[k]); var L=String(typeof vals[k]==='object'?vals[k].text:vals[k]).split('\n').reduce(function(a,s){return a+Math.max(1,Math.ceil(s.length/(widths[k]*1.05)))},0); if(L>lines) lines=L; });
     var ht=Math.max(60,Math.round(lines*16.5+14));
     rx=rx.replace(/ ht="[\d.]+"/,' ht="'+ht+'"');
     entryRows.push(rx);
@@ -1281,6 +1291,10 @@ async function pmcfWorkbook(zip,d){
   var OE='Old English Text MT', TJ='Trajan Pro';
   var lh=run('Republic of the Philippines\n',OE,12)+run('Department of Education\n',OE,18)+run('Region IV-A CALABARZON\n',TJ,10,1)+run('DIVISION OF CALAMBA CITY\n',TJ,10,1)+run('Castor Alviar National High School\n',TJ,10)+run('(Formerly Tiyani National High School)\n',TJ,10)+run('Sgt. Pablo Alviar St., Brgy. Masili, Calamba City',TJ,10);
   sx=sx.replace(/<c r="C2" s="90" t="s"><v>\d+<\/v><\/c>/,'<c r="C2" s="'+nx+'" t="inlineStr"><is>'+lh+'</is></c>').replace(/<c r="([D-I])2" s="90"\/>/g,'<c r="$12" s="'+nx+'"/>').replace(/(<row r="2" [^>]*?)ht="[\d.]+"/,'$1ht="178"');
+  try{ var sm=/<c r="D15"[^>]*?s="(\d+)"/.exec(sx), xfs=/<cellXfs[^>]*>([\s\S]*?)<\/cellXfs>/.exec(st)[1].match(/<xf [^>]*?(?:\/>|>[\s\S]*?<\/xf>)/g), fid=sm?+(/fontId="(\d+)"/.exec(xfs[+sm[1]])||[0,0])[1]:0;
+    var fonts=/<fonts[^>]*>([\s\S]*?)<\/fonts>/.exec(st)[1].match(/<font>[\s\S]*?<\/font>|<font\/>/g)||[], fx=fonts[fid]||'';
+    d.font={name:(/<name val="([^"]+)"/.exec(fx)||[])[1],sz:(/<sz val="([^"]+)"/.exec(fx)||[])[1],family:(/<family val="([^"]+)"/.exec(fx)||[])[1],b:/<b\/>/.test(fx),color:(/<color [^>]*\/>/.exec(fx)||[''])[0]};
+  }catch(e){ d.font={}; }
   var r=fillPMCF(sx,d);
   zip.file('xl/worksheets/sheet2.xml',r.xml);
   var wb=await zip.file('xl/workbook.xml').async('string');
@@ -1332,7 +1346,7 @@ var STAGES={
   h:{label:'Highly Proficient (Master Teacher I\u2013II)',short:'MASTER TEACHER I-II',scale:[4,5,6,7,8],col:'#4472C4',foot:['Highly Proficient Teacher','(MT I \u2013 MT II)']},
   d:{label:'Distinguished (Master Teacher III\u2013V)',short:'MASTER TEACHER III-V',scale:[5,6,7,8,9],col:'#ED7D31',foot:['Distinguished Teacher','(MT III \u2013 MT V)']}
 };
-var MECH=['Meeting (Group)','One-on-One','Learning Action Cell Session','Walk-through Observation','Workshop','Focus Group Discussion (FGD)','Checking of DLL','Conduct of on-the-spot test','Others'];
+var MECH=['Meeting (Group)','One-on-One','Learning Action Cell Session','Walk-through Observation','Workshop','Focus Group Discussion (FGD)','Checking of DLL','On-the-Spot Test','Others'];
 var PRINCIPAL=PEOPLE.filter(function(p){return p.g==='head'})[0]||{n:'',p:''};
 
 /* ------------------------------------------------------------------ dates: "October 14, 2026" */
@@ -2275,9 +2289,9 @@ function entryMonth(c){ return c.month||String(c.date||'').slice(0,7); }
 function readCoach(){
   var r=getPerson('c-ratee'), t=getPerson('c-rater'), a=getPerson('c-appr');
   return {ratee:r.n,rateePos:r.p,desig:$('#c-desig').value.trim(),rater:t.n,raterPos:t.p,appr:a.n,apprPos:a.p,date:getDate('c-date'),dept:$('#c-dept').value,
-    incident:$('#c-incident').value,impact:$('#c-impact').value,mech:$$('#c-mech input:checked').map(function(i){return i.value}),feedback:$('#c-feedback').value,progress:$('#c-progress').value};
+    incident:$('#c-incident').value,cls:$('#c-cls').value.trim(),impact:$('#c-impact').value,mech:$$('#c-mech input:checked').map(function(i){return i.value}),feedback:$('#c-feedback').value,progress:$('#c-progress').value};
 }
-function clearEntry(){ ['c-incident','c-impact','c-feedback','c-progress'].forEach(function(k){$('#'+k).value=''}); $$('#c-mech input').forEach(function(i){i.checked=false}); }
+function clearEntry(){ ['c-incident','c-cls','c-impact','c-feedback','c-progress'].forEach(function(k){$('#'+k).value=''}); $$('#c-mech input').forEach(function(i){i.checked=false}); }
 function newCoach(keepPeople){
   wizGo($('#p-coach'),keepPeople?2:1);
   coach={id:''};
@@ -2308,7 +2322,7 @@ function openCoach(id){
   coach={id:id};
   setPerson('c-ratee',c.ratee,c.rateePos); $('#c-desig').value=c.desig||''; setPerson('c-rater',c.rater,c.raterPos); setPerson('c-appr',c.appr,c.apprPos);
   setMonth(entryMonth(c)||TODAY.slice(0,7));
-  setDate('c-date',c.date||''); $('#c-dept').value=c.dept||''; $('#c-incident').value=c.incident||''; $('#c-impact').value=c.impact||''; $('#c-feedback').value=c.feedback||''; $('#c-progress').value=c.progress||'';
+  setDate('c-date',c.date||''); $('#c-dept').value=c.dept||''; $('#c-incident').value=c.incident||''; $('#c-cls').value=c.cls||''; $('#c-impact').value=c.impact||''; $('#c-feedback').value=c.feedback||''; $('#c-progress').value=c.progress||'';
   $$('#c-mech input').forEach(function(i){ i.checked=(c.mech||[]).indexOf(i.value)>=0; });
   $('#c-del').hidden=false; $('#c-state').textContent='Opened the saved entry. Save again after changes.'; renderCoachLog(); go('coach');
 }
@@ -2320,7 +2334,20 @@ function coachEntries(){
   var r=getPerson('c-ratee').n, mk2=monthKey();
   return S.coach.filter(function(c){return c.ratee===r && entryMonth(c)===mk2}).sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
 }
+function renderCoachMonths(){
+  var r=getPerson('c-ratee').n, cur=monthKey(), by={};
+  if(r) S.coach.forEach(function(c){ if(c.ratee!==r) return; var k=entryMonth(c); if(k) by[k]=(by[k]||0)+1; });
+  var ks=Object.keys(by).sort(), html='';
+  if(ks.length){
+    var here=by[cur]||0;
+    html='<span>'+(here?'PMCFs of '+esc(r)+' with saved entries:':'<b>No entries in '+esc(monthLabel(cur))+'.</b> Saved entries of '+esc(r)+' are in:')+'</span>'+
+      ks.map(function(k){ return '<button type="button" class="mchip'+(k===cur?' on':'')+'" data-cmonth="'+k+'">'+esc(monthLabel(k))+' ('+by[k]+')</button>'; }).join('');
+  }
+  $('#c-months1').innerHTML=html; $('#c-months3').innerHTML=html;
+}
+document.addEventListener('click',function(e){ var b=e.target.closest('[data-cmonth]'); if(!b) return; setMonth(b.dataset.cmonth); $('#c-month').dispatchEvent(new Event('change')); });
 function renderCoachLog(){
+  renderCoachMonths();
   var list=coachEntries(), r=getPerson('c-ratee').n, ml=monthLabel(monthKey());
   $('#c-count').textContent=list.length+' entr'+(list.length===1?'y':'ies');
   $('#c-loghint').textContent='All saved entries for '+(r||'this teacher')+' in '+ml+', oldest first. Open an entry to change it.';
@@ -2351,7 +2378,7 @@ function impDate(s,fallback){
 }
 function impMech(a){
   var U=String(a||'').toUpperCase(), out=[];
-  var rules=[[/SPOT|ON.THE.SP/,'Conduct of on-the-spot test'],[/\bDLL\b|LESSON LOG|LESSON PLAN/,'Checking of DLL'],[/FOCUS GROUP|\bFGD\b/,'Focus Group Discussion (FGD)'],[/WALK/,'Walk-through Observation'],[/\bLAC\b|LEARNING ACTION/,'Learning Action Cell Session'],[/ONE[- ]ON[- ]ONE|CONFERENCE|POST[- ]OBSERVATION/,'One-on-One'],[/WORKSHOP/,'Workshop'],[/MEETING/,'Meeting (Group)']];
+  var rules=[[/SPOT|ON.THE.SP/,'On-the-Spot Test'],[/\bDLL\b|LESSON LOG|LESSON PLAN/,'Checking of DLL'],[/FOCUS GROUP|\bFGD\b/,'Focus Group Discussion (FGD)'],[/WALK/,'Walk-through Observation'],[/\bLAC\b|LEARNING ACTION/,'Learning Action Cell Session'],[/ONE[- ]ON[- ]ONE|CONFERENCE|POST[- ]OBSERVATION/,'One-on-One'],[/WORKSHOP/,'Workshop'],[/MEETING/,'Meeting (Group)']];
   rules.forEach(function(r){ if(r[0].test(U)&&out.indexOf(r[1])<0) out.push(r[1]); });
   if(!out.length&&String(a||'').trim()) out.push(String(a).replace(/\s+/g,' ').trim().replace(/^([A-Za-z.]+\s+){1,3}\d{1,2}\s*([\u2013\u2014-]\s*)?/,'').replace(/\s+[\u2013\u2014-]+\s+/g,' ').trim()||String(a).trim());
   return out;
@@ -2543,12 +2570,16 @@ async function impParse(file){
   if(/\.doc$/.test(n)) throw new Error('doc');
   throw new Error('type');
 }
+function fullSubj(x){ x=String(x||'').replace(/\s+/g,' ').trim();
+  [[/^values ed(uc)?\.?(?=\s|$)/i,'Values Education'],[/^esp(?=\s|$)/i,'Values Education'],[/^math\.?(?=\s|$)/i,'Mathematics'],[/^sci\.?(?=\s|$)/i,'Science'],[/^eng\.?(?=\s|$)/i,'English'],[/^fil\.?(?=\s|$)/i,'Filipino'],[/^ap(?=\s|$)/i,'Araling Panlipunan'],[/^p\.?e\.?(?=\s|$)/i,'Physical Education']].forEach(function(r){ x=x.replace(r[0],r[1]); });
+  return x; }
+function clsOf(subj,sec){ var p=String(subj||'').split(/\s+[\u2013\u2014-]\s+/), a=fullSubj(p[0]), b=String(sec||p.slice(1).join(' ')||'').trim(); return a?a+(b?'-'+b:''):''; }
 function impEntry(r){
   var t=impPerson(r.teacher), s=impPerson(r.sup);
-  var head=r.output||(r.kind==='pmcf'?'':[r.activity,r.subject].filter(Boolean).join(' – '));
+  var subj=r.subject||(r.output&&/\d/.test(String(r.output).split(/\s+[\u2013\u2014-]\s+/)[0])?String(r.output).split(/\s+[\u2013\u2014-]\s+/)[0]:''), head=subj?'':(r.output||(r.kind==='pmcf'?'':r.activity||''));
   if(!s&&!r.sup){ var hd=(S.cfg.heads||{})[deptOf(t?t.n:'')]; if(hd) s=byName(hd)||{n:hd,p:''}; }
   return {ratee:t?t.n:String(r.teacher||'').toUpperCase(),rateePos:t?t.p:(r.pos||''),desig:'',rater:s?s.n:String(r.sup||'').toUpperCase(),raterPos:s?s.p:'',appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:r.date,dept:deptOf(t?t.n:''),
-    incident:(head?head+':\n':'')+(r.findings||''),impact:r.impact||'',mech:impMech(r.activity),feedback:r.rec||'',progress:r.progress||'',month:String(r.date||'').slice(0,7),sy:r.date?syOfMonth(r.date.slice(0,7)):'',source:r.file};
+    incident:(head?head+':\n':'')+(r.findings||''),cls:clsOf(subj,''),impact:r.impact||'',mech:impMech(r.activity),feedback:r.rec||'',progress:r.progress||'',month:String(r.date||'').slice(0,7),sy:r.date?syOfMonth(r.date.slice(0,7)):'',source:r.file};
 }
 function impSame(a,b){ var n=function(t){return String(t||'').replace(/\s+/g,' ').trim().toLowerCase()}; return a.ratee===b.ratee&&a.date===b.date&&n(a.incident).replace(/^.*?:\s*/,'')===n(b.incident).replace(/^.*?:\s*/,''); }
 function impDup(e,upto){ return S.coach.some(function(c){ return impSame(c,e); })||IMP.slice(0,upto==null?IMP.length:upto).some(function(x){ return x.e!==e&&impSame(x.e,e); }); }
@@ -2566,6 +2597,7 @@ function impRender(){
         L('Teacher (ratee)','<input type="text" list="imp-people" data-ie="'+i+'" data-f="ratee" value="'+esc(e.ratee)+'">')+
         L('Date','<input type="text" data-ie="'+i+'" data-f="date" value="'+esc(e.date?longDate(e.date):x.r.dateRaw)+'" placeholder="October 14, 2026">')+
         L('Significant incident','<textarea rows="3" data-ie="'+i+'" data-f="incident">'+esc(e.incident)+'</textarea>',true)+
+        L('Learning area &amp; section','<input type="text" data-ie="'+i+'" data-f="cls" value="'+esc(e.cls||'')+'" placeholder="Values Education 8-Adorable">')+
         L('Impact on job','<textarea rows="2" data-ie="'+i+'" data-f="impact">'+esc(e.impact)+'</textarea>',true)+
         L('Coaching mechanisms','<input type="text" data-ie="'+i+'" data-f="mech" value="'+esc(e.mech.join(', '))+'" placeholder="One-on-One, Walk-through Observation">')+
         L('Feedback / recommendation','<textarea rows="2" data-ie="'+i+'" data-f="feedback">'+esc(e.feedback)+'</textarea>',true)+
@@ -2612,8 +2644,8 @@ function cval(c,k){ return k==='date'?longDate(c.date):k==='mech'?(c.mech||[]).j
 function coachLeaf(){
   var d=readCoach(), list=coachEntries(), mk2=monthKey();
   $('#c-leaf').innerHTML=''+LH_HTML(1)+'<div style="height:10pt"></div><h4>PERFORMANCE MONITORING AND COACHING FORM (PMCF)</h4><p style="text-align:center;margin:0 0 4pt">'+esc(monthLabel(mk2))+'</p><div style="width:62%;margin:8pt 0 10pt">'+fcol([['Name of Ratee:',d.ratee],['Position:',d.rateePos],['Designation (if applicable):',d.desig]])+'</div>'+
-    '<table class="pmcftbl"><colgroup>'+[1.10,1.82,1.76,1.41,2.70,1.90].map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+CCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+(list.length?list.map(function(c){return '<tr>'+CCOLS.map(function(k){return '<td style="white-space:pre-wrap">'+esc(cval(c,k[0]))+'</td>'}).join('')+'</tr>'}).join(''):'<tr>'+CCOLS.map(function(){return '<td style="height:40pt"></td>'}).join('')+'</tr>')+'</table>'+
-    '<div class="sigs pmcf"><div class="sig"><div class="lb" style="text-align:left">Conducted by:</div><div class="nm">'+esc(d.rater||'\u00a0')+'</div><div class="lb">(Signature Over Printed Name of Rater)</div><div class="lb">'+esc(d.raterPos)+'</div></div><div class="sig"><div class="lb" style="text-align:left">Concurred by:</div><div class="nm">'+esc(d.ratee||'\u00a0')+'</div><div class="lb">(Signature Over Printed Name of Ratee)</div><div class="lb">'+esc(d.rateePos)+'</div></div><div class="sig"><div class="lb" style="text-align:left">Approved by:</div><div class="nm">'+esc(d.appr||'\u00a0')+'</div><div class="lb">(Signature Over Printed Name of Approving Authority)</div><div class="lb">'+esc(d.apprPos)+'</div></div></div>';
+    '<table class="pmcftbl"><colgroup>'+[1.10,1.82,1.76,1.41,2.70,1.90].map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+CCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+(list.length?list.map(function(c){return '<tr>'+CCOLS.map(function(k){return '<td style="white-space:pre-wrap">'+esc(cval(c,k[0]))+(k[0]==='incident'&&c.cls?' <i>('+esc(c.cls)+')</i>':'')+'</td>'}).join('')+'</tr>'}).join(''):'<tr>'+CCOLS.map(function(){return '<td style="height:40pt"></td>'}).join('')+'</tr>')+'</table>'+
+    '<div class="sigs pmcf"><div class="sig"><div class="lb" style="text-align:left">Conducted by:</div><div style="height:22pt;line-height:22pt">&nbsp;</div><div class="nm" style="text-align:left;border-bottom:none;padding-top:0">'+esc(d.rater||'\u00a0')+'</div><div class="lb" style="text-align:left">'+esc(d.raterPos)+'</div></div><div class="sig"><div class="lb" style="text-align:left">Concurred by:</div><div style="height:22pt;line-height:22pt">&nbsp;</div><div class="nm" style="text-align:left;border-bottom:none;padding-top:0">'+esc(d.ratee||'\u00a0')+'</div><div class="lb" style="text-align:left">'+esc(d.rateePos)+'</div></div><div class="sig"><div class="lb" style="text-align:left">Approved by:</div><div style="height:22pt;line-height:22pt">&nbsp;</div><div class="nm" style="text-align:left;border-bottom:none;padding-top:0">'+esc(d.appr||'\u00a0')+'</div><div class="lb" style="text-align:left">'+esc(d.apprPos)+'</div></div></div>';
 }
 $('#c-dl').addEventListener('click',async function(){
   var d=readCoach(), list=coachEntries(), mk2=monthKey();
@@ -2622,7 +2654,7 @@ $('#c-dl').addEventListener('click',async function(){
   try{
     var z=await fetchTpl('Annex-D-Performance-Monitoring-and-Coaching-Form.xlsx');
     await TPL.pmcfWorkbook(z,{sy:syOfMonth(mk2),month:monthLabel(mk2),ratee:d.ratee,rateePos:d.rateePos,desig:d.desig,school:'Castor Alviar National High School',
-      rows:list.map(function(c){ return {date:longDate(c.date),incident:c.incident,impact:c.impact,mech:(c.mech||[]).join(', '),feedback:c.feedback,progress:c.progress}; }),
+      rows:list.map(function(c){ return {date:longDate(c.date),incident:c.incident,cls:c.cls||'',impact:c.impact,mech:(c.mech||[]).join(', '),feedback:c.feedback,progress:c.progress}; }),
       rater:d.rater,raterPos:d.raterPos,appr:d.appr,apprPos:d.apprPos});
     var blob=await z.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     await offerFile(safeName('PMCF '+d.ratee+' '+monthLabel(mk2))+'.xlsx',blob);
@@ -3270,9 +3302,9 @@ function openOts(id){
 function otCoachEntry(d,c){
   var gaps=c.items.map(function(x,i){return {x:x,i:i}}).filter(function(o){return (d.items[o.i].correct||d.items[o.i].comp)&&Math.round(o.x.pct)<35});
   return {ratee:d.teacher,rateePos:d.teacherPos,desig:'',rater:d.mon,raterPos:d.monPos,appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:d.date,month:d.date.slice(0,7),sy:d.date?syOfMonth(d.date.slice(0,7)):d.sy,dept:d.dept,
-    incident:'On-the-spot test, '+[d.subject,d.section].filter(Boolean).join(' – ')+(d.term?' (Term '+d.term+')':'')+': '+c.N+' of '+(d.present||c.N)+' learners took the 5-item test. Mean score '+fmt(c.mean)+'; MPS '+fmt(c.mps)+'% ('+c.lv[1]+'). '+c.passed+' passed (4–5); '+c.dnm+' did not meet expectation (0–3).'+(gaps.length?' Learning gaps: '+gaps.map(function(o){return 'Item '+(o.i+1)+(d.items[o.i].comp?' ('+d.items[o.i].comp+')':'')+' '+fmt(o.x.pct)+'%'}).join('; ')+'.':''),
+    cls:clsOf(d.subject,d.section),incident:'On-the-spot test'+(d.term?' (Term '+d.term+')':'')+': '+c.N+' of '+(d.present||c.N)+' learners took the 5-item test. Mean score '+fmt(c.mean)+'; MPS '+fmt(c.mps)+'% ('+c.lv[1]+'). '+c.passed+' passed (4–5); '+c.dnm+' did not meet expectation (0–3).'+(gaps.length?' Learning gaps: '+gaps.map(function(o){return 'Item '+(o.i+1)+(d.items[o.i].comp?' ('+d.items[o.i].comp+')':'')+' '+fmt(o.x.pct)+'%'}).join('; ')+'.':''),
     impact:c.dnm?Math.round(c.pctOf(c.dnm))+'% of the learners ('+c.dnm+') need remediation on the tested competencies.':'All learners met the expected score on the tested competencies.',
-    mech:['Conduct of on-the-spot test'],feedback:otRecLines(d,c).join('\n'),progress:'',source:'ots',otsId:ots.id};
+    mech:['On-the-Spot Test'],feedback:otRecLines(d,c).join('\n'),progress:'',source:'ots',otsId:ots.id};
 }
 $('#ot-save').addEventListener('click',async function(){
   var d=otRead(), c=otCalc(d);
@@ -3327,7 +3359,7 @@ function monthlyRows(fm,fy,fd,q){
       find:c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%).'+(c.notYet.length?'\nNot yet: '+c.notYet.map(function(i){ return LPC[i].b.replace(/,$/,'')+((o.findings||[])[i]?' \u2013 '+o.findings[i]:''); }).join('; '):''),
       rec:o.rec||''}); });
   S.coach.forEach(function(c){ if(c.source==='ots'||c.source==='lp'||!ok(c.date,c.dept||deptOf(c.ratee),[c.ratee,c.rater])) return;
-    rows.push({date:c.date,teacher:c.ratee,subj:'',act:(c.mech||[]).join(', ')||'Coaching and feedback',by:c.rater,find:c.incident||'',rec:c.feedback||''}); });
+    rows.push({date:c.date,teacher:c.ratee,subj:c.cls||'',act:(c.mech||[]).join(', ')||'Coaching and feedback',by:c.rater,find:c.incident||'',rec:c.feedback||''}); });
   S.obs.forEach(function(o){ if(!hasCOT(o)||!ok(o.date,o.dept||deptOf(o.teacher),[o.teacher].concat((o.observers||[]).map(function(x){return x.n})))) return;
     var st=STAGES[o.stage], sc=(o.ratings||[]).map(function(r){ return st?scoreOf(String(r),st):null; }).filter(function(v){return v!=null});
     var avg=sc.length?sc.reduce(function(a,b){return a+b},0)/sc.length:0, rated=(o.ratings||[]).filter(function(r){return r!==''&&r!=null}).length;
@@ -3416,13 +3448,13 @@ function lpSheetHTML(d){
     frow('Topic:',d.topic)+
     '<table style="width:100%;border-collapse:collapse;margin-top:8pt"><colgroup><col style="width:42%"><col style="width:9%"><col style="width:9%"><col></colgroup>'+
     '<tr><th style="'+TH+';text-align:left">I can say that in my lesson plan&hellip;</th><th style="'+TH+'">Yes</th><th style="'+TH+'">Not Yet</th><th style="'+TH+'">Findings/Remarks</th></tr>'+
-    LPC.map(function(cr,i){ var r=d.ratings[i]; return '<tr><td style="'+TD+'"><b>'+esc(cr.b)+'</b>'+esc(cr.t)+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='Y'?'&#10003;':'')+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='N'?'&#10003;':'')+'</td><td style="'+TD+';white-space:pre-wrap">'+esc(d.findings[i]||'')+'</td></tr>'; }).join('')+
-    '<tr><td style="'+TD+';text-align:right;font-weight:700">Total</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.yes:'')+'</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.no:'')+'</td><td style="'+TD+'">'+(c.rated?c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%)':'')+'</td></tr></table>'+
+    LPC.map(function(cr,i){ var r=d.ratings[i]; return '<tr><td style="'+TD+'"><b>'+esc(cr.b)+'</b>'+esc(cr.t)+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='Y'?'&#10003;':'')+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='N'?'&#10003;':'')+'</td><td style="'+TD+';white-space:pre-wrap;vertical-align:middle">'+esc(d.findings[i]||'')+'</td></tr>'; }).join('')+
+    '<tr><td style="'+TD+';text-align:right;font-weight:700">Total</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.yes:'')+'</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.no:'')+'</td><td style="'+TD+';vertical-align:middle">'+(c.rated?c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%)':'')+'</td></tr></table>'+
     '<div style="background:#E2EFD9;border:.75pt solid #808080;text-align:center;font-weight:700;padding:1pt;margin-top:8pt">Recommendations</div>'+
     '<div style="border:.75pt solid #808080;border-top:none;padding:4pt 8pt;min-height:56pt">'+recs.map(function(r){ return '<div>'+esc(r)+'</div>'; }).join('')+'</div>'+
     '<table class="lay" style="width:100%;border-collapse:collapse;margin-top:16pt"><tr>'+
-      '<td class="lay" style="width:50%;border:none;padding:0 20pt 0 0;vertical-align:top"><b>Monitored by:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left">'+esc(d.mon||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.monPos||'HT/MT/School Head')+'</div></div></td>'+
-      '<td class="lay" style="border:none;padding:0;vertical-align:top"><b>Conforme:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left">'+esc(d.teacher||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.teacherPos||'Teacher/Master Teacher')+'</div></div></td></tr></table>'+
+      '<td class="lay" style="width:50%;border:none;padding:0 20pt 0 0;vertical-align:top"><b>Monitored by:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left;border-bottom:none">'+esc(d.mon||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.monPos||'HT/MT/School Head')+'</div></div></td>'+
+      '<td class="lay" style="border:none;padding:0;vertical-align:top"><b>Conforme:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left;border-bottom:none">'+esc(d.teacher||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.teacherPos||'Teacher/Master Teacher')+'</div></div></td></tr></table>'+
     '<img class="lh-bot" src="'+LH_BOT+'" alt=""></div>';
 }
 function newLp(){
@@ -3443,7 +3475,7 @@ function openLp(id){
 function lpCoachEntry(d,c){
   var ny=c.notYet.map(function(i){ return LPC[i].b.replace(/,$/,'')+(d.findings[i]?' ('+d.findings[i].replace(/\s+/g,' ').trim()+')':''); });
   return {ratee:d.teacher,rateePos:d.teacherPos,desig:'',rater:d.mon,raterPos:d.monPos,appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:d.date,month:d.date.slice(0,7),sy:d.date?syOfMonth(d.date.slice(0,7)):d.sy,dept:d.dept,
-    incident:'Lesson plan monitoring, '+[d.subject,d.topic].filter(Boolean).join(' – ')+(d.term?' (Term '+d.term+')':'')+': '+c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%).'+(ny.length?' Not yet: '+ny.join('; ')+'.':''),
+    cls:clsOf(d.subject,''),incident:'Lesson plan monitoring'+(d.topic?' – '+d.topic:'')+(d.term?' (Term '+d.term+')':'')+': '+c.yes+' of '+c.n+' criteria met ('+fmt(c.pct)+'%).'+(ny.length?' Not yet: '+ny.join('; ')+'.':''),
     impact:ny.length?'The lesson plan needs revision in '+ny.length+' area'+(ny.length===1?'':'s')+' before it fully supports learning.':'The lesson plan fully supports the intended learning.',
     mech:['Checking of DLL'],feedback:d.rec||'',progress:'',source:'lp',lpId:lp.id};
 }
@@ -3508,7 +3540,7 @@ var startTab=ls('tab'); if(/^#(home|plan|obs|coach|reports|records|people|librar
 
 Store.init().then(function(){
   Store.watch('obs',function(l){ S.obs=l.filter(function(x){return x.kind!=='ots'&&x.kind!=='lp'}); S.ots=l.filter(function(x){return x.kind==='ots'}); S.lp=l.filter(function(x){return x.kind==='lp'}); renderAll(); });
-  Store.watch('coach',function(l){ S.coach=l; renderAll(); });
+  Store.watch('coach',function(l){ l.forEach(function(c){ if(c.mech) c.mech=c.mech.map(function(m){ return /^conduct of on-the-spot test$/i.test(m)?'On-the-Spot Test':m; }); }); S.coach=l; renderAll(); });
   Store.watch('plans',function(l){ S.plans=l; renderAll(); });
   Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{}}; renderPeople(); renderAll(); });
 });
