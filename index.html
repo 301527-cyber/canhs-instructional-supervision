@@ -611,9 +611,9 @@ table.rate .finds li{margin:2px 0}
     <p class="hint">Type what you see while the lesson runs: what the teacher and the learners do, with the time. The notes print on the Classroom Observation Notes Form.</p>
     <div class="f nted" style="margin-top:12px"><div class="ntbar"><span>Observation notes</span><button type="button" class="btn ghost small" id="o-bold" title="Bold the selected words (Ctrl+B)" aria-label="Bold"><b>B</b> Bold</button><span class="ntip">Select words, then click Bold or press Ctrl+B. Click again to remove.</span></div><div id="o-notes-ed" class="noted" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Observation notes" spellcheck="true" data-ph="8:00 Teacher greets the class and checks attendance.&#10;8:04 Review: learners answer three questions on the board.&#10;8:10 Motivation: picture of the barangay market; teacher asks what they notice about prices&hellip;"></div><textarea id="o-notes" hidden rows="12" placeholder="8:00 Teacher greets the class and checks attendance.&#10;8:04 Review: learners answer three questions on the board.&#10;8:10 Motivation: picture of the barangay market; teacher asks what they notice about prices&hellip;"></textarea></div>
     <div class="row" style="margin-top:12px">
-      <button class="btn" id="o-notes-pdf" type="button">Download PDF</button>
+      <button class="btn" id="o-notes-pdf" type="button">Official Annex E-4 (PDF)</button>
       <button class="btn ghost" id="o-notes-doc" type="button">Download Word (.docx)</button>
-      <button class="btn ghost" id="o-notes-docx" type="button">Official Annex template (.docx)</button>
+      <button class="btn ghost" id="o-notes-docx" type="button" hidden>Official Annex template (.docx)</button>
       <button class="btn ghost" id="o-notes-print" type="button">Print Notes Form</button>
       <button class="btn gold" id="o-notes-save" type="button">Save observation</button>
       <span class="mini" id="o-notes-count"></span>
@@ -652,9 +652,9 @@ table.rate .finds li{margin:2px 0}
     <p class="hint">The download is the Annex E-2 template for the teacher&rsquo;s career stage and the school year, filled in. With two or three observers it is the Annex E-3 Inter-Observer Agreement Form.</p>
     <div class="row" style="margin-top:12px">
       <button class="btn gold" id="o-save" type="button">Save observation to the shared record</button>
-      <button class="btn" id="o-pdf" type="button">Download PDF</button>
+      <button class="btn" id="o-pdf" type="button">Official Annex E-2 (PDF)</button>
       <button class="btn ghost" id="o-doc" type="button">Download Word (.docx)</button>
-      <button class="btn ghost" id="o-dl" type="button">Official Annex template (.docx)</button>
+      <button class="btn ghost" id="o-dl" type="button" hidden>Official Annex template (.docx)</button>
       <button class="btn ghost" id="o-print" type="button">Print COT Rating Sheet</button>
       <button class="btn ghost" id="o-new" type="button">Start a new observation</button>
       <button class="btn danger" id="o-del" type="button" hidden>Delete this observation</button>
@@ -713,7 +713,7 @@ table.rate .finds li{margin:2px 0}
     <div class="cmonths" id="c-months3"></div>
     <p class="hint" id="c-loghint">All saved entries for this teacher in the chosen month, oldest first. Open an entry to change it.</p>
     <div id="c-log"></div>
-    <div class="row" style="margin-top:12px"><button class="btn" id="c-pdf" type="button">Download PDF</button><button class="btn ghost" id="c-doc" type="button">Download Word (.docx)</button><button class="btn ghost" id="c-dl" type="button">Download Excel (Annex D)</button></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="c-pdf" type="button">Official Annex D (PDF)</button><button class="btn ghost" id="c-doc" type="button">Download Word (.docx)</button><button class="btn ghost" id="c-dl" type="button" hidden>Download Excel (Annex D)</button></div>
     <div class="leafwrap"><div class="leaf a4land" id="c-leaf"></div></div>
   </div>
 </section>
@@ -1198,7 +1198,7 @@ function fillNotes(xml,d,DOMP,SER){
     all(tbl,'trHeight').forEach(function(h){ setAttr(h,'hRule','atLeast'); });
     var tc=all(tbl,'tc')[0], p0=all(tc,'p')[0];
     var lines=String(d.notes||'').split(/\r?\n/);
-    if(p0){ var mx=lines.reduce(function(a,l){ var p=noteSplit(l); return p.pre?Math.max(a,p.pre.length):a; },0); addParas(doc,p0,lines,{sz:20,rich:true,hang:mx?Math.max(600,mx*115+140):0}); }
+    if(p0){ var mx=lines.reduce(function(a,l){ var p=noteSplit(l); return p.pre?Math.max(a,p.pre.length):a; },0); addParas(doc,p0,lines,{sz:20,rich:true,hang:mx?Math.max(480,mx*100+80):0}); }
   }
   paras=kids(body,'p');
   paras.forEach(function(p,i){ var nx=paras[i+1]; if(nx && /Name of the Observer/.test(textOf(nx)) && /_{6,}/.test(textOf(p))) sigLine(doc,p,[(d.observers[0]||{}).n]); });
@@ -2064,7 +2064,7 @@ function cotSheetHTML(d){
   if(st.foot) h+='<div class="cfoot"><div class="lab" style="background:'+col+'"><span>S.Y. '+esc(d.sy)+' <b>| '+esc(st.foot[0])+'</b></span><b>'+esc(st.foot[1])+'</b></div><div class="rt">This tool was developed through the Research Institute for Teacher Quality (RITQ)&mdash;formerly Research Center for Teacher Quality&mdash;with support from the Australian Government.</div><img src="'+LOGOS+'" alt="Australian Aid, University of New England, SiMERR, Philippine Normal University, RCTQ"></div>';
   return h+'</div>';
 }
-var obT; function obsLeafSoon(){ clearTimeout(obT); obT=setTimeout(function(){ var d=readObs(); $('#o-leafwrap').innerHTML=cotSheetHTML(d); $('#o-notesleaf').innerHTML=notesSheetHTML(d);
+var obT; function obsLeafSoon(){ clearTimeout(obT); obT=setTimeout(function(){ var d=readObs(); $('#o-pdf').textContent='Official Annex '+(d.observers.length>1?'E-3':'E-2')+' (PDF)'; $('#o-leafwrap').innerHTML=cotSheetHTML(d); $('#o-notesleaf').innerHTML=notesSheetHTML(d);
   var w=(plainNotes(d.notes).match(/\S+/g)||[]).length; $('#o-notes-count').textContent=w?w+' word'+(w===1?'':'s'):''; },250); }
 
 /* ---------- files: exact templates and the notes PDF ---------- */
@@ -2192,12 +2192,14 @@ function richNotes(s){ return String(s||'').split('\n').map(function(l){ return 
 var TIME_RX=/^(\s*\d{1,2}[:.]\d{2}(?:\s*[AaPp]\.?\s?[Mm]\.?)?\s*(?:[-\u2013\u2014]|:(?!\d))?)\s*(.*)$/;
 function noteSplit(line){ var m=TIME_RX.exec(line); return m?{pre:m[1].trim(),txt:m[2]}:{pre:'',txt:line}; }
 function richLine(l){ return noteSegs(l).map(function(g){ return g.b?'<b>'+esc(g.t)+'</b>':esc(g.t); }).join(''); }
+var NOTE_PT='10';
 function notesTable(s){
   var L=String(s||'').split('\n'); if(!String(s||'').trim()) return '';
   var cs='border:none;padding:0 0 1pt 0;vertical-align:top;line-height:1.35';
-  var mx=L.reduce(function(a,l){ var p=noteSplit(l); return Math.max(a,p.pre.length); },0), cw=Math.max(24,Math.round(mx*5.6+8));
+  var CW=function(t){ return String(t).split('').reduce(function(a,ch){ return a+(/[0-9]/.test(ch)?0.556:/[:. ]/.test(ch)?0.278:/[-]/.test(ch)?0.333:/[\u2013]/.test(ch)?0.556:/[\u2014]/.test(ch)?1:/[MW]/.test(ch)?0.833:/[A-Z]/.test(ch)?0.667:0.5); },0); };
+  var fs=parseFloat(NOTE_PT)||10, mx=L.reduce(function(a,l){ var p=noteSplit(l); return Math.max(a,CW(p.pre)); },0), cw=Math.max(14,Math.ceil(mx*fs+5));
   return '<table style="width:100%;border-collapse:collapse;border:none;table-layout:fixed"><colgroup><col style="width:'+cw+'pt"><col></colgroup>'+L.map(function(l){ var p=noteSplit(l);
-    return '<tr><td style="'+cs+';white-space:nowrap;padding-right:5pt">'+esc(p.pre).replace(/ /g,'&nbsp;')+'</td><td style="'+cs+';white-space:pre-wrap">'+(richLine(p.txt)||'&nbsp;')+'</td></tr>'; }).join('')+'</table>';
+    return '<tr><td style="'+cs+';white-space:nowrap;padding-right:4pt">'+esc(p.pre).replace(/ /g,'&nbsp;')+'</td><td style="'+cs+';white-space:pre-wrap">'+(richLine(p.txt)||'&nbsp;')+'</td></tr>'; }).join('')+'</table>';
 }
 function edToText(root){
   var lines=[[]], nl=function(){ lines.push([]); }, cur=function(){ return lines[lines.length-1]; };
