@@ -156,6 +156,19 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--in
 label.f>input,label.f>select,label.f>textarea,label.f .dfield{text-transform:none;letter-spacing:normal;font-size:14.5px;color:var(--ink)}
 label.f.wide{grid-column:1/-1}
 .cmonths:empty{display:none}
+.scc input[type=date]{display:block;width:140px;font-size:13px;padding:3px 6px;margin:2px 0}
+.scc select{font-size:13px;max-width:170px}
+.scchip{display:inline-block;font-size:11.5px;padding:1px 6px;margin:1px 3px 1px 0;border-radius:10px;border:1px solid var(--rule);color:var(--ink-3);white-space:nowrap}
+.scchip.part{border-color:#c9a227;color:#7a5d00;background:rgba(201,162,39,.1)}
+.scchip.ok{border-color:#2e7d4f;color:#1d5e39;background:rgba(46,125,79,.1)}
+table.sccal{width:100%;min-width:760px;border-collapse:collapse;table-layout:fixed}
+table.sccal th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);padding:4px;border-bottom:1px solid var(--rule)}
+td.scday{vertical-align:top;border:1px solid var(--rule);padding:4px 5px;height:84px;font-size:12px}
+td.scday.empty{background:transparent;border-color:transparent}
+td.scday.off{background:rgba(127,127,127,.08)}
+.scdn{font-weight:700;margin-bottom:2px}
+.scev{border-left:3px solid #888;padding:1px 4px;margin:2px 0;line-height:1.3;background:rgba(127,127,127,.06);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scev.dll{border-color:#3a6ea5}.scev.walk{border-color:#2e7d4f}.scev.ots{border-color:#c9a227}.scev.cot{border-color:#a5463a}
 .cpull{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 10px;padding:10px 12px;border:1px solid var(--gold,#c9a227);border-radius:8px;background:rgba(201,162,39,.08);font-size:13.5px}
 .cmonths{margin:12px 0 4px;padding:10px 12px;background:var(--seal-soft);border-radius:2px;font-size:13.5px;color:var(--ink);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .cmonths .mchip{all:unset;cursor:pointer;padding:4px 10px;border-radius:999px;border:1px solid var(--seal);color:var(--seal);font-size:13px;font-weight:600;background:var(--surface,#fff)}
@@ -487,6 +500,7 @@ table.rate .finds li{margin:2px 0}
     <button role="tab" aria-selected="true" data-panel="home">Dashboard</button>
     <div class="navhead">Supervision forms</div>
     <button role="tab" aria-selected="false" data-panel="plan">IS Plan</button>
+    <button role="tab" aria-selected="false" data-panel="sched">Supervisory Schedule</button>
     <button role="tab" aria-selected="false" data-panel="obs">Classroom Observation</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="notes">Classroom Observation Notes Form</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="cot">COT Rating</button>
@@ -537,6 +551,39 @@ table.rate .finds li{margin:2px 0}
   <div id="h-depts"></div>
 </section>
 
+<!-- ============ SUPERVISORY SCHEDULE ============ -->
+<section class="panel" id="p-sched">
+  <div class="dbar">
+    <label>Month <select id="sc-month"></select><input type="number" id="sc-year" min="2024" max="2035" style="width:84px"></label>
+    <label>Department <select id="sc-dept"></select></label>
+    <label>Days without classes <input type="text" id="sc-off" placeholder="e.g. 1, 2, 30" style="width:120px" autocomplete="off"></label>
+  </div>
+  <div class="card">
+    <h2>Schedule of supervisory activities</h2>
+    <p class="hint" style="max-width:none">Every teacher, every month: <b>2 DLL checks</b>, <b>2 walk-through observations</b> and <b>2 on-the-spot tests</b>, plus the <b>COT classroom observation</b> in the month it is due. The system suggests dates on school days, spread across the month for each supervisor. The department head (and the Master Teacher who also supervises) chooses the final dates and saves. Master Teachers and the department supervisors themselves are scheduled by the School Head under &ldquo;Master Teachers &amp; Supervisors&rdquo;. The &ldquo;Done&rdquo; column counts the forms already saved this month. The saved schedule is put in the Monthly Supervisory Plan automatically.</p>
+    <div id="sc-sups" style="margin:8px 0 10px"></div>
+    <div class="scroll"><table class="ind" id="sc-table" style="min-width:980px"></table></div>
+    <div class="row" style="margin-top:12px;gap:10px;flex-wrap:wrap">
+      <button class="btn gold" id="sc-save" type="button">Save schedule</button>
+      <button class="btn ghost" id="sc-suggest" type="button">Suggest dates for blank cells</button>
+      <button class="btn ghost" id="sc-clear" type="button">Clear all dates</button>
+      <button class="btn" id="sc-plan" type="button">Put in the Monthly Supervisory Plan</button>
+      <button class="btn ghost" id="sc-pdf" type="button">Download PDF</button>
+      <button class="btn ghost" id="sc-doc" type="button">Download Word (.docx)</button>
+      <span class="mini" id="sc-state"></span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0">Calendar</h2><label class="row" id="sc-calall-l" style="gap:6px;font-size:13.5px"><input type="checkbox" id="sc-calall"> Show every department (School Head)</label></div>
+    <p class="hint" style="max-width:none">School days of the month with the activities set. DLL = DLL Checking, WT = Walk-through Observation, OTS = On-the-Spot Test, COT = Classroom Observation. The name after the dot is the supervisor.</p>
+    <div class="scroll"><div id="sc-cal"></div></div>
+  </div>
+  <div class="card">
+    <h2>Preview</h2>
+    <div class="leafwrap"><div class="leaf a4land" id="sc-leaf"></div></div>
+  </div>
+</section>
+
 <!-- ============ IS PLAN (Annex B) ============ -->
 <section class="panel wiz" id="p-plan">
   <div class="card">
@@ -582,7 +629,7 @@ table.rate .finds li{margin:2px 0}
     <h2><span class="step">STEP 2</span> Plan rows</h2>
     <p class="hint">One row per key result area or activity. Write the time frame with full dates, for example &ldquo;October 14, 2026 &ndash; October 18, 2026&rdquo;.</p>
     <div id="pl-rows"></div>
-    <div class="row" style="margin-top:10px"><button class="btn ghost small" id="pl-add" type="button">Add a row</button></div>
+    <div class="row" style="margin-top:10px"><button class="btn ghost small" id="pl-add" type="button">Add a row</button><button class="btn ghost small" id="pl-sched" type="button">Update the activities from the Supervisory Schedule</button></div>
   </div>
   <div class="card" data-step="3">
     <h2><span class="step">STEP 3</span> Save and download</h2>
@@ -927,8 +974,8 @@ table.rate .finds li{margin:2px 0}
     <div class="scroll"><table class="ind" id="pp-heads" style="min-width:620px"></table></div>
   </div>
   <div class="card" id="pp-codes-card" hidden>
-    <h2>Department head sign-ins</h2>
-    <p class="hint">Give each department head their email and a 4-digit passcode. Signed in, they see and save only the plans, observations, on-the-spot tests, lesson plan monitoring and PMCFs of the teachers assigned to their department. They cannot open other departments&rsquo; records. The check is done by the Google Sheet, so the other records never reach their browser. Leave a row blank to block that department.</p>
+    <h2>Supervisor sign-ins</h2>
+    <p class="hint">One row for each department head and each Master Teacher who supervises (set above). Give each one their email and a 4-digit passcode. Signed in, they see and save only the plans, schedules, observations, on-the-spot tests, lesson plan monitoring and PMCFs of the teachers in the department(s) shown on their row. A person who handles two departments signs in once and works in both. They cannot open other departments&rsquo; records. The check is done by the Google Sheet, so the other records never reach their browser. Leave a row blank to block that person.</p>
     <div class="scroll"><table class="ind" id="pp-codes" style="min-width:560px"></table></div>
     <div class="row" style="margin-top:12px"><button class="btn gold" id="pp-codes-save" type="button">Save sign-ins</button><span class="mini" id="pp-codes-state"></span></div>
   </div>
@@ -1483,7 +1530,7 @@ function stageOf(pos){
   return r<=3?'b':'p';
 }
 function fillPeople(sel){
-  var f=FILTERS[sel.dataset.people]||FILTERS.all, only=function(p){ if(sel.dataset.people==='teach'&&mtHidden()&&p.g==='mt') return false; if(sel.dataset.people==='teach'&&S.myDept) return (S.cfg.assign||{})[p.n]===S.myDept; return true; }, h=sel.dataset.optional?'<option value="">(none)</option>':'<option value="">Choose a name&hellip;</option>';
+  var f=FILTERS[sel.dataset.people]||FILTERS.all, only=function(p){ if(sel.dataset.people==='teach'&&mtHidden()&&p.g==='mt') return false; if(sel.dataset.people==='teach'&&S.myDept) return myDeptOk((S.cfg.assign||{})[p.n]); return true; }, h=sel.dataset.optional?'<option value="">(none)</option>':'<option value="">Choose a name&hellip;</option>';
   f.forEach(function(g){
     var list=PEOPLE.filter(function(p){return p.g===g&&only(p)}).sort(function(a,b){return a.s<b.s?-1:1});
     if(!list.length) return;
@@ -1512,7 +1559,8 @@ function setPerson(id,name,pos){
 }
 
 /* ------------------------------------------------------------------ shared record (Google Sheet through Apps Script) */
-var S={obs:[],ots:[],lp:[],coach:[],plans:[],tplans:[],cfg:{heads:{},assign:{}},sy:ls('sy')||'2026-2027',canWrite:true,canEdit:false,mode:'connecting',role:'',myDept:''};
+var S={obs:[],ots:[],lp:[],coach:[],plans:[],tplans:[],cfg:{heads:{},assign:{}},sy:ls('sy')||'2026-2027',canWrite:true,canEdit:false,mode:'connecting',role:'',myDept:'',myDepts:[]};
+function myDeptOk(d){ return !S.myDepts.length||S.myDepts.indexOf(String(d||''))>=0; }
 var CFG=window.CANHS_IS||{};
 var API={url:String(CFG.apiUrl||ls('apiUrl')||'').trim(), code:ls('code')||''};
 var COLLS=['obs','coach','plans','config'];
@@ -1529,7 +1577,7 @@ var Store={
         if(!res.ok){ S.mode='locked'; self.lastErr=res.error||''; S.canWrite=false; S.canEdit=false;
           if(res.error==='code'){ try{ var pg=await self.get('ping'); self.diag=pg&&pg.version?(pg.hasHead?'ok':'nohead'):'old'; self.diagSheet=pg&&pg.sheet||''; }catch(e){ self.diag='old'; } }
           connUI(); return; }
-        S.mode='shared'; S.role=res.role; S.myDept=res.role==='dept'?String(res.dept||''):''; S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
+        S.mode='shared'; S.role=res.role; S.myDepts=res.role==='dept'?((res.depts&&res.depts.length)?res.depts.map(String):String(res.dept||'').split(/\s*[,;&\/]\s*/).filter(String)):[]; S.myDept=S.myDepts.join(' & '); S.myName=String(res.name||''); S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
         self.apply(res.data); connUI();
         clearInterval(self.timer); self.timer=setInterval(function(){ self.refresh(); },30000);
         document.addEventListener('visibilitychange',function(){ if(!document.hidden) self.refresh(); });
@@ -1550,7 +1598,7 @@ var Store={
     if(S.mode!=='shared') return;
     try{ var res=await this.get('all'); if(res.ok) this.apply(res.data); }catch(e){}
   },
-  apply:function(data){ var self=this; COLLS.forEach(function(c){ var l=(data&&data[c])||[]; if(S.myDept&&c!=='config') l=l.filter(function(o){ return recDept(c,o)===S.myDept; }); if(mtHidden()&&c!=='config') l=l.filter(function(o){ return !recIsMT(c,o); }); self.cache[c]=l; self._emit(c); }); },
+  apply:function(data){ var self=this; COLLS.forEach(function(c){ var l=(data&&data[c])||[]; if(S.myDept&&c!=='config') l=l.filter(function(o){ return myDeptOk(recDept(c,o)); }); if(mtHidden()&&c!=='config') l=l.filter(function(o){ return !recIsMT(c,o); }); self.cache[c]=l; self._emit(c); }); },
   lsKey:function(c){return 'local-'+c},
   watch:function(coll,cb){
     this.subs[coll]=cb;
@@ -1584,9 +1632,9 @@ function recIsMT(coll,o){ var tp=coll==='plans'&&o.kind==='tplan', pos=tp?o.teac
 function recDept(coll,o){ if(o&&o.dept) return String(o.dept); var n=coll==='coach'?o.ratee:o.teacher; return (n&&(S.cfg.assign||{})[n])||''; }
 /* a department head sees and picks only their own department */
 function lockDept(){
-  var d=S.myDept;
-  $$('#pl-dept,#o-dept,#c-dept,#ot-dept,#lp-dept,#rp-dept,#h-dept,#r-dept').forEach(function(sel){
-    if(d){ if(sel.options.length!==1||sel.value!==d){ sel.innerHTML='<option value="'+esc(d)+'">'+esc(d)+'</option>'; sel.value=d; } sel.disabled=true; sel.title='You are signed in for the '+d+' Department'; }
+  var d=S.myDept, ds=S.myDepts;
+  $$('#pl-dept,#o-dept,#c-dept,#ot-dept,#lp-dept,#rp-dept,#h-dept,#r-dept,#sc-dept').forEach(function(sel){
+    if(d){ var have=[].map.call(sel.options,function(o){return o.value}).join('|'); if(have!==ds.join('|')){ var v=sel.value; sel.innerHTML=ds.map(function(x){return '<option value="'+esc(x)+'">'+esc(x)+'</option>'}).join(''); sel.value=ds.indexOf(v)>=0?v:ds[0]; } sel.disabled=ds.length<2; sel.title='You are signed in for the '+d+' Department'+(ds.length>1?'s':''); }
     else if(sel.disabled&&sel.dataset.locked){ sel.disabled=false; }
     if(d) sel.dataset.locked='1';
   });
@@ -1596,11 +1644,11 @@ function banner(msg,kind){ $('#banner').innerHTML=msg?'<div class="notice '+(kin
 function connUI(){
   var c=$('#conn');
   c.className='conn '+(S.mode==='shared'?'live':S.mode==='local'?'local':'');
-  $('#conntext').textContent=S.mode==='shared'?(S.role==='admin'?'Shared record \u00b7 School Head':S.myDept?'Shared record \u00b7 '+S.myDept+' Department':S.canWrite?'Shared record \u00b7 can save':'Shared record \u00b7 read only'):S.mode==='local'?'This browser only':S.mode==='locked'?'Sign-in needed':S.mode==='offline'?'Cannot reach the record':'Connecting\u2026';
+  $('#conntext').textContent=S.mode==='shared'?(S.role==='admin'?'Shared record \u00b7 School Head':S.myDept?'Shared record \u00b7 '+S.myDept+' Department'+(S.myDepts.length>1?'s':''):S.canWrite?'Shared record \u00b7 can save':'Shared record \u00b7 read only'):S.mode==='local'?'This browser only':S.mode==='locked'?'Sign-in needed':S.mode==='offline'?'Cannot reach the record':'Connecting\u2026';
   if(S.mode==='local') banner('<b>Not connected to a shared record.</b> Entries saved now stay in this browser only. To share one record with the department heads, set up the Google Sheet as described in the README, then open <button class="link" type="button" data-go="settings">Connection</button>.','ask');
   else if(S.mode==='locked') banner('<b>Sign in</b> with your email and 4-digit passcode to open the shared supervision record. '+(Store.lastErr==='locked_out'?'Too many wrong passcodes; wait 15 minutes. ':Store.lastErr==='code'?(Store.diag==='old'?'<br><b>The web app is still running the old Apps Script.</b> In Apps Script: Deploy &rsaquo; Manage deployments &rsaquo; pencil &rsaquo; Version: <b>New version</b> &rsaquo; Deploy. Then sign in again. ':Store.diag==='nohead'?'<br><b>The Google Sheet'+(Store.diagSheet?' &ldquo;'+esc(Store.diagSheet)+'&rdquo;':'')+' has no School Head sign-in yet.</b> In Apps Script, run <b>setMyLogin</b> with your email and passcode. ':'The email and passcode were not accepted; check them in the Access tab of the Google Sheet'+(Store.diagSheet?' &ldquo;'+esc(Store.diagSheet)+'&rdquo;':'')+'. '):'')+'<button class="btn small" type="button" data-go="settings">Sign in</button>','ask');
   else if(S.mode==='offline') banner('<b>The shared record could not be reached.</b> Check the internet connection, then reload the page.','warn');
-  else if(S.mode==='shared' && S.myDept) banner('<b>'+esc(S.myDept)+' Department.</b> You see and save only the records of teachers in your department.','info');
+  else if(S.mode==='shared' && S.myDept) banner('<b>'+esc(S.myDept)+' Department'+(S.myDepts.length>1?'s':'')+'.</b> You see and save only the records of teachers in your department'+(S.myDepts.length>1?'s':'')+'.','info');
   else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for a department head sign-in.','ask');
   else banner('');
   $$('#pl-save,#o-save,#o-notes-save,#sm-save,#ot-save,#ot-del,#lp-save,#lp-del,#c-save,#pl-del,#o-del,#c-del').forEach(function(b){ b.disabled=!S.canWrite; });
@@ -1614,7 +1662,7 @@ function saveErr(e){
   if(c==='readonly'||c==='admin'){ toast(c==='admin'?'Only the School Head can change departments.':'Not saved: this sign-in can only read the record.'); return; }
   if(c==='code'){ toast('Not saved: your sign-in was not accepted. Sign in again under Connection.'); return; }
   if(c==='mt'){ toast('Not saved: Master Teachers\u2019 plans and supervisory records are for the School Head only.'); return; }
-  if(c==='dept'){ toast('Not saved: this record belongs to another department. You are signed in for the '+(S.myDept||'other')+' Department only.'); return; }
+  if(c==='dept'){ toast('Not saved: this record belongs to another department. You are signed in for the '+(S.myDept||'other')+' Department'+(S.myDepts.length>1?'s':'')+' only.'); return; }
   if(c==='too_large'){ toast('Not saved: this entry is too long for one row. Shorten the notes and try again.'); return; }
   if(c==='locked'||c==='offline'){ toast('Not saved: the shared record is not connected.'); return; }
   toast('Not saved ('+(c||'no connection')+'). Check the connection and try again.');
@@ -1677,6 +1725,7 @@ function sheetHead(){ return '<div class="hd"><div>Republic of the Philippines</
 /* ------------------------------------------------------------------ nav */
 var LEDES={
   home:['Dashboard',''],
+  sched:['Supervisory Schedule','The dates of each teacher\u2019s DLL checking, walk-through observations, on-the-spot tests and COT observations for the month.'],
   plan:['Instructional Supervisory Plan','Annex B. The department head\u2019s plan for the month, saved to the shared record and downloadable as the filled template.'],
   obs:['Classroom Observation','Annex E. Rate the COT indicators of the school year on the teacher\u2019s career-stage scale and file the Rating Sheet or Inter-Observer Agreement Form.'],
   coach:['Monitoring & Coaching','Annex D. Log each coaching and feedback session; the entries make up the teacher\u2019s Performance Monitoring and Coaching Form.'],
@@ -1712,6 +1761,11 @@ document.addEventListener('click',function(e){ var b=e.target.closest('[data-go]
 
 /* ------------------------------------------------------------------ helpers */
 function deptOf(name){ return (S.cfg.assign||{})[name]||''; }
+/* the supervisors of a department: the department head designate, then the Master Teacher who also supervises */
+function deptSups(dp){ if(dp==='_SH') return PRINCIPAL.n?[PRINCIPAL.n]:[]; var a=[(S.cfg.heads||{})[dp],(S.cfg.sup2||{})[dp]].filter(Boolean); return a.filter(function(x,i){return a.indexOf(x)===i}); }
+/* the departments a person supervises (head or second supervisor) */
+function supDepts(n){ return DEPTS.filter(function(dp){ return deptSups(dp).indexOf(n)>=0; }); }
+function allSups(){ var out=[]; DEPTS.forEach(function(dp){ deptSups(dp).forEach(function(n){ if(out.indexOf(n)<0) out.push(n); }); }); return out; }
 function optList(arr,blank){ return (blank!=null?'<option value="">'+blank+'</option>':'')+arr.map(function(x){ return typeof x==='string'?'<option>'+esc(x)+'</option>':'<option value="'+esc(x[0])+'">'+esc(x[1])+'</option>'; }).join(''); }
 function armDelete(btn,fn){
   if(btn.classList.contains('armed')){ btn.classList.remove('armed'); btn.textContent=btn.dataset.label; fn(); return; }
@@ -2104,7 +2158,7 @@ function ipRender(){
   var list=(S.tplans||[]).filter(function(p){ return p.sy===sy; }).sort(function(a,b){ return lastFirst(a.teacher).localeCompare(lastFirst(b.teacher)); });
   $('#ip-list').innerHTML=list.length?'<p class="mini" style="margin:4px 0">(1) Supervisory plans per teacher, SY '+esc(sy)+': '+list.length+'</p>'+list.map(function(p){ return '<div class="listrow"><div class="what"><b>'+esc(lastFirst(p.teacher))+'</b> &middot; '+esc(p.dept||deptOf(p.teacher)||'No department')+'<div>'+p.rows.length+' plan rows &middot; from '+esc(p.source||'IDP')+'</div></div><button class="btn ghost small" type="button" data-ipview="'+esc(p.id)+'">View</button></div>'; }).join(''):'';
   $('#ip-actions').hidden=!list.length;
-  if(!$('#ip-annual-dept').options.length||$('#ip-annual-dept').dataset.v!==String(S.myDept)){ $('#ip-annual-dept').innerHTML=S.myDept?'<option>'+esc(S.myDept)+'</option>':'<option value="">Whole school</option>'+DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join(''); $('#ip-annual-dept').dataset.v=String(S.myDept); }
+  if(!$('#ip-annual-dept').options.length||$('#ip-annual-dept').dataset.v!==String(S.myDept)){ $('#ip-annual-dept').innerHTML=S.myDept?S.myDepts.map(function(x){return '<option>'+esc(x)+'</option>'}).join(''):'<option value="">Whole school</option>'+DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join(''); $('#ip-annual-dept').dataset.v=String(S.myDept); }
 }
 $('#ip-file').addEventListener('change',async function(){
   var files=[].slice.call(this.files); this.value=''; if(!files.length) return; var bad=[];
@@ -3311,7 +3365,7 @@ function renderHome(){
     $('#h-q').addEventListener('input',renderHome);
     $('#h-depts').addEventListener('toggle',function(e){ var d=e.target; if(d.dataset&&d.dataset.dk!=null){ dashOpen[d.dataset.dk]=d.open; ls('dash-open',dashOpen); } },true);
   }
-  if(S.myDept&&$('#h-dept').value!==S.myDept) lockDept();
+  if(S.myDept&&S.myDepts.indexOf($('#h-dept').value)<0) lockDept();
   var mk2=($('#h-year').value||TODAY.slice(0,4))+'-'+pad($('#h-month').value), fd=$('#h-dept').value, show=$('#h-show').value, q=$('#h-q').value.trim().toUpperCase(), sy=S.sy, map={};
   var mon=MONTHS[+$('#h-month').value-1];
   PEOPLE.filter(function(p){return p.g==='t'||(p.g==='mt'&&!mtHidden())}).forEach(function(p){ map[p.n]={n:p.n,p:p.p,dept:deptOf(p.n),pm:0,o1:null,o2:null,t1:null,t2:null,wt:null}; });
@@ -3393,16 +3447,180 @@ $('#r-csv').addEventListener('click',function(){
   offerFile('CANHS Instructional Supervision SY '+S.sy+'.csv','\ufeff'+csv);
 });
 
+/* ================================================================== SUPERVISORY SCHEDULE */
+/* Each teacher, each month: 2 DLL checks, 2 walk-through observations, 2 on-the-spot tests; the COT classroom observations in their months.
+   Department heads (and the Master Teacher who also supervises) choose the dates; the School Head sees every department and the calendar. */
+var SC_ACT=[['dll','DLL Checking','DLL'],['walk','Walk-through Observation','WT'],['ots','On-the-Spot Test','OTS']];
+var SC_N=2, SC_SH='_SH', SC_SHN='Master Teachers & Supervisors';
+var SC={key:'',rec:null,dirty:false,suggested:false}, SC_DRAFT={};
+function scMonth(){ return (+$('#sc-year').value||new Date().getFullYear())+'-'+pad(+$('#sc-month').value||1); }
+function scId(dp,mk){ return 'sc_'+mk.replace('-','')+'_'+String(dp).replace(/[^A-Za-z0-9]+/g,'').toLowerCase(); }
+function scDeptName(dp){ return dp===SC_SH?SC_SHN:dp; }
+function scCanEdit(dp){ if(!S.canWrite) return false; if(S.mode!=='shared') return true; if(S.role==='admin'||S.role==='edit') return true; return dp!==SC_SH&&myDeptOk(dp); }
+/* teachers on a department's schedule; Master Teachers and the department supervisors are scheduled by the School Head */
+function scTeachers(dp){
+  var as=S.cfg.assign||{}, sups=allSups();
+  if(dp===SC_SH) return PEOPLE.filter(function(p){ return ['t','mt','ht'].indexOf(p.g)>=0&&(p.g==='mt'||sups.indexOf(p.n)>=0); }).sort(function(a,b){return a.s<b.s?-1:1});
+  var mine=deptSups(dp);
+  return PEOPLE.filter(function(p){ return ['t','mt','ht'].indexOf(p.g)>=0&&as[p.n]===dp&&p.g!=='mt'&&mine.indexOf(p.n)<0&&sups.indexOf(p.n)<0; }).sort(function(a,b){return a.s<b.s?-1:1});
+}
+function scSaved(dp,mk){ return (S.scheds||[]).filter(function(x){return x.id===scId(dp,mk)})[0]||null; }
+function scWeekdays(mk,off){
+  var a=mk.split('-').map(Number), last=new Date(a[0],a[1],0).getDate(), out=[], skip={};
+  String(off||'').split(/[^0-9]+/).forEach(function(x){ if(x) skip[+x]=1; });
+  for(var d=1;d<=last;d++){ var w=new Date(a[0],a[1]-1,d).getDay(); if(w>0&&w<6&&!skip[d]) out.push(mk+'-'+pad(d)); }
+  return out;
+}
+function scCotDone(n,sy){ var nos={}; S.obs.forEach(function(o){ if(o.teacher===n&&o.sy===sy&&!isWalk(o)&&(o.no===1||o.no===2)) nos[o.no]=1; }); return nos; }
+/* suggest dates for every blank cell; a supervisor's teachers are spread across the month */
+function scSuggest(rec,mk,onlyBlank){
+  var W=scWeekdays(mk,rec.off); if(!W.length) return;
+  var h=Math.ceil(W.length/2), H=[W.slice(0,h),W.slice(h)], mo=+mk.split('-')[1], sy=syOfMonth(mk), by={};
+  Object.keys(rec.items).forEach(function(n){ var it=rec.items[n]; (by[it.sup||'']=by[it.sup||'']||[]).push(n); });
+  Object.keys(by).sort().forEach(function(sp,si){ by[sp].sort().forEach(function(n,j0){ var it=rec.items[n], j=j0*2+si;
+    SC_ACT.forEach(function(a,ai){ it[a[0]]=it[a[0]]||[]; for(var k=0;k<SC_N;k++){ var L=H[k]&&H[k].length?H[k]:W, o=Math.max(1,Math.floor(L.length/3)); if(!onlyBlank||!it[a[0]][k]) it[a[0]][k]=L[(j+ai*o)%L.length]; } });
+    if(!onlyBlank||!it.cot){ var done=scCotDone(n,sy), no=0;
+      if(mo>=8&&mo<=11&&!done[1]&&j%4===mo-8) no=1; else if(mo>=1&&mo<=3&&!done[2]&&j%3===mo-1) no=2;
+      if(no){ var used=[].concat(it.dll,it.walk,it.ots); var c=W.filter(function(d){return used.indexOf(d)<0}); it.cot=c[(j*3+1)%c.length]||W[0]; it.cotNo=no; } else if(!onlyBlank){ it.cot=''; it.cotNo=''; } }
+  }); });
+}
+function scBuild(dp,mk){
+  var saved=scSaved(dp,mk), sups=deptSups(dp), ts=scTeachers(dp), prev={};
+  (S.scheds||[]).filter(function(x){return x.dept===scDeptName(dp)&&x.month<mk}).sort(function(a,b){return a.month<b.month?-1:1}).forEach(function(x){ Object.keys(x.items||{}).forEach(function(n){ if(x.items[n].sup) prev[n]=x.items[n].sup; }); });
+  var rec=saved?JSON.parse(JSON.stringify(saved)):{kind:'sched',month:mk,sy:syOfMonth(mk),dept:scDeptName(dp),off:'',items:{}};
+  delete rec.id; rec.items=rec.items||{};
+  ts.forEach(function(p,i){ if(!rec.items[p.n]) rec.items[p.n]={sup:prev[p.n]&&sups.indexOf(prev[p.n])>=0?prev[p.n]:(sups[i%Math.max(1,sups.length)]||''),dll:['',''],walk:['',''],ots:['',''],cot:'',cotNo:''}; });
+  Object.keys(rec.items).forEach(function(n){ if(!ts.some(function(p){return p.n===n})) delete rec.items[n]; });
+  var sug=false; if(!saved){ scSuggest(rec,mk,true); sug=true; }
+  return {rec:rec,suggested:sug};
+}
+function scDoneOf(n,mk){
+  var inM=function(o){ return o.teacher===n&&String(o.date||'').slice(0,7)===mk; };
+  return {dll:(S.lp||[]).filter(inM).length,walk:S.obs.filter(function(o){return inM(o)&&isWalk(o)}).length,ots:(S.ots||[]).filter(inM).length,cot:S.obs.filter(function(o){return inM(o)&&!isWalk(o)&&(o.no===1||o.no===2)}).length};
+}
+function scShort(iso){ if(!iso) return ''; var a=iso.split('-'); return MONTHS[+a[1]-1].slice(0,3)+'. '+(+a[2]); }
+function scDays(list){ list=list.filter(Boolean).sort(); if(!list.length) return ''; var a=list[0].split('-'); return MONTHS[+a[1]-1].slice(0,3)+'. '+list.map(function(d){return +d.split('-')[2]}).join(' & '); }
+function scLoad(force){
+  var dp=$('#sc-dept').value, mk=scMonth(), key=dp+'|'+mk;
+  if(!force&&SC.key===key&&SC.dirty) return;
+  if(!force&&SC_DRAFT[key]){ SC={key:key,rec:SC_DRAFT[key],dirty:true,suggested:false}; return; }
+  var b=scBuild(dp,mk); SC={key:key,rec:b.rec,dirty:false,suggested:b.suggested};
+}
+function renderSched(){
+  if(!$('#sc-dept').options.length) return;
+  scLoad(false);
+  var dp=$('#sc-dept').value, mk=scMonth(), rec=SC.rec, ed=scCanEdit(dp), sups=deptSups(dp), ts=scTeachers(dp), a=mk.split('-'), last=new Date(+a[0],+a[1],0).getDate(), mn=mk+'-01', mx=mk+'-'+pad(last);
+  $('#sc-off').value=rec.off||''; $('#sc-off').disabled=!ed;
+  $('#sc-sups').innerHTML=sups.length?'<b>Supervisor'+(sups.length>1?'s':'')+':</b> '+sups.map(function(n){var p=byName(n);return esc(lastFirst(n))+(p?' <span class="mini">('+esc(p.p)+')</span>':'')}).join(' &middot; ')+(sups.length>1?' <span class="mini">&middot; Choose who handles each teacher in the second column.</span>':''):'<span class="mini">No department head set for '+esc(dp)+'. The School Head sets it in Personnel &amp; Departments.</span>';
+  var di=function(n,k,i,v){ return '<input type="date" class="scd" data-sct="'+esc(n)+'" data-sck="'+k+'" data-sci="'+i+'" min="'+mn+'" max="'+mx+'" value="'+esc(v||'')+'"'+(ed?'':' disabled')+' aria-label="'+esc(n)+' '+k+' '+(i+1)+'">'; };
+  $('#sc-table').innerHTML='<thead><tr><th>#</th><th>Teacher</th><th>Handled by</th>'+SC_ACT.map(function(x){return '<th>'+x[1]+'<div class="mini" style="font-weight:400">2 this month</div></th>'}).join('')+'<th>Classroom Observation (COT)</th><th>Done this month</th></tr></thead><tbody>'+
+    (ts.length?ts.map(function(p,i){ var it=rec.items[p.n]||{}, dn=scDoneOf(p.n,mk), sy=syOfMonth(mk), cd=scCotDone(p.n,sy);
+      var chip=function(k,want){ var v=dn[k], ok=v>=want; return '<span class="scchip'+(ok?' ok':v?' part':'')+'">'+(k==='cot'?'COT':SC_ACT.filter(function(x){return x[0]===k})[0][2])+' '+v+'/'+want+'</span>'; };
+      return '<tr><td class="num">'+(i+1)+'</td><td><b>'+esc(p.s)+'</b><div class="mini">'+esc(p.p)+'</div></td><td>'+(sups.length>1&&ed?'<select data-scsup="'+esc(p.n)+'" aria-label="Supervisor of '+esc(p.n)+'">'+sups.map(function(n){return '<option value="'+esc(n)+'"'+(n===it.sup?' selected':'')+'>'+esc(lastFirst(n))+'</option>'}).join('')+'</select>':esc(lastFirst(it.sup||sups[0]||''))||'<span class="mini">Not set</span>')+'</td>'+
+        SC_ACT.map(function(x){ return '<td class="scc">'+[0,1].map(function(k){ return di(p.n,x[0],k,(it[x[0]]||[])[k]); }).join('')+'</td>'; }).join('')+
+        '<td class="scc"><select data-scno="'+esc(p.n)+'"'+(ed?'':' disabled')+' aria-label="COT of '+esc(p.n)+'"><option value="">None this month</option><option value="1"'+(String(it.cotNo)==='1'?' selected':'')+'>1st observation'+(cd[1]?' (done)':'')+'</option><option value="2"'+(String(it.cotNo)==='2'?' selected':'')+'>2nd observation'+(cd[2]?' (done)':'')+'</option></select>'+(it.cotNo?di(p.n,'cot',0,it.cot):'')+'</td>'+
+        '<td>'+chip('dll',SC_N)+chip('walk',SC_N)+chip('ots',SC_N)+(it.cotNo?chip('cot',1):'')+'</td></tr>'; }).join(''):'<tr><td colspan="8" class="c mini">No teachers assigned to '+esc(scDeptName(dp))+'. Assign teachers in Personnel &amp; Departments.</td></tr>')+'</tbody>';
+  var sv=scSaved(dp,mk);
+  $('#sc-state').textContent=SC.dirty?'Changes not yet saved.':SC.suggested?'Suggested dates, not yet saved. Adjust any date, then save.':sv?'Saved'+(sv.savedAt?' '+longDate(sv.savedAt.slice(0,10)):'')+(sv.by?' by '+sv.by:'')+'.':'';
+  ['sc-save','sc-suggest','sc-clear'].forEach(function(id){ $('#'+id).disabled=!ed; });
+  $('#sc-plan').hidden=dp===SC_SH; $('#sc-calall-l').hidden=!!S.myDept;
+  scCal(); scLeaf();
+}
+function scCal(){
+  var mk=scMonth(), all=$('#sc-calall').checked&&!S.myDept, dp=$('#sc-dept').value, list=[];
+  var recs=all?(S.scheds||[]).filter(function(x){return x.month===mk&&x.dept!==scDeptName(dp)}).concat([SC.rec]):[SC.rec];
+  recs.forEach(function(r){ Object.keys(r.items||{}).forEach(function(n){ var it=r.items[n];
+    SC_ACT.forEach(function(x){ (it[x[0]]||[]).forEach(function(d){ if(d) list.push({d:d,k:x[0],t:x[2],n:n,sup:it.sup,dept:r.dept}); }); });
+    if(it.cotNo&&it.cot) list.push({d:it.cot,k:'cot',t:'COT '+(it.cotNo==1?'1st':'2nd'),n:n,sup:it.sup,dept:r.dept}); }); });
+  var a=mk.split('-').map(Number), first=new Date(a[0],a[1]-1,1), last=new Date(a[0],a[1],0).getDate(), off={};
+  String(SC.rec.off||'').split(/[^0-9]+/).forEach(function(x){ if(x) off[+x]=1; });
+  var fd=first.getDay(), cells=[], lead=fd>=1&&fd<=5?fd-1:0; for(var i=0;i<lead;i++) cells.push('');
+  for(var d=1;d<=last;d++){ var w=new Date(a[0],a[1]-1,d).getDay(); if(w===0||w===6) continue; cells.push(d); }
+  var day=function(d){ if(!d) return '<td class="scday empty"></td>'; var iso=mk+'-'+pad(d), L=list.filter(function(x){return x.d===iso}).sort(function(x,y){return (x.sup||'').localeCompare(y.sup||'')||x.t.localeCompare(y.t)});
+    return '<td class="scday'+(off[d]?' off':'')+'"><div class="scdn">'+d+(L.length?' <span class="mini">('+L.length+')</span>':'')+(off[d]?' <span class="mini">no classes</span>':'')+'</div>'+L.map(function(x){ return '<div class="scev '+x.k+'" title="'+esc(x.n+' · '+x.t+' · '+(x.sup||'')+(all?' · '+x.dept:''))+'"><b>'+esc(x.t)+'</b> '+esc(lastFirst(x.n).split(',')[0])+(x.sup?' <span class="mini">· '+esc(lastFirst(x.sup).split(',')[0])+'</span>':'')+(all?' <span class="mini">· '+esc(x.dept)+'</span>':'')+'</div>'; }).join('')+'</td>'; };
+  var rows=[]; for(var k=0;k<cells.length;k+=5){ var wk=cells.slice(k,k+5); while(wk.length<5) wk.push(''); rows.push('<tr>'+wk.map(day).join('')+'</tr>'); }
+  $('#sc-cal').innerHTML='<table class="sccal"><thead><tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
+}
+function scLeaf(){
+  var dp=$('#sc-dept').value, mk=scMonth(), rec=SC.rec, ts=scTeachers(dp), sups=deptSups(dp), hp=byName(sups[0]||'')||{};
+  var TD='border:1px solid #000;padding:3pt 4pt;vertical-align:top;font-size:9pt', TH=TD+';background:#d9d9d9;font-weight:700;text-align:center';
+  $('#sc-leaf').innerHTML=LH_HTML(1)+'<div style="height:8pt"></div><h4>SCHEDULE OF INSTRUCTIONAL SUPERVISORY ACTIVITIES</h4><p style="text-align:center;margin:0 0 8pt">'+esc(monthLabel(mk))+' &middot; '+esc(scDeptName(dp))+(dp===SC_SH?'':' Department')+'</p>'+
+    '<table style="width:770pt;border-collapse:collapse;table-layout:fixed"><colgroup>'+[0.35,2.0,1.6,1.2,1.2,1.2,1.6,1.54].map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+['#','Teacher','Handled by','DLL Checking','Walk-through Observation','On-the-Spot Test','Classroom Observation (COT)','Remarks'].map(function(h){return '<th style="'+TH+'">'+h+'</th>'}).join('')+'</tr>'+
+    ts.map(function(p,i){ var it=rec.items[p.n]||{}; return '<tr><td style="'+TD+';text-align:center">'+(i+1)+'</td><td style="'+TD+'">'+esc(p.s)+'</td><td style="'+TD+'">'+esc(lastFirst(it.sup||''))+'</td>'+SC_ACT.map(function(x){return '<td style="'+TD+';text-align:center">'+esc(scDays(it[x[0]]||[]))+'</td>'}).join('')+'<td style="'+TD+';text-align:center">'+(it.cotNo&&it.cot?esc((it.cotNo==1?'1st':'2nd')+' – '+scShort(it.cot)):'')+'</td><td style="'+TD+'"></td></tr>'; }).join('')+'</table>'+
+    '<div class="psig" style="width:770pt"><div><div>Prepared by:</div><b>'+esc(dp===SC_SH?PRINCIPAL.n:(sups[0]||''))+'</b><div>'+esc(dp===SC_SH?PRINCIPAL.p:(hp.p||'Department Head'))+'</div></div><div><div>Approved by:</div><b>'+esc(PRINCIPAL.n)+'</b><div>'+esc(PRINCIPAL.p)+'</div></div></div>';
+}
+/* monthly plan rows built from the schedule */
+var SC_ROWS={
+  dll:{kra:'Curriculum and Planning (PPST Domain 4) – Lesson planning',obj:function(n){return 'To check the Daily Lesson Logs / lesson plans of '+n+' twice this month and give feedback on their alignment with the learning competencies.';},act:'DLL Checking using the Lesson Plan Monitoring Tool, 2 per teacher; feedback and coaching recorded in the PMCF:',ind:function(n){return 'DLLs of '+n+' checked twice this month; feedback given to each teacher.';},mov:'Accomplished Lesson Plan Monitoring Tools; PMCF entries'},
+  walk:{kra:'Learning Environment and Teaching Practice (PPST Domains 1–3) – Walk-through observation',obj:function(n){return 'To conduct two walk-through observations of '+n+' this month to monitor classroom practice and learner engagement.';},act:'Walk-through Observation, 2 per teacher; observation notes and feedback recorded in the PMCF:',ind:function(n){return 'Two walk-through observations of '+n+' conducted; feedback given after each visit.';},mov:'Classroom Observation Notes Forms (Walk-through); PMCF entries'},
+  ots:{kra:'Assessment and Reporting (PPST Domain 5) – Learners’ mastery',obj:function(n){return 'To give two on-the-spot tests in the classes of '+n+' this month to check the learners’ mastery of the competencies taught.';},act:'On-the-Spot Test (5 items), 2 per teacher; results analyzed and remediation recommended:',ind:function(n){return 'MPS of the tested classes of '+n+' determined; learning gaps identified and remediation recommended.';},mov:'On-the-Spot Test Results Forms; PMCF entries'},
+  cot:{kra:'RPMS – Classroom Observation using the COT',obj:function(n){return 'To conduct the classroom observation of '+n+' using the Classroom Observation Tool.';},act:'Classroom observation with pre- and post-observation conference:',ind:function(n){return 'COT Rating Sheets of '+n+' accomplished; feedback given in the post-observation conference.';},mov:'COT Rating Sheets / IOA Forms; Classroom Observation Notes Forms'}
+};
+function scPlanRows(dp,mk){
+  var b=SC.key===dp+'|'+mk?{rec:SC.rec}:scBuild(dp,mk), rec=b.rec, ts=scTeachers(dp), out=[];
+  ['dll','walk','ots','cot'].forEach(function(k){ var lines=[], dates=[], sups={};
+    ts.forEach(function(p){ var it=rec.items[p.n]||{}, ds=k==='cot'?(it.cotNo&&it.cot?[it.cot]:[]):(it[k]||[]).filter(Boolean); if(!ds.length) return;
+      lines.push('• '+lastFirst(p.n)+' – '+(k==='cot'?(it.cotNo==1?'1st':'2nd')+', '+scShort(it.cot):scDays(ds))); dates=dates.concat(ds); if(it.sup) sups[lastFirst(it.sup)]=1; });
+    if(!lines.length) return;
+    dates.sort(); var n=lines.length, who=n===1?'1 teacher':n+' teachers', R=SC_ROWS[k];
+    out.push(Object.assign(blankRow(),{kra:R.kra,obj:R.obj(who),act:R.act+'\n'+lines.join('\n'),ind:R.ind(n===1?'the teacher':'all '+n+' teachers'),mov:R.mov,time:dates[0]===dates[dates.length-1]?longDate(dates[0]):longDate(dates[0])+' – '+longDate(dates[dates.length-1]),status:'',rem:'Conducted by: '+Object.keys(sups).join('; '),src:'sched'})); });
+  return out;
+}
+function scFillPlan(quiet){
+  var mo=+$('#pl-month').value, yr=+$('#pl-year').value, dp=$('#pl-dept').value; if(!dp||!mo||!yr) return 0;
+  var rows=scPlanRows(dp,yr+'-'+pad(mo));
+  if(rows.length&&!getPerson('pl-prep').n&&deptSups(dp)[0]){ var hp=byName(deptSups(dp)[0]); setPerson('pl-prep',hp?hp.n:deptSups(dp)[0],hp?hp.p:''); }
+  var keep=plan.rows.filter(function(r){ return r.src!=='sched'&&PCOLS.some(function(c){return String(r[c[0]]).trim()}); });
+  plan.rows=rows.concat(keep); if(!plan.rows.length) plan.rows=[blankRow()];
+  drawPlanRows(); planLeaf();
+  if(!quiet) toast(rows.length?rows.length+' rows from the '+MONTHS[mo-1]+' schedule of '+dp+' put in the plan':'No scheduled activities for '+dp+' in '+MONTHS[mo-1]+' '+yr+'.');
+  return rows.length;
+}
+function scInit(){
+  $('#sc-month').innerHTML=MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join('');
+  var now=new Date(); $('#sc-month').value=String(now.getMonth()+1); $('#sc-year').value=now.getFullYear();
+  $('#sc-dept').innerHTML=DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join('')+'<option value="'+SC_SH+'">'+SC_SHN+' (School Head)</option>';
+  ['sc-month','sc-year','sc-dept'].forEach(function(id){ $('#'+id).addEventListener('change',function(){ renderSched(); }); });
+  $('#sc-calall').addEventListener('change',scCal);
+  $('#sc-off').addEventListener('change',function(){ SC.rec.off=this.value.replace(/[^0-9,\s]/g,''); scDirty(); renderSched(); });
+  $('#sc-table').addEventListener('change',function(e){ var t=e.target, it;
+    if(t.dataset.sct){ it=SC.rec.items[t.dataset.sct]; if(t.dataset.sck==='cot') it.cot=t.value; else { it[t.dataset.sck]=it[t.dataset.sck]||['','']; it[t.dataset.sck][+t.dataset.sci]=t.value; } }
+    else if(t.dataset.scsup){ SC.rec.items[t.dataset.scsup].sup=t.value; }
+    else if(t.dataset.scno){ it=SC.rec.items[t.dataset.scno]; it.cotNo=t.value?+t.value:''; if(it.cotNo&&!it.cot){ var W=scWeekdays(scMonth(),SC.rec.off), used=[].concat(it.dll||[],it.walk||[],it.ots||[]); it.cot=W.filter(function(d){return used.indexOf(d)<0})[0]||W[0]||''; } if(!it.cotNo) it.cot=''; }
+    else return;
+    scDirty(); renderSched(); });
+  $('#sc-suggest').addEventListener('click',function(){ scSuggest(SC.rec,scMonth(),true); scDirty(); renderSched(); toast('Blank dates filled. Dates you set were kept.'); });
+  $('#sc-clear').addEventListener('click',function(){ var b=this; armDelete(b,function(){ Object.keys(SC.rec.items).forEach(function(n){ var it=SC.rec.items[n]; SC_ACT.forEach(function(x){ it[x[0]]=['','']; }); it.cot=''; it.cotNo=''; }); scDirty(); renderSched(); }); });
+  $('#sc-save').addEventListener('click',async function(){
+    var dp=$('#sc-dept').value, mk=scMonth(), d=JSON.parse(JSON.stringify(SC.rec));
+    d.kind='sched'; d.month=mk; d.sy=syOfMonth(mk); d.dept=scDeptName(dp); d.savedAt=new Date().toISOString(); d.by=(S.myName||'');
+    this.disabled=true;
+    try{ await Store.put('plans',scId(dp,mk),d); delete SC_DRAFT[SC.key]; SC.dirty=false; SC.suggested=false; toast('Schedule saved for '+scDeptName(dp)+', '+monthLabel(mk)); }
+    catch(e){ saveErr(e); }
+    this.disabled=!scCanEdit(dp); renderSched();
+  });
+  $('#sc-plan').addEventListener('click',function(){ var dp=$('#sc-dept').value, mk=scMonth().split('-');
+    go('plan'); if(plan.id&&(+$('#pl-month').value!==+mk[1]||+$('#pl-year').value!==+mk[0]||$('#pl-dept').value!==dp)) newPlan();
+    $('#pl-month').value=String(+mk[1]); $('#pl-year').value=mk[0]; if(!$('#pl-dept').disabled||$('#pl-dept').value!==dp) $('#pl-dept').value=dp;
+    scFillPlan(); wizGo($('#p-plan'),2); });
+  $('#sc-pdf').addEventListener('click',function(){ scLeaf(); EXP.pdf($('#sc-leaf').outerHTML,'Supervisory Schedule '+scDeptName($('#sc-dept').value)+' '+monthLabel(scMonth())); });
+  $('#sc-doc').addEventListener('click',function(){ scLeaf(); EXP.word($('#sc-leaf').outerHTML,'Supervisory Schedule '+scDeptName($('#sc-dept').value)+' '+monthLabel(scMonth())); });
+  $('#pl-sched').addEventListener('click',function(){ if(!$('#pl-dept').value){ toast('Choose the department in Step 1 first.'); wizGo($('#p-plan'),1); return; } scFillPlan(); });
+  ['pl-month','pl-year','pl-dept'].forEach(function(id){ $('#'+id).addEventListener('change',function(){ if(!plan.id) scFillPlan(true); }); });
+}
+function scDirty(){ SC.dirty=true; SC.suggested=false; SC_DRAFT[SC.key]=SC.rec; }
+
 /* ================================================================== PERSONNEL */
 var cfgT=null, cfgBusy=Promise.resolve();
 function saveCfgSoon(){ clearTimeout(cfgT); cfgT=setTimeout(function(){ var data=JSON.parse(JSON.stringify(S.cfg)); cfgBusy=cfgBusy.then(function(){ return Store.put('config','school',data).then(function(){ toast('Departments saved'); }).catch(saveErr); }); },600); }
 function renderPeople(){
   var ed=S.canEdit && S.canWrite, heads=S.cfg.heads||{}, as=S.cfg.assign||{};
-  $('#pp-hint').textContent=ed?'Set the department head designate for each learning area. Changes save to the shared record and every form uses them.':'Only the School Head and editors can change department heads and assignments. Ask the School Head for a change.';
+  $('#pp-hint').textContent=ed?'Set the department head designate for each learning area, and the Master Teacher who also supervises where the department has one. One person may handle one or two departments: choose them in both rows. Changes save to the shared record and every form uses them.':'Only the School Head and editors can change department heads and assignments. Ask the School Head for a change.';
   var sup=PEOPLE.filter(function(p){return FILTERS.sup.indexOf(p.g)>=0}).sort(function(a,b){return a.s<b.s?-1:1});
-  $('#pp-heads').innerHTML='<thead><tr><th>Learning area</th><th>Department head designate</th><th>Position</th><th class="c">Teachers assigned</th></tr></thead><tbody>'+DEPTS.map(function(dp,i){
-    var h=heads[dp]||'', p=byName(h), cnt=PEOPLE.filter(function(x){return as[x.n]===dp}).length;
-    return '<tr><td><b>'+dp+'</b></td><td><select id="pp-h'+i+'" data-head="'+esc(dp)+'"'+(ed?'':' disabled')+' aria-label="Head of '+dp+'"><option value="">Not set</option>'+sup.map(function(x){return '<option value="'+esc(x.n)+'"'+(x.n===h?' selected':'')+'>'+esc(x.s)+'</option>'}).join('')+'</select></td><td>'+esc(p?p.p:'')+'</td><td class="c">'+cnt+'</td></tr>';
+  var s2=S.cfg.sup2||{}, opt=function(cur){ return '<option value="">Not set</option>'+sup.map(function(x){return '<option value="'+esc(x.n)+'"'+(x.n===cur?' selected':'')+'>'+esc(x.s)+'</option>'}).join(''); };
+  $('#pp-heads').innerHTML='<thead><tr><th>Learning area</th><th>Department head designate</th><th>Position</th><th>Master Teacher who also supervises</th><th>Position</th><th class="c">Teachers assigned</th></tr></thead><tbody>'+DEPTS.map(function(dp,i){
+    var h=heads[dp]||'', p=byName(h), h2=s2[dp]||'', p2=byName(h2), cnt=PEOPLE.filter(function(x){return as[x.n]===dp}).length;
+    return '<tr><td><b>'+dp+'</b></td><td><select id="pp-h'+i+'" data-head="'+esc(dp)+'"'+(ed?'':' disabled')+' aria-label="Head of '+dp+'">'+opt(h)+'</select></td><td>'+esc(p?p.p:'')+'</td><td><select id="pp-s'+i+'" data-sup2="'+esc(dp)+'"'+(ed?'':' disabled')+' aria-label="Second supervisor of '+dp+'">'+opt(h2)+'</select></td><td>'+esc(p2?p2.p:'')+'</td><td class="c">'+cnt+'</td></tr>';
   }).join('')+'</tbody>';
   var order=['head','ht','mt','t','gc','adm'], q=String(($('#pp-q')||{}).value||'').trim().toUpperCase(), rem=((S.cfg.roster||{}).removed)||{};
   $('#pp-add-card').hidden=!ed; $('#pp-edit-hint').textContent=ed?'Change a position for a promotion, move a teacher to another department, or remove someone who resigned, retired or transferred.':'';
@@ -3438,7 +3656,7 @@ $('#p-people').addEventListener('click',function(e){
   b=e.target.closest('[data-rmv-ok]');
   if(b){ var n2=b.dataset.rmvOk, p=byName(n2)||{}, why=b.parentNode.querySelector('[data-rmv-why]').value, r=rosterOf();
     r.removed[n2]={why:why,date:TODAY,s:p.s||n2,p:p.p||''};
-    var hs=S.cfg.heads||{}; Object.keys(hs).forEach(function(k){ if(hs[k]===n2){ S.cfg.heads=Object.assign({},hs); delete S.cfg.heads[k]; } });
+    ['heads','sup2'].forEach(function(key){ var hs=S.cfg[key]||{}; Object.keys(hs).forEach(function(k){ if(hs[k]===n2){ S.cfg[key]=Object.assign({},S.cfg[key]); delete S.cfg[key][k]; } }); });
     rosterSaved(); toast(n2+' removed ('+why.toLowerCase()+'). Their saved records are kept.'); return; }
   b=e.target.closest('[data-restore]');
   if(b){ var r2=rosterOf(); delete r2.removed[b.dataset.restore]; rosterSaved(); toast(b.dataset.restore+' restored'); }
@@ -3449,7 +3667,10 @@ $('#p-people').addEventListener('change',function(e){
     if(ad){ ad.p=t.value; ad.g=groupOf(t.value); delete r.pos[t.dataset.rpos]; }
     else if(base&&base.p===t.value) delete r.pos[t.dataset.rpos]; else r.pos[t.dataset.rpos]={p:t.value,date:TODAY};
     rosterSaved(); toast(t.dataset.rpos+' is now '+t.value); return; }
-  if(t.dataset.head!=null){ S.cfg.heads=Object.assign({},S.cfg.heads); if(t.value) S.cfg.heads[t.dataset.head]=t.value; else delete S.cfg.heads[t.dataset.head]; saveCfgSoon(); renderPeople(); renderHome(); }
+  if(t.dataset.head!=null||t.dataset.sup2!=null){ var key=t.dataset.head!=null?'heads':'sup2', dp=t.dataset.head!=null?t.dataset.head:t.dataset.sup2;
+    if(t.value){ var other=supDepts(t.value).filter(function(x){return x!==dp}); if(other.length>=2){ toast(t.value+' already handles '+other.join(' and ')+'. One person can handle at most two departments.'); renderPeople(); return; }
+      if(key==='sup2'&&(S.cfg.heads||{})[dp]===t.value){ toast(t.value+' is already the department head of '+dp+'.'); renderPeople(); return; } }
+    S.cfg[key]=Object.assign({},S.cfg[key]); if(t.value) S.cfg[key][dp]=t.value; else delete S.cfg[key][dp]; saveCfgSoon(); renderPeople(); renderHome(); if(CODES) drawCodes(); if(typeof renderSched==='function') renderSched(); }
   if(t.dataset.assign!=null){ S.cfg.assign=Object.assign({},S.cfg.assign); if(t.value) S.cfg.assign[t.dataset.assign]=t.value; else delete S.cfg.assign[t.dataset.assign]; saveCfgSoon(); renderHome(); var y=window.scrollY; renderPeople(); window.scrollTo(0,y); var n=$('[data-assign="'+t.dataset.assign.replace(/"/g,'\\"')+'"]'); if(n) n.focus(); }
 });
 
@@ -3504,17 +3725,19 @@ async function loadCodes(){
   try{ var r=await Store.get('codes'); if(!r.ok) throw 0; CODES=r.codes||[]; }catch(e){ CODES=null; $('#pp-codes').innerHTML='<tbody><tr><td class="mini">The sign-ins could not be loaded. The Google Sheet may still run the old Apps Script; deploy the new Code.gs first.</td></tr></tbody>'; return; }
   drawCodes();
 }
+var CODE_P=[];
+function codeOf(n,dps){ var L=(CODES||[]).filter(function(c){return c.role==='dept'}); return L.filter(function(c){return c.name===n})[0]||L.filter(function(c){ return !c.name&&String(c.department).split(/\s*[,;&\/]\s*/).indexOf(dps[0])>=0; })[0]||{}; }
 function drawCodes(){
-  var by={}; (CODES||[]).forEach(function(c){ if(c.role==='dept') by[c.department]=c; });
-  $('#pp-codes').innerHTML='<thead><tr><th>Department</th><th>Department head</th><th>Email address</th><th>Passcode</th><th></th></tr></thead><tbody>'+DEPTS.map(function(dp,i){ var c=by[dp]||{};
-    return '<tr><td><b>'+esc(dp)+'</b></td><td>'+esc((S.cfg.heads||{})[dp]||'Not set')+'</td><td><input type="email" id="pp-e'+i+'" data-edept="'+esc(dp)+'" value="'+esc(c.email||'')+'" placeholder="name@deped.gov.ph" autocomplete="off" spellcheck="false" style="min-width:200px"></td><td><input type="text" id="pp-c'+i+'" data-cdept="'+esc(dp)+'" value="'+esc(c.pin||'')+'" inputmode="numeric" maxlength="4" autocomplete="off" style="font-family:var(--mono);width:80px;letter-spacing:.2em"></td><td><button class="btn ghost small" type="button" data-cgen="'+i+'">New passcode</button></td></tr>'; }).join('')+'</tbody>';
+  CODE_P=allSups();
+  $('#pp-codes').innerHTML='<thead><tr><th>Supervisor</th><th>Position</th><th>Department(s)</th><th>Email address</th><th>Passcode</th><th></th></tr></thead><tbody>'+(CODE_P.length?CODE_P.map(function(n,i){ var dps=supDepts(n), c=codeOf(n,dps), p=byName(n)||{};
+    return '<tr><td><b>'+esc(lastFirst(n))+'</b></td><td>'+esc(p.p||'')+'</td><td>'+esc(dps.join(', '))+'</td><td><input type="email" id="pp-e'+i+'" value="'+esc(c.email||'')+'" placeholder="name@deped.gov.ph" autocomplete="off" spellcheck="false" style="min-width:200px"></td><td><input type="text" id="pp-c'+i+'" value="'+esc(c.pin||'')+'" inputmode="numeric" maxlength="4" autocomplete="off" style="font-family:var(--mono);width:80px;letter-spacing:.2em"></td><td><button class="btn ghost small" type="button" data-cgen="'+i+'">New passcode</button></td></tr>'; }).join(''):'<tr><td colspan="6" class="mini">Set the department heads and supervising Master Teachers above first.</td></tr>')+'</tbody>';
 }
 $('#pp-codes').addEventListener('click',function(e){ var b=e.target.closest('[data-cgen]'); if(!b) return; var a=new Uint32Array(1); crypto.getRandomValues(a); $('#pp-c'+b.dataset.cgen).value=('000'+(a[0]%10000)).slice(-4); });
 $('#pp-codes-save').addEventListener('click',async function(){
   var rows=[], seen={}, bad='';
-  DEPTS.forEach(function(dp,i){ var em=$('#pp-e'+i).value.trim().toLowerCase(), pn=$('#pp-c'+i).value.trim(); if(!em&&!pn) return;
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) bad='Type a valid email for '+dp+'.'; else if(!/^\d{4}$/.test(pn)) bad='The passcode for '+dp+' must be 4 digits.'; else if(seen[em]) bad=em+' is used twice. Each department head needs their own email.';
-    seen[em]=1; rows.push({email:em,pin:pn,role:'dept',department:dp,name:(S.cfg.heads||{})[dp]||''}); });
+  CODE_P.forEach(function(n,i){ var em=$('#pp-e'+i).value.trim().toLowerCase(), pn=$('#pp-c'+i).value.trim(); if(!em&&!pn) return;
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) bad='Type a valid email for '+n+'.'; else if(!/^\d{4}$/.test(pn)) bad='The passcode for '+n+' must be 4 digits.'; else if(seen[em]) bad=em+' is used twice. Each supervisor needs their own email.';
+    seen[em]=1; rows.push({email:em,pin:pn,role:'dept',department:supDepts(n).join(', '),name:n}); });
   if(bad){ toast(bad); return; }
   (CODES||[]).forEach(function(c){ if(c.role==='edit'||c.role==='view') rows.push(c); });
   this.disabled=true;
@@ -4137,7 +4360,7 @@ $('#lp-teacher').addEventListener('personchange',function(){ var dp=deptOf(getPe
 $('#lp-mon').addEventListener('personchange',function(){ lpLeafSoon(); });
 
 /* ================================================================== boot */
-function renderAll(){ lockDept(); if(typeof pgSavedList==='function') pgSavedList(); if(typeof ipRender==='function') ipRender(); if(typeof renderOtsList==='function') renderOtsList(); if(typeof renderLpList==='function') renderLpList(); if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
+function renderAll(){ lockDept(); if(typeof renderSched==='function') renderSched(); if(typeof pgSavedList==='function') pgSavedList(); if(typeof ipRender==='function') ipRender(); if(typeof renderOtsList==='function') renderOtsList(); if(typeof renderLpList==='function') renderLpList(); if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog(); }
 function initSelects(){
   $('#g-sy').innerHTML=SYS.map(function(s){return '<option value="'+s+'"'+(s===S.sy?' selected':'')+'>SY '+s+'</option>'}).join('');
   $('#g-sy').addEventListener('change',function(){ S.sy=this.value; ls('sy',S.sy); if(!obs.id){ drawRate(); obsLeafSoon(); } if(!coach.id) renderCoachLog(); renderAll(); });
@@ -4150,7 +4373,7 @@ function initSelects(){
   $$('select[data-people]').forEach(fillPeople);
   $('#h-today').textContent=longDate(TODAY);
 }
-initSelects(); initDates(); renderLibrary();
+initSelects(); scInit(); initDates(); renderLibrary();
 newPlan(); newObs(); newCoach(false); newOts(); newLp(); setPerson('rp-noted',PRINCIPAL.n,PRINCIPAL.p); (function(){ var me=ls('observer'); if(me) setPerson('rp-prep',me.n,me.p); })();
 renderAll(); renderPeople();
 var startTab=ls('tab'); if(/^#(home|plan|obs|coach|reports|records|people|library|help|settings)(:(notes|cot|plans|pmcf))?$/.test(location.hash)) go(location.hash.slice(1)); else if(startTab) go(startTab);
@@ -4158,8 +4381,8 @@ var startTab=ls('tab'); if(/^#(home|plan|obs|coach|reports|records|people|librar
 Store.init().then(function(){
   Store.watch('obs',function(l){ S.obs=l.filter(function(x){return x.kind!=='ots'&&x.kind!=='lp'}); S.ots=l.filter(function(x){return x.kind==='ots'}); S.lp=l.filter(function(x){return x.kind==='lp'}); renderAll(); });
   Store.watch('coach',function(l){ l.forEach(function(c){ if(c.mech) c.mech=c.mech.map(function(m){ return /^conduct of on-the-spot test$/i.test(m)?'On-the-Spot Test':m; }); }); S.coach=l; renderAll(); });
-  Store.watch('plans',function(l){ S.plans=l.filter(function(x){return x.kind!=='tplan'}); S.tplans=l.filter(function(x){return x.kind==='tplan'}); renderAll(); });
-  Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{},mts:(d&&d.mts)||[],roster:(d&&d.roster)||{}}; applyRoster(); refreshPeopleSelects(); if(S.mode==='shared'&&S.role==='admin'){ var mtl=PEOPLE.filter(function(p){return p.g==='mt'}).map(function(p){return p.n}).sort(); if(JSON.stringify(mtl)!==JSON.stringify((S.cfg.mts||[]).slice().sort())){ S.cfg.mts=mtl; saveCfgSoon(); } } $$('select[data-people="teach"]').forEach(function(x){ delete x.dataset.forDept; }); renderPeople(); renderAll(); });
+  Store.watch('plans',function(l){ S.plans=l.filter(function(x){return x.kind!=='tplan'&&x.kind!=='sched'}); S.tplans=l.filter(function(x){return x.kind==='tplan'}); S.scheds=l.filter(function(x){return x.kind==='sched'}); renderAll(); });
+  Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{},mts:(d&&d.mts)||[],roster:(d&&d.roster)||{},sup2:(d&&d.sup2)||{},split:(d&&d.split)||{}}; applyRoster(); refreshPeopleSelects(); if(S.mode==='shared'&&S.role==='admin'){ var mtl=PEOPLE.filter(function(p){return p.g==='mt'}).map(function(p){return p.n}).sort(); if(JSON.stringify(mtl)!==JSON.stringify((S.cfg.mts||[]).slice().sort())){ S.cfg.mts=mtl; saveCfgSoon(); } } $$('select[data-people="teach"]').forEach(function(x){ delete x.dataset.forDept; }); renderPeople(); renderAll(); });
 });
 })();
 </script>
