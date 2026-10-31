@@ -86,12 +86,13 @@ a{color:var(--seal)}
 .brand h1{font-size:15px;line-height:1.22;color:#fff;font-weight:600;letter-spacing:.01em}
 .brand p{margin:4px 0 0;font-size:11.5px;color:var(--side-dim);line-height:1.35}
 .nav{display:flex;flex-direction:column;flex:1;padding:10px 0}
+.navhead.navsep{padding:0;margin:6px 0 4px}
 .navhead{padding:14px 20px 5px;margin-top:6px;border-top:1px solid rgba(232,185,59,.22);font-size:12.5px;letter-spacing:.06em;text-transform:none;font-weight:700;color:var(--gold-mark)}
 .nav button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:8px 20px;background:none;border:0;
   border-left:3px solid transparent;color:var(--side-fg);cursor:pointer;font-family:var(--sans);font-size:13.5px;line-height:1.3}
 .nav button span{width:19px;height:19px;flex:none;border-radius:2px;display:grid;place-items:center;font-family:var(--mono);
   font-size:10.5px;background:rgba(255,255,255,.08);color:var(--side-dim)}
-.nav button.navgrp{font-weight:600}
+.nav button.navgrp,.nav button.navsolo{font-weight:600}
 .nav button.navgrp.subpar{color:#F4CF63}
 .nav button.subnav{padding:6px 20px 6px 38px;font-size:12.8px}
 .nav button.subpar[aria-selected="true"]{background:none;font-weight:600;border-left-color:transparent}
@@ -165,6 +166,8 @@ label.f.wide{grid-column:1/-1}
 .whobar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px;padding:8px 10px;background:var(--surface);border:1px solid var(--rule);border-radius:2px}
 .whobar button{font:inherit;font-size:13.5px;padding:6px 12px;border:1px solid var(--rule);background:var(--surface-2);border-radius:2px;cursor:pointer;color:var(--ink)}
 .whobar button.on{border-color:var(--seal);background:var(--seal-soft);font-weight:600}
+.gpbar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 14px;margin-top:6px}.gpbar .gpf{display:flex;flex-direction:column;gap:4px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}.gpbar .gpf select,.gpbar .gpf input{text-transform:none;letter-spacing:0;font-size:14px;min-width:120px}.gpbar #gp-yr{width:90px;min-width:0}.gpbar #gp-t{max-width:300px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden}.seg label{display:flex;align-items:center;gap:6px;padding:8px 14px;cursor:pointer;font-size:14px;border-right:1px solid var(--rule)}.seg label:last-child{border-right:0}.seg input{margin:0}.seg label:has(input:checked){background:var(--teal);color:#fff}
 .scdept{margin-bottom:22px}.scdept h3{margin:0 0 4px;font-size:17px;color:var(--ink)}.scdept .scsl{font-size:13.5px;margin-bottom:10px}
 .scrow{border:1px solid var(--rule);border-radius:2px;padding:10px 12px 12px;margin-bottom:10px;background:var(--surface)}
 .scrow .sch{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;margin-bottom:8px}
@@ -199,6 +202,12 @@ td.scday.empty{background:transparent;border-color:transparent}
 td.scday.off{background:rgba(127,127,127,.08)}
 .scdn{font-weight:700;margin-bottom:2px}
 .scev{border-left:3px solid #888;padding:1px 4px;margin:2px 0;line-height:1.3;background:rgba(127,127,127,.06);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scev[draggable=true]{cursor:pointer}.scev.done{background:rgba(46,125,79,.12)}.scev.late{background:rgba(168,32,42,.08)}.scev.sel{outline:2px solid var(--seal);outline-offset:1px}.scev .ck{color:#2e7d4f;font-weight:700}
+.scdn{display:flex;align-items:center;gap:4px}.scadd{all:unset;cursor:pointer;margin-left:auto;width:20px;height:20px;line-height:18px;text-align:center;border:1px solid var(--rule);border-radius:3px;color:var(--seal);font-weight:700}.scadd:hover,.scadd:focus-visible{background:var(--seal-soft)}
+td.scday.drop{background:var(--seal-soft)}td.scday.pick{cursor:copy}
+.sclegend{display:flex;gap:6px;font-size:12px}.sclegend .scev{margin:0}
+#sc-tool:not(:empty){display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:10px 12px;margin-bottom:10px;border:1px solid var(--seal);border-radius:3px;background:var(--seal-soft);font-size:13.5px}
+#sc-tool select{max-width:280px}
 .scev.dll{border-color:#3a6ea5}.scev.walk{border-color:#2e7d4f}.scev.ots{border-color:#c9a227}.scev.cot{border-color:#a5463a}
 .cpull{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 10px;padding:10px 12px;border:1px solid var(--gold,#c9a227);border-radius:8px;background:rgba(201,162,39,.08);font-size:13.5px}
 .cmonths{margin:12px 0 4px;padding:10px 12px;background:var(--seal-soft);border-radius:2px;font-size:13.5px;color:var(--ink);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -544,13 +553,11 @@ table.rate .finds li{margin:2px 0}
   </div>
   <nav class="nav" role="tablist" aria-label="Sections">
     <button role="tab" aria-selected="true" data-panel="home">Dashboard</button>
-    <div class="navhead">Supervision forms</div>
-    <button role="tab" aria-selected="false" class="navgrp" data-panel="plan" data-sub="form" data-grp="plan">Supervisory Plan</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="form" data-grp="plan">Monthly Supervisory Plan</button>
+    <div class="navhead navsep" aria-hidden="true"></div>
+    <button role="tab" aria-selected="false" class="navgrp" data-panel="plan" data-sub="saved" data-grp="plan">Supervisory Plan</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="saved" data-grp="plan">Saved Plans</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="idp" data-grp="plan">Plans from IDPs</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="all" data-grp="plan">Supervisory Schedule</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="srep" data-grp="plan">Supervisory Report</button>
+    <button role="tab" aria-selected="false" class="navsolo" data-panel="srep">Supervisory Report</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="obs" data-sub="notes" data-grp="obs">Classroom Observation</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="cot" data-grp="obs">COT Schedule</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="notes" data-grp="obs">Saved Classroom Observation Notes Forms</button>
@@ -612,11 +619,14 @@ table.rate .finds li{margin:2px 0}
   <div class="dbar">
     <label>Month <select id="sc-month"></select><input type="number" id="sc-year" min="2024" max="2035" style="width:84px"></label>
     <label>Department <select id="sc-dept"></select></label>
-    <label>Days without classes <input type="text" id="sc-off" placeholder="e.g. 1, 2, 30" style="width:120px" autocomplete="off"></label>
+    <label hidden>Days without classes <input type="text" id="sc-off" placeholder="e.g. 1, 2, 30" style="width:120px" autocomplete="off"></label>
   </div>
   <div class="card">
 <div id="sc-sups" hidden></div>
-    <div id="sc-table"></div>
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px"><span class="sclegend"><span class="scev dll"><b>DLL</b></span><span class="scev walk"><b>WT</b></span><span class="scev ots"><b>OTS</b></span><span class="scev cot"><b>COT</b></span></span><label class="row" id="sc-calall-l" style="gap:6px;font-size:13.5px;margin-left:auto"><input type="checkbox" id="sc-calall"> Show every department</label></div>
+    <div id="sc-tool"></div>
+    <div class="scroll"><div id="sc-cal"></div></div>
+    <div id="sc-table" hidden></div>
     <div class="row" style="margin-top:12px;gap:10px;flex-wrap:wrap">
       <button class="btn gold" id="sc-save" type="button">Save schedule</button>
       <button class="btn ghost" id="sc-suggest" type="button">Suggest dates for blank cells</button>
@@ -626,10 +636,6 @@ table.rate .finds li{margin:2px 0}
       <button class="btn ghost" id="sc-doc" type="button">Download Word (.docx)</button>
       <span class="mini" id="sc-state"></span>
     </div>
-  </div>
-  <div class="card">
-    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0">Calendar</h2><label class="row" id="sc-calall-l" style="gap:6px;font-size:13.5px"><input type="checkbox" id="sc-calall"> Show every department</label></div>
-        <div class="scroll"><div id="sc-cal"></div></div>
   </div>
   <div class="card">
     <h2>Preview</h2>
@@ -644,7 +650,7 @@ table.rate .finds li{margin:2px 0}
     <label>Department <select id="sr-dept"></select></label>
   </div>
   <div class="card">
-    <h2>Supervisory Report <span class="tag" id="sr-count">0</span></h2>
+    <h2>Activities recorded this month <span class="tag" id="sr-count">0</span></h2>
         <div class="scroll"><table class="ind" id="sr-table" style="min-width:980px"></table></div>
   </div>
   <div class="card" id="sr-form">
@@ -662,7 +668,7 @@ table.rate .finds li{margin:2px 0}
     <div class="row" style="margin-top:12px"><button class="btn gold" id="sr-save" type="button">Save entry</button><button class="btn ghost" id="sr-new" type="button">New entry</button><button class="btn danger" id="sr-del" type="button" hidden>Delete this entry</button><span class="mini" id="sr-state"></span></div>
   </div>
   <div class="card">
-    <h2>Report</h2>
+    <h2>Supervisory Report</h2>
     <div class="lines">
       <label class="fline"><span class="lk">Prepared by</span><span class="lv"><select id="sr-prep" data-people="sup" data-pos="sr-prep-pos" data-other="sr-prep-other"></select><input type="text" id="sr-prep-other" class="other" placeholder="Type the full name" hidden><input type="hidden" id="sr-prep-pos"></span></label>
       <label class="fline"><span class="lk">Noted by</span><span class="lv"><select id="sr-noted" data-people="sup" data-pos="sr-noted-pos" data-other="sr-noted-other"></select><input type="text" id="sr-noted-other" class="other" placeholder="Type the full name" hidden><input type="hidden" id="sr-noted-pos"></span></label>
@@ -674,13 +680,27 @@ table.rate .finds li{margin:2px 0}
 
 <!-- ============ IS PLAN (Annex B) ============ -->
 <section class="panel wiz" id="p-plan">
+  <div class="card" data-pv="saved" id="gp-card">
+    <h2>Generate a supervisory plan</h2>
+    <div class="gpbar">
+      <div class="seg" role="radiogroup" aria-label="Plan"><label><input type="radio" name="gp-kind" value="month" checked> Monthly</label><label><input type="radio" name="gp-kind" value="year"> Annual</label></div>
+      <label class="gpf gpm">Month <select id="gp-mo"></select></label>
+      <label class="gpf gpm">Year <input type="number" id="gp-yr" min="2024" max="2035"></label>
+      <label class="gpf gpy" hidden>School Year <select id="gp-sy"></select></label>
+      <label class="gpf">Learning Area <select id="gp-dp"></select></label>
+      <label class="gpf">Teacher <select id="gp-t"></select></label>
+      <button class="btn gold" id="gp-go" type="button">Generate</button>
+    </div>
+    <div id="ip-viewbar" class="row" style="margin-top:12px;gap:10px" hidden><b id="ip-viewtitle"></b><button class="btn" id="ip-vpdf" type="button">Download PDF</button><button class="btn ghost" id="ip-vdoc" type="button">Download Word (.docx)</button><button class="btn ghost" id="ip-vclose" type="button">Close</button></div>
+    <div class="leafwrap" id="ip-viewwrap" hidden><div class="leaf folio" id="ip-leaf"></div></div>
+  </div>
   <div class="card" data-pv="saved">
     <h2>Saved plans</h2>
     <div id="pl-list"></div>
     <div class="row" style="margin-top:12px"><button class="btn ghost small" id="pl-new" type="button">Start a new plan</button></div>
   </div>
-  <div class="card" id="ip-card" data-pv="idp">
-    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">IDP</span> Supervisory plans from the teachers&rsquo; IDPs</h2><label class="btn ghost" style="cursor:pointer">Upload IDPs (Word, Excel or PDF)<input type="file" id="ip-file" accept=".docx,.xlsx,.xlsm,.pdf,application/pdf" multiple hidden></label><span class="mini" id="ip-msg"></span></div>
+  <div class="card" id="ip-card" data-pv="saved">
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0">Teachers&rsquo; IDPs</h2><label class="btn ghost" style="cursor:pointer">Upload IDPs (Word, Excel or PDF)<input type="file" id="ip-file" accept=".docx,.xlsx,.xlsm,.pdf,application/pdf" multiple hidden></label><span class="mini" id="ip-msg"></span></div>
         <div id="ip-review"></div>
     <div class="row" style="margin-top:10px"><button class="btn gold" id="ip-save" type="button" hidden>Save the teachers&rsquo; supervisory plans</button></div>
     <div id="ip-list" style="margin-top:12px"></div>
@@ -690,8 +710,6 @@ table.rate .finds li{margin:2px 0}
       <button class="btn ghost" id="ip-annual" type="button">(3) Annual Supervisory Plan of the school</button>
       <select id="ip-annual-dept" style="max-width:220px"></select>
     </div>
-    <div id="ip-viewbar" class="row" style="margin-top:12px;gap:10px" hidden><b id="ip-viewtitle"></b><button class="btn" id="ip-vpdf" type="button">Download PDF</button><button class="btn ghost" id="ip-vdoc" type="button">Download Word (.docx)</button><button class="btn ghost" id="ip-vclose" type="button">Close</button></div>
-    <div class="leafwrap" id="ip-viewwrap" hidden><div class="leaf folio" id="ip-leaf"></div></div>
   </div>
   <div class="card" id="pg-card">
     <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">OPTIONAL</span> Generate the plan from classroom observations</h2><label class="btn ghost" style="cursor:pointer">Upload COT Rating Sheets / Notes Forms<input type="file" id="pg-file" accept=".docx,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*" multiple hidden></label><span class="mini" id="pg-msg"></span></div>
@@ -1810,12 +1828,13 @@ var LEDES={
   help:['How It Works','How the shared record works and how the forms are filled.'],
   settings:['Connection','The shared Google Sheet record, your sign-in, and backups.']
 };
-var SUBS={sched:{all:'Supervisory Schedule',cot:'COT Schedule',walk:'Walk-through Schedule',dll:'DLL Checking Schedule',ots:'On-the-Spot Test Schedule'},plan:{form:'Monthly Supervisory Plan',saved:'Saved Plans',idp:'Supervisory Plans from IDPs'},obs:{notes:'Classroom Observation Notes Form',cot:'COT Rating',walk:'Walk-through Observation'},
+var SUBS={sched:{all:'Supervisory Schedule',cot:'COT Schedule',walk:'Walk-through Schedule',dll:'DLL Checking Schedule',ots:'On-the-Spot Test Schedule'},plan:{form:'Monthly Supervisory Plan',saved:'Saved Plans'},obs:{notes:'Classroom Observation Notes Form',cot:'COT Rating',walk:'Walk-through Observation'},
   reports:{plans:'Supervisory Plans',notes:'Saved Classroom Observation Notes Forms',cot:'Saved COT Rating Sheets',walk:'Saved Walk-through Observations',lp:'Saved DLL Monitoring',ots:'Saved On-the-Spot Tests',pmcf:'Saved PMCFs',monthly:'Monthly Supervisory Report'}};
-var curSub={sched:'all',plan:ls('sub-plan')||'form',obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
+var curSub={sched:'all',plan:ls('sub-plan')==='form'?'form':'saved',obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
 function go(p,sub){
   if(String(p).indexOf(':')>0){ sub=p.split(':')[1]; p=p.split(':')[0]; }
   if(!LEDES[p]) p='home';
+  if(p==='plan'&&sub==='idp') sub='saved';
   var prevSub=curSub[p];
   if(SUBS[p]){ if(sub&&SUBS[p][sub]) curSub[p]=sub; ls('sub-'+p,curSub[p]); }
   obsSub=curSub.obs;
@@ -1826,7 +1845,7 @@ function go(p,sub){
   if(p==='sched'&&typeof renderSched==='function') renderSched();
   if(p==='obs'&&obsSub==='cot'&&typeof cotFromNotes==='function') cotFromNotes();
   if(p==='plan'){ $$('#p-plan > .card').forEach(function(c){ c.hidden=(c.dataset.pv||'form')!==curSub.plan; }); if(curSub.plan==='form') wizGo($('#p-plan'),+$('#p-plan').dataset.cur||1); }
-  var here=function(b){ return b.dataset.panel===p&&(SUBS[p]?(b.dataset.sub||'')===curSub[p]:!b.dataset.sub); }, grp='';
+  var here=function(b){ return b.dataset.panel===p&&(SUBS[p]?(b.dataset.sub||'')===(p==='plan'?'saved':curSub[p]):!b.dataset.sub); }, grp='';
   $$('.nav button[role=tab]:not(.navgrp)').forEach(function(b){ var on=here(b); b.setAttribute('aria-selected',String(on)); if(on&&b.dataset.grp) grp=b.dataset.grp; });
   $$('.nav button.navgrp').forEach(function(b){ b.setAttribute('aria-selected','false'); b.classList.toggle('subpar',b.dataset.grp===grp); });
   $$('.panel').forEach(function(s){s.classList.toggle('on',s.id==='p-'+p)});
@@ -1852,7 +1871,7 @@ function armDelete(btn,fn){
 function byDateDesc(a,b){ return (b.date||'').localeCompare(a.date||'')||(b.savedAt||'').localeCompare(a.savedAt||''); }
 
 /* ================================================================== IS PLAN */
-var PCOL_IN=[1.25,1.25,1.5,1.25,1.5,1,1.75,1.5];
+var PCOL_IN=[1.25,2.0,1.35,1.15,1.3,0.95,1.6,1.4];
 var PCOLS=[['kra','Key Result Areas'],['obj','Objectives'],['act','Enabling Projects and/or Activities'],['ind','Success Indicators'],['mov','Means of Verification'],['time','Time Frame'],['status','Accomplishment / Status'],['rem','Remarks']];
 var plan={id:'',rows:[]};
 function blankRow(){ var r={}; PCOLS.forEach(function(c){r[c[0]]=''}); return r; }
@@ -1930,7 +1949,7 @@ $('#pl-save').addEventListener('click',async function(){
   if(!d.rows.length){ toast('Write at least one plan row.'); wizGo($('#p-plan'),2); return; }
   var id=plan.id||uid('p'); d.savedAt=new Date().toISOString(); d.sy=S.sy;
   this.disabled=true;
-  try{ await Store.put('plans',id,d); plan.id=id; $('#pl-del').hidden=false; $('#pl-state').textContent='Saved '+longDate(TODAY)+'.'; toast('Plan saved to the '+(S.mode==='shared'?'shared record':'this browser')); }
+  try{ await Store.put('plans',id,d); plan.id=id; $('#pl-del').hidden=false; $('#pl-state').textContent='Saved '+longDate(TODAY)+'.'; toast('Plan saved '+(S.mode==='shared'?'to the shared record':'in this browser')); }
   catch(e){ saveErr(e); }
   this.disabled=!S.canWrite;
 });
@@ -1945,8 +1964,10 @@ function openPlan(id,step){
 }
 $('#pl-dl').addEventListener('click',function(){ var d=readPlan(); planLeaf(); EXP.word($('#pl-leaf').outerHTML,'Annex B Supervisory Plan '+(MONTHS[d.month-1]||'')+' '+d.year+' '+(d.dept||'')); });
 function renderPlanList(){
-  var list=S.plans.slice().sort(function(a,b){return (b.year-a.year)||(b.month-a.month)||String(a.dept).localeCompare(b.dept)});
-  if(!list.length){ $('#pl-list').innerHTML='<div class="empty">No plans saved yet. Fill in the form below and save it; it will be listed here for every department head.</div>'; return; }
+  if(typeof gpFill==='function'){ gpFill(); gpShowKind(); }
+  var fdp=$('#gp-t').value?deptOf($('#gp-t').value)||$('#gp-dp').value:$('#gp-dp').value, fm=gpKind()==='month', fsy=$('#gp-sy').value||S.sy, fyr=+$('#gp-yr').value, fmo=+$('#gp-mo').value;
+  var list=S.plans.filter(function(p){ return (!fdp||p.dept===fdp)&&(fm?(+p.year===fyr&&+p.month===fmo):syOfMonth(p.year+'-'+pad(p.month))===fsy); }).sort(function(a,b){return (b.year-a.year)||(b.month-a.month)||String(a.dept).localeCompare(b.dept)});
+  if(!list.length){ $('#pl-list').innerHTML='<div class="empty">No saved plans for '+(fm?esc(MONTHS[fmo-1]+' '+fyr):'SY '+esc(fsy))+(fdp?' in '+esc(fdp):'')+'.</div>'; return; }
   $('#pl-list').innerHTML=list.map(function(p){ return '<div class="listrow"><div class="what"><b>'+esc(MONTHS[p.month-1])+' '+esc(p.year)+' &middot; '+esc(p.dept||'No department')+'</b><div>Prepared by '+esc(p.prep||'\u2014')+(p.date?' on '+esc(longDate(p.date)):'')+' &middot; '+(p.rows||[]).length+' row'+((p.rows||[]).length===1?'':'s')+'</div></div><button class="btn ghost small" type="button" data-open-plan="'+esc(p.id)+'">Open</button></div>'; }).join('');
 }
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-open-plan]'); if(b) openPlan(b.dataset.openPlan); });
@@ -2122,6 +2143,26 @@ var STRANDS={'1.1':'content knowledge and its application within and across curr
   '6.1':'learning environments responsive to community contexts','6.2':'engagement of parents and the wider school community','6.3':'professional ethics','6.4':'school policies and procedures',
   '7.1':'philosophy of teaching','7.2':'dignity of teaching as a profession','7.3':'professional links with colleagues','7.4':'professional reflection and learning to improve practice','7.5':'professional development goals'};
 var DOMAINS7={1:'Content Knowledge and Pedagogy',2:'Learning Environment',3:'Diversity of Learners',4:'Curriculum and Planning',5:'Assessment and Reporting',6:'Community Linkages and Professional Engagement',7:'Personal Growth and Professional Development'};
+/* DepEd Order No. 42, s. 2017 (PPST) and DepEd Order No. 24, s. 2020 (PPSSH): indicators of the Proficient (x.x.2) and
+   Highly Proficient (x.x.3) teachers, and of Career Stage 2 school heads (x.x.2) */
+var PP={"pst2":{"1.1":"Apply knowledge of content within and across curriculum teaching areas.","1.2":"Use research-based knowledge and principles of teaching and learning to enhance professional practice.","1.3":"Ensure the positive use of ICT to facilitate the teaching and learning process.","1.4":"Use a range of teaching strategies that enhance learner achievement in literacy and numeracy skills.","1.5":"Apply a range of teaching strategies to develop critical and creative thinking, as well as other higher-order thinking skills.","1.6":"Display proficient use of Mother Tongue, Filipino and English to facilitate teaching and learning.","1.7":"Use effective verbal and non-verbal classroom communication strategies to support learner understanding, participation, engagement and achievement.","2.1":"Establish safe and secure learning environments to enhance learning through the consistent implementation of policies, guidelines and procedures.","2.2":"Maintain learning environments that promote fairness, respect and care to encourage learning.","2.3":"Manage classroom structure to engage learners, individually or in groups, in meaningful exploration, discovery and hands-on activities within a range of physical learning environments.","2.4":"Maintain supportive learning environments that nurture and inspire learners to participate, cooperate and collaborate in continued learning.","2.5":"Apply a range of successful strategies that maintain learning environments that motivate learners to work productively by assuming responsibility for their own learning.","2.6":"Manage learner behavior constructively by applying positive and non-violent discipline to ensure learning-focused environments.","3.1":"Use differentiated, developmentally appropriate learning experiences to address learners’ gender, needs, strengths, interests and experiences.","3.2":"Establish a learner-centered culture by using teaching strategies that respond to their linguistic, cultural, socio-economic and religious backgrounds.","3.3":"Design, adapt and implement teaching strategies that are responsive to learners with disabilities, giftedness and talents.","3.4":"Plan and deliver teaching strategies that are responsive to the special educational needs of learners in difficult circumstances, including: geographic isolation; chronic illness; displacement due to armed conflict, urban resettlement or disasters; child abuse and child labor practices.","3.5":"Adapt and use culturally appropriate teaching strategies to address the needs of learners from indigenous groups.","4.1":"Plan, manage and implement developmentally sequenced teaching and learning process to meet curriculum requirements and varied teaching contexts.","4.2":"Set achievable and appropriate learning outcomes that are aligned with learning competencies.","4.3":"Adapt and implement learning programs that ensure relevance and responsiveness to the needs of all learners.","4.4":"Participate in collegial discussions that use teacher and learner feedback to enrich teaching practice.","4.5":"Select, develop, organize and use appropriate teaching and learning resources, including ICT, to address learning goals.","5.1":"Design, select, organize and use diagnostic, formative and summative assessment strategies consistent with curriculum requirements.","5.2":"Monitor and evaluate learner progress and achievement using learner attainment data.","5.3":"Use strategies for providing timely, accurate and constructive feedback to improve learner performance.","5.4":"Communicate promptly and clearly the learners’ needs, progress and achievement to key stakeholders, including parents/guardians.","5.5":"Utilize assessment data to inform the modification of teaching and learning practices and programs.","6.1":"Maintain learning environments that are responsive to community contexts.","6.2":"Build relationships with parents/guardians and the wider school community to facilitate involvement in the educative process.","6.3":"Review regularly personal teaching practice using existing laws and regulations that apply to the teaching profession and the responsibilities specified in the Code of Ethics for Professional Teachers.","6.4":"Comply with and implement school policies and procedures consistently to foster harmonious relationships with learners, parents, and other stakeholders.","7.1":"Apply a personal philosophy of teaching that is learner-centered.","7.2":"Adopt practices that uphold the dignity of teaching as a profession by exhibiting qualities such as caring attitude, respect and integrity.","7.3":"Participate in professional networks to share knowledge and to enhance practice.","7.4":"Develop a personal professional improvement plan based on reflection of one’s practice and ongoing professional learning.","7.5":"Set professional development goals based on the Philippine Professional Standards for Teachers."},"pst3":{"1.1":"Model effective applications of content knowledge within and across curriculum teaching areas.","1.2":"Collaborate with colleagues in the conduct and application of research to enrich knowledge of content and pedagogy.","1.3":"Promote effective strategies in the positive use of ICT to facilitate the teaching and learning process.","1.4":"Evaluate with colleagues the effectiveness of teaching strategies that promote learner achievement in literacy and numeracy.","1.5":"Develop and apply effective teaching strategies to promote critical and creative thinking, as well as other higher-order thinking skills.","1.6":"Model and support colleagues in the proficient use of Mother Tongue, Filipino and English to improve teaching and learning, as well as to develop the learners’ pride of their language, heritage and culture.","1.7":"Display a wide range of effective verbal and non-verbal classroom communication strategies to support learner understanding, participation, engagement and achievement.","2.1":"Exhibit effective strategies that ensure safe and secure learning environments to enhance learning through the consistent implementation of policies, guidelines and procedures.","2.2":"Exhibit effective practices to foster learning environments that promote fairness, respect and care to encourage learning.","2.3":"Work with colleagues to model and share effective techniques in the management of classroom structure to engage learners, individually or in groups, in meaningful exploration, discovery and hands-on activities within a range of physical learning environments.","2.4":"Work with colleagues to share successful strategies that sustain supportive learning environments that nurture and inspire learners to participate, cooperate and collaborate in continued learning.","2.5":"Model successful strategies and support colleagues in promoting learning environments that effectively motivate learners to work productively by assuming responsibility for their own learning.","2.6":"Exhibit effective and constructive behavior management skills by applying positive and non-violent discipline to ensure learning-focused environments.","3.1":"Work with colleagues to share differentiated, developmentally appropriate opportunities to address learners’ differences in gender, needs, strengths, interests and experiences.","3.2":"Exhibit a learner-centered culture that promotes success by using effective teaching strategies that respond to their linguistic, cultural, socio-economic and religious backgrounds.","3.3":"Assist colleagues to design, adapt and implement teaching strategies that are responsive to learners with disabilities, giftedness and talents.","3.4":"Evaluate with colleagues teaching strategies that are responsive to the special educational needs of learners in difficult circumstances, including: geographic isolation; chronic illness; displacement due to armed conflict, urban resettlement or disasters; child abuse and child labor practices.","3.5":"Develop and apply teaching strategies to address effectively the needs of learners from indigenous groups.","4.1":"Develop and apply effective strategies in the planning and management of developmentally sequenced teaching and learning process to meet curriculum requirements and varied teaching contexts.","4.2":"Model to colleagues the setting of achievable and challenging learning outcomes that are aligned with learning competencies to cultivate a culture of excellence for all learners.","4.3":"Work collaboratively with colleagues to evaluate the design of learning programs that develop the knowledge and skills of learners at different ability levels.","4.4":"Review with colleagues, teacher and learner feedback to plan, facilitate, and enrich teaching practice.","4.5":"Advise and guide colleagues in the selection, organization, development and use of appropriate teaching and learning resources, including ICT, to address specific learning goals.","5.1":"Work collaboratively with colleagues to review the design, selection, organization and use of a range of effective diagnostic, formative and summative assessment strategies consistent with curriculum requirements.","5.2":"Interpret collaboratively monitoring and evaluation strategies of attainment data to support learner progress and achievement.","5.3":"Use effective strategies for providing timely, accurate and constructive feedback to encourage learners to reflect on and improve their own learning.","5.4":"Apply skills in the effective communication of learner needs, progress and achievement to key stakeholders, including parents/guardians.","5.5":"Work collaboratively with colleagues to analyze and utilize assessment data to modify practices and programs to further support learner progress and achievement.","6.1":"Reflect on and evaluate learning environments that are responsive to community contexts.","6.2":"Guide colleagues to strengthen relationships with parents/guardians and the wider school community to maximize their involvement in the educative process.","6.3":"Discuss with colleagues teaching and learning practices that apply existing codes, laws and regulations that apply to the teaching profession, and the responsibilities specified in the Code of Ethics for Professional Teachers.","6.4":"Exhibit commitment to and support teachers in the implementation of school policies and procedures to foster harmonious relationships with learners, parents and other stakeholders.","7.1":"Manifest a learner-centered teaching philosophy in various aspects of practice and support colleagues in enhancing their own learner-centered teaching philosophy.","7.2":"Identify and utilize personal professional strengths to uphold the dignity of teaching as a profession to help build a positive teaching and learning culture within the school.","7.3":"Contribute actively to professional networks within and between schools to improve knowledge and to enhance practice.","7.4":"Initiate professional reflections and promote learning opportunities with colleagues to improve practice.","7.5":"Reflect on the Philippine Professional Standards for Teachers to plan personal professional development goals and assist colleagues in planning and achieving their own goals."},"ssh2":{"1.1":"Communicate the DepEd vision, mission and core values to the wider school community to ensure shared understanding and alignment of school policies, programs, projects and activities.","1.2":"Develop and implement with the planning team school plans aligned with institutional goals and policies.","1.3":"Undertake policy implementation and review in the school to ensure that operations are consistent with national and local laws, regulations and issuances.","1.4":"Utilize relevant research findings from reliable sources in facilitating data-driven and evidence-based innovations to improve school performance.","1.5":"Implement programs in the school that support the development of learners.","1.6":"Utilize learner voice, such as feelings, views and/or opinions to inform policy development and decision-making towards school improvement.","1.7":"Utilize available monitoring and evaluation processes and tools to promote learner achievement.","2.1":"Manage school data and information using technology, including ICT, to ensure efficient and effective school operations.","2.2":"Manage finances adhering to policies, guidelines and issuances in allocation, procurement, disbursement and liquidation aligned with the school plan.","2.3":"Manage school facilities and equipment in adherence to policies, guidelines and issuances on acquisition, recording, utilization, repair and maintenance, storage and disposal.","2.4":"Manage staffing such as teaching load distribution and grade level and subject area assignment in adherence to laws, policies, guidelines and issuances based on the needs of the school.","2.5":"Manage school safety for disaster preparedness, mitigation and resiliency to ensure continuous delivery of instruction.","2.6":"Manage emerging opportunities and challenges to encourage equality and equity in addressing the needs of learners, school personnel and other stakeholders.","3.1":"Assist teachers in the review, contextualization and implementation of learning standards to make the curriculum relevant for learners.","3.2":"Provide technical assistance to teachers on teaching standards and pedagogies within and across learning areas to improve their teaching practice.","3.3":"Use validated feedback obtained from learners, parents and other stakeholders to help teachers improve their performance.","3.4":"Utilize learning outcomes in developing data-based interventions to maintain learner achievement and attain other performance indicators.","3.5":"Provide technical assistance to teachers in using learning assessment tools, strategies and results consistent with curriculum requirements to ensure accountability in achieving higher learning outcomes.","3.6":"Manage a learner-friendly, inclusive and healthy learning environment.","3.7":"Ensure integration of career awareness and opportunities in the provision of learning experiences aligned with the curriculum.","3.8":"Implement learner discipline policies that are developed collaboratively with stakeholders including parents, school personnel and the community.","4.1":"Set personal and professional development goals based on self-assessment aligned with the Philippine Professional Standards for School Heads.","4.2":"Apply professional reflection and learning to improve one’s practice.","4.3":"Participate in professional networks to upgrade knowledge and skills and to enhance practice.","4.4":"Implement the performance management system with a team to support the career advancement of school personnel, and to improve office performance.","4.5":"Implement professional development initiatives to enhance strengths and address performance gaps among school personnel.","4.6":"Provide opportunities to individuals and teams in performing leadership roles and responsibilities.","4.7":"Implement laws, policies, guidelines and issuances on the rights, privileges and benefits of school personnel to ensure their general welfare.","4.8":"Implement a school rewards system to recognize and motivate learners, school personnel and other stakeholders for exemplary performance and/or continued support.","5.1":"Build constructive relationships with authorities, colleagues, parents and other stakeholders to foster an enabling and supportive environment for learners.","5.2":"Manage school organizations, such as learner organizations, faculty clubs and parent-teacher associations, by applying relevant policies and guidelines to support the attainment of institutional goals.","5.3":"Exhibit inclusive practices, such as gender sensitivity, physical and mental health awareness and culture responsiveness, to foster awareness, acceptance and respect.","5.4":"Communicate effectively in speaking and in writing to teachers, learners, parents and other stakeholders, through positive use of communication platforms, to facilitate information sharing, collaboration and support.","5.5":"Initiate partnerships with the community, such as parents, alumni, authorities, industries and other stakeholders, to strengthen support for learner development, as well as school and community improvement."}};
+var PPSSH_D={1:'Leading Strategically',2:'Managing School Operations and Resources',3:'Focusing on Teaching and Learning',4:'Developing Self and Others',5:'Building Connections'};
+var PPSSH_S={'1.1':'Vision, mission and core values','1.2':'School planning and implementation','1.3':'Policy implementation and review','1.4':'Research and innovation','1.5':'Program design and implementation','1.6':'Learner voice','1.7':'Monitoring and evaluation processes and tools','2.1':'Records management','2.2':'Financial management','2.3':'School facilities and equipment','2.4':'Management of staff','2.5':'School safety for disaster preparedness, mitigation and resiliency','2.6':'Emerging opportunities and challenges','3.1':'School-based review, contextualization and implementation of learning standards','3.2':'Teaching standards and pedagogies','3.3':'Teacher performance feedback','3.4':'Learner achievement and other performance indicators','3.5':'Learning assessment','3.6':'Learning environment','3.7':'Career awareness and opportunities','3.8':'Learner discipline','4.1':'Personal and professional development','4.2':'Professional reflection and learning','4.3':'Professional networks','4.4':'Performance management','4.5':'Professional development of school personnel','4.6':'Leadership development in individuals and teams','4.7':'General welfare of human resources','4.8':'Rewards and recognition mechanism','5.1':'Management of diverse relationships','5.2':'Management of school organizations','5.3':'Inclusive practice','5.4':'Communication','5.5':'Community engagement'};
+function ppCap(t){ t=String(t||''); return t.charAt(0).toUpperCase()+t.slice(1); }
+/* the school head's PPSSH strand that supports a teacher's PPST strand */
+function ppsshOf(st){ st=String(st||''); var d=+st.charAt(0); if(st==='4.4') return '4.5'; if(st==='4.5') return '3.2'; if(st==='5.2'||st==='5.5') return '3.4'; if(st==='6.1'||st==='6.2') return '5.5'; return {1:'3.2',2:'3.6',3:'3.2',4:'3.1',5:'3.5',6:'1.3',7:'4.5'}[d]||'3.2'; }
+/* KRA: the PPSSH domain and strand of the school head, then the PPST domains and strands of the teacher */
+function ppKra(ssh,pst){
+  var L='PPSSH Domain '+ssh.charAt(0)+': '+PPSSH_D[ssh.charAt(0)]+' – Strand '+ssh+' '+PPSSH_S[ssh];
+  if(typeof pst==='string') return L+'\n'+pst;
+  var byD={}, ord=[]; pst.forEach(function(x){ var d=x.charAt(0); if(!byD[d]){ byD[d]=[]; ord.push(d); } byD[d].push(x); });
+  return L+'\n'+ord.map(function(d){ return 'PPST Domain '+d+': '+DOMAINS7[d]+' – Strand'+(byD[d].length>1?'s ':' ')+byD[d].map(function(x){ return x+' '+ppCap(STRANDS[x]||''); }).join('; '); }).join('\n');
+}
+/* Objectives: the PPSSH indicator and the PPST indicators (x.x.3 for Master Teachers), then what is checked */
+function ppObj(ssh,codes,focus){
+  return 'PPSSH '+ssh+'.2: '+(PP.ssh2[ssh]||'')+codes.map(function(c){ var a=String(c).split('.'), st=a[0]+'.'+a[1], lv=a[2]==='3'?'3':'2'; return '\nPPST '+st+'.'+lv+': '+((lv==='3'?PP.pst3:PP.pst2)[st]||''); }).join('')+(focus?'\n'+focus:'');
+}
+function kCore(k){ var m=/((?:Core Behavioral|Leadership) Competency\s*[–-]\s*[^\n]+)/.exec(String(k||'')); return m?m[1]:String(k||''); }
 var STRAND_RX=[['1.2',/research-based/i],['1.6',/mother tongue/i],['1.7',/verbal and non-?\s*(teaching )?verbal|classroom communication/i],['1.4',/literacy and numeracy/i],['1.5',/critical and creative|higher-order/i],['3.5',/indigenous/i],['3.4',/difficult circumstances/i],['3.3',/disabilit|giftedness/i],['3.2',/learner-centered culture|linguistic, cultural/i],['3.1',/differentiated/i],
   ['2.6',/learner behavio|non-violent/i],['2.1',/safe and secure/i],['2.2',/fairness, respect|fair learning/i],['2.3',/classroom structure/i],['2.4',/nurture and inspire|participate, cooperate/i],['2.5',/motivate learners|successful strategies that maintain/i],
   ['4.1',/developmentally sequenced/i],['4.2',/learning outcomes|achievable and appropriate/i],['4.3',/learning programs?/i],['4.4',/collegial discussion|feedback from colleagues|professional collaboration/i],['5.1',/diagnostic, formative and summative|assessment strategies/i],['5.2',/monitor(ed)? and evaluat(e|ed) learner progress/i],['5.3',/timely, accurate and constructive feedback|providing timely/i],['5.4',/communicat\w* promptly|key stakeholders|learners’? ?needs, progress/i],['5.5',/assessment data/i],
@@ -2319,8 +2360,8 @@ function ipRender(){
     return '<tr><td>'+esc(r.file)+'</td><td><input type="text" list="imp-people" data-ipi="'+i+'" value="'+esc(r.teacher)+'" style="min-width:220px"></td><td>'+esc(deptOf(r.teacher)||'Not set')+'</td><td class="c">'+r.items.length+'</td><td class="c">'+ipRows(r,sy).length+'</td></tr>'; }).join('')+'</tbody></table>':'';
   $('#ip-save').hidden=!IPQ.length;
   var list=(S.tplans||[]).filter(function(p){ return p.sy===sy; }).sort(function(a,b){ return lastFirst(a.teacher).localeCompare(lastFirst(b.teacher)); });
-  $('#ip-list').innerHTML=list.length?'<p class="mini" style="margin:4px 0">(1) Supervisory plans per teacher, SY '+esc(sy)+': '+list.length+'</p>'+list.map(function(p){ return '<div class="listrow"><div class="what"><b>'+esc(lastFirst(p.teacher))+'</b> &middot; '+esc(p.dept||deptOf(p.teacher)||'No department')+'<div>'+p.rows.length+' plan rows &middot; from '+esc(p.source||'IDP')+'</div></div><button class="btn ghost small" type="button" data-ipview="'+esc(p.id)+'">View</button></div>'; }).join(''):'';
-  $('#ip-actions').hidden=!list.length;
+  $('#ip-list').innerHTML=list.length?'<p class="mini" style="margin:4px 0">Teachers with IDPs, SY '+esc(sy)+': '+list.length+'</p>'+list.map(function(p){ return '<div class="listrow"><div class="what"><b>'+esc(lastFirst(p.teacher))+'</b> &middot; '+esc(p.dept||deptOf(p.teacher)||'No department')+'<div>'+p.rows.length+' plan rows &middot; from '+esc(p.source||'IDP')+'</div></div><button class="btn ghost small" type="button" data-ipview="'+esc(p.id)+'">View</button></div>'; }).join(''):'';
+  $('#ip-actions').hidden=true;
   if(!$('#ip-annual-dept').options.length||$('#ip-annual-dept').dataset.v!==String(S.myDept)){ $('#ip-annual-dept').innerHTML=S.myDept?S.myDepts.map(function(x){return '<option>'+esc(x)+'</option>'}).join(''):'<option value="">Whole school</option>'+DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join(''); $('#ip-annual-dept').dataset.v=String(S.myDept); }
 }
 $('#ip-file').addEventListener('change',async function(){
@@ -2359,10 +2400,17 @@ function ipGroup(rows,withMonths){ var g={}, order=[];
   return order.map(function(k){ var x=g[k], r=x.r, n=x.teachers.length, who=n>4?n+' teachers':x.teachers.map(lastFirst).join('; ');
     var focus=r.strand?(STRANDS[r.strand]||''):r.kra.replace(/^.*?–\s*/,'').toLowerCase();
     var ms=Object.keys(x.months).sort().map(function(k2){ var a=k2.split('-'); return MONTHS[+a[1]-1]+' '+a[0]; });
-    return {key:k,strand:r.strand,kra:r.strand?r.kra.replace(/PPST \d\.\d\.\d/,'PPST '+r.strand):r.kra,obj:'To support '+(n>1?n+' teachers':x.teachers[0])+' on '+(r.strand?'PPST '+r.strand+' ('+focus+')':'\u201c'+r.kra.replace(/^.*?\u2013\s*/,'')+'\u201d')+'.',act:r.act.split('\nIDP intervention:')[0],ind:(n>1?'All '+n+' teachers: ':'')+r.ind,mov:r.mov.split('\nResources:')[0],time:withMonths?ms.join(', '):'',status:'',rem:'Teachers: '+who,n:n}; })
+    var ko=ppKO(r,syOfMonth(Object.keys(x.months).sort()[0]||''));
+    return {key:k,strand:r.strand,kra:ko.kra,obj:ko.obj,act:r.act.split('\nIDP intervention:')[0],ind:(n>1?'All '+n+' teachers: ':'')+r.ind,mov:numList(String(r.mov||'').split('\nResources:')[0].replace(/\.$/,'').split(/\s*;\s*/).filter(Boolean).map(ppCap)),time:withMonths?ms.join(', '):'',status:'',rem:'Teachers: '+who,n:n}; })
     .sort(function(a,b){ return String(a.strand||'9').localeCompare(String(b.strand||'9'))||b.n-a.n; });
 }
 (function(){ var now=new Date(); $('#ip-mo').innerHTML=MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join(''); $('#ip-mo').value=String(now.getMonth()+1); $('#ip-yr').value=now.getFullYear(); $('#ip-dp').innerHTML=optList(DEPTS,'Choose a department'); })();
+function ipMonthRows(dp,mo,yr,teacher){
+  var key=yr+'-'+pad(mo), sy=syOfMonth(key), rows=[];
+  (S.tplans||[]).filter(function(p){ return p.sy===sy&&(!dp||(p.dept||deptOf(p.teacher))===dp)&&(!teacher||p.teacher===teacher); }).forEach(function(p){ p.rows.forEach(function(r){ if((r.months||[r.month]).indexOf(key)>=0) rows.push(Object.assign({teacher:p.teacher},r)); }); });
+  var last=new Date(yr,mo,0).getDate(), tf=MONTHS[mo-1]+' 1, '+yr+' – '+MONTHS[mo-1]+' '+last+', '+yr;
+  return ipGroup(rows,false).map(function(r){ return Object.assign(blankRow(),{kra:r.kra,obj:r.obj,act:r.act,ind:r.ind,mov:r.mov,time:tf,status:'',rem:r.rem}); });
+}
 $('#ip-month').addEventListener('click',function(){
   var mo=+$('#ip-mo').value, yr=+$('#ip-yr').value, dp=$('#ip-dp').value, key=yr+'-'+pad(mo);
   if(!dp){ toast('Choose the department first.'); $('#ip-dp').focus(); return; }
@@ -2385,6 +2433,76 @@ $('#ip-annual').addEventListener('click',function(){
   var g=annualRows(rows,sy), hd=dp?(S.cfg.heads||{})[dp]:'', hp=byName(hd||'');
   ipShow('Annual Supervisory Plan SY '+sy+(dp?' '+dp:''), ipLeaf('ANNUAL INSTRUCTIONAL SUPERVISORY PLAN','SY '+sy+(dp?' · '+dp+' Department':''),g,ANCOLS,{prep:dp?hd:PRINCIPAL.n,prepPos:dp?(hp?hp.p:'Department Head'):PRINCIPAL.p}));
 });
+/* ---------- Saved Plans: generate a Monthly or an Annual plan, by learning area and teacher ---------- */
+function gpKind(){ var r=$('input[name=gp-kind]:checked'); return r?r.value:'month'; }
+function gpTeachersOf(dp){ return PEOPLE.filter(function(p){ return ['t','mt','ht'].indexOf(p.g)>=0&&(dp?deptOf(p.n)===dp:!!deptOf(p.n)); }).sort(function(a,b){ return lastFirst(a.n).localeCompare(lastFirst(b.n)); }); }
+function gpFill(){
+  if(!$('#gp-mo').options.length){ var now=new Date(); $('#gp-mo').innerHTML=MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join(''); $('#gp-mo').value=String(now.getMonth()+1); $('#gp-yr').value=now.getFullYear(); }
+  var sy=$('#gp-sy').value||S.sy; $('#gp-sy').innerHTML=SYS.map(function(x){return '<option value="'+x+'">SY '+x+'</option>'}).join(''); $('#gp-sy').value=SYS.indexOf(sy)>=0?sy:S.sy;
+  var dv=$('#gp-dp').value, ds=S.myDept?S.myDepts:DEPTS;
+  $('#gp-dp').innerHTML=(S.myDept?'':'<option value="">All Learning Areas</option>')+ds.map(function(d){return '<option>'+esc(d)+'</option>'}).join('');
+  if([].some.call($('#gp-dp').options,function(o){return o.value===dv})) $('#gp-dp').value=dv;
+  gpFillT();
+}
+function gpFillT(){
+  var tv=$('#gp-t').value, dp=$('#gp-dp').value;
+  $('#gp-t').innerHTML='<option value="">All teachers</option>'+gpTeachersOf(dp).map(function(p){return '<option value="'+esc(p.n)+'">'+esc(lastFirst(p.n))+(p.p?' ('+esc(p.p)+')':'')+'</option>'}).join('');
+  if([].some.call($('#gp-t').options,function(o){return o.value===tv})) $('#gp-t').value=tv;
+}
+function gpShowKind(){ var m=gpKind()==='month'; $$('#gp-card .gpm').forEach(function(e){ e.hidden=!m; }); $$('#gp-card .gpy').forEach(function(e){ e.hidden=m; }); }
+/* one teacher's activities in the month from the Supervisory Schedule */
+function scTeacherRows(dp,mk,n){
+  var st=SC_ST[dp+'|'+mk], rec=st?st.rec:scBuild(dp,mk).rec, it=(rec.items||{})[n]; if(!it) return [];
+  var out=[];
+  ['dll','walk','ots','cot'].forEach(function(k){ var ds=k==='cot'?(it.cotNo&&it.cot?[it.cot]:[]):(it[k]||[]).filter(Boolean); if(!ds.length) return; ds.sort();
+    var R=SC_ROWS[k], r=Object.assign(blankRow(),{kra:R.kra,obj:R.obj(lastFirst(n)),act:R.act,ind:R.ind('the teacher'),mov:R.mov,time:ds[0]===ds[ds.length-1]?longDate(ds[0]):longDate(ds[0])+' – '+longDate(ds[ds.length-1]),rem:it.sup?'Conducted by: '+lastFirst(it.sup):'',src:'sched',skey:k});
+    out.push(r); });
+  return out;
+}
+/* status of a row from the teacher's PMCF entries in the month */
+function gpStatus(rows,mk,n){ return rows.map(function(r){ if(String(r.status||'').trim()) return r;
+  var L=S.coach.filter(function(c){ return c.ratee===n&&entryMonths(c)[mk]&&entryMatches(c,r); }).sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
+  return Object.assign({},r,{status:L.map(function(c){return updLine(c,mk)}).join('\n')}); }); }
+function gpSavedMonthly(dp,mo,yr){ return (S.plans||[]).filter(function(p){ return p.dept===dp&&+p.month===mo&&+p.year===yr; })[0]||null; }
+var GP_COLS=PCOLS.map(function(c,i){ return [c[0],c[1],PCOL_IN[i]]; });
+function gpGenerate(){
+  var dp=$('#gp-dp').value, t=$('#gp-t').value, tp=byName(t)||{}, tdp=t?(deptOf(t)||dp):dp;
+  var head=function(d){ var h=d?deptSups(d)[0]||'':'', hp=byName(h); return d&&h?{prep:h,prepPos:hp?hp.p:'Department Head'}:{prep:PRINCIPAL.n,prepPos:PRINCIPAL.p}; };
+  if(gpKind()==='month'){
+    var mo=+$('#gp-mo').value, yr=+$('#gp-yr').value, mk=yr+'-'+pad(mo), ml=MONTHS[mo-1]+' '+yr;
+    if(!mo||!yr){ toast('Choose the month and year.'); return; }
+    if(dp&&!t){ // one learning area: the editable Monthly Supervisory Plan
+      var sv=gpSavedMonthly(dp,mo,yr); if(sv){ openPlan(sv.id,3); toast('Opened the saved plan of '+dp+' for '+ml+'.'); return; }
+      if(plan.id||+$('#pl-month').value!==mo||+$('#pl-year').value!==yr||$('#pl-dept').value!==dp) newPlan();
+      $('#pl-month').value=String(mo); $('#pl-year').value=yr; $('#pl-dept').value=dp; go('plan','form');
+      var n=scFillPlan(true), g=ipMonthRows(dp,mo,yr);
+      plan.rows=plan.rows.filter(function(r){ return PCOLS.some(function(c){return String(r[c[0]]).trim()}); }).concat(g); if(!plan.rows.length) plan.rows=[blankRow()];
+      var hp=byName(deptSups(dp)[0]||''); if(hp&&!getPerson('pl-prep').n) setPerson('pl-prep',hp.n,hp.p);
+      drawPlanRows(); planLeaf(); wizGo($('#p-plan'),2);
+      toast(n||g.length?'Monthly plan of '+dp+' for '+ml+': '+n+' rows from the schedule, '+g.length+' from the IDPs. Check the rows, then save.':'Nothing scheduled and no IDP focus for '+dp+' in '+ml+'. Write the rows, then save.');
+      return; }
+    var rows=[];
+    if(t){ rows=gpStatus(scTeacherRows(tdp,mk,t).concat(ipMonthRows(tdp,mo,yr,t)),mk,t); }
+    else DEPTS.forEach(function(d){ var sv=gpSavedMonthly(d,mo,yr), rs=sv?(sv.rows||[]):scPlanRows(d,mk).concat(ipMonthRows(d,mo,yr));
+      rs.forEach(function(r){ rows.push(Object.assign(blankRow(),r,{rem:d+(String(r.rem||'').trim()?'\n'+r.rem:'')})); }); });
+    if(!rows.length){ toast('Nothing planned for '+(t?lastFirst(t):'any learning area')+' in '+ml+'.'); return; }
+    var sub=ml+(t?' · '+t+(tp.p?', '+tp.p:'')+(tdp?' · '+tdp+' Department':''):' · All Learning Areas');
+    ipShow('Monthly Supervisory Plan '+ml+' '+(t?t:'All Learning Areas'), ipLeaf('MONTHLY INSTRUCTIONAL SUPERVISORY PLAN',sub,rows,GP_COLS,head(t?tdp:'')));
+    return; }
+  var sy=$('#gp-sy').value||S.sy;
+  if(t){ var p=(S.tplans||[]).filter(function(x){ return x.sy===sy&&x.teacher===t; })[0];
+    if(!p){ toast('No plan from the IDP of '+lastFirst(t)+' for SY '+sy+'. Upload the IDP below.'); return; }
+    ipShow('Annual Supervisory Plan '+t+' SY '+sy, ipLeaf('ANNUAL INSTRUCTIONAL SUPERVISORY PLAN','SY '+sy+' · '+t+(p.teacherPos?', '+p.teacherPos:'')+(tdp?' · '+tdp+' Department':''),annualRows(tplanUpdates(p).map(function(r){return Object.assign({teacher:p.teacher},r)}),sy),ANCOLS,head(tdp)));
+    return; }
+  var all=[];
+  (S.tplans||[]).filter(function(p){ return p.sy===sy&&(!dp||(p.dept||deptOf(p.teacher))===dp); }).forEach(function(p){ p.rows.forEach(function(r){ all.push(Object.assign({teacher:p.teacher},r)); }); });
+  if(!all.length){ toast('No teachers’ IDPs saved for SY '+sy+(dp?' in '+dp:'')+'. Upload them below.'); return; }
+  ipShow('Annual Supervisory Plan SY '+sy+' '+(dp||'All Learning Areas'), ipLeaf('ANNUAL INSTRUCTIONAL SUPERVISORY PLAN','SY '+sy+' · '+(dp?dp+' Department':'All Learning Areas'),annualRows(all,sy),ANCOLS,head(dp)));
+}
+$$('input[name=gp-kind]').forEach(function(r){ r.addEventListener('change',function(){ gpShowKind(); renderPlanList(); }); });
+$('#gp-dp').addEventListener('change',function(){ gpFillT(); renderPlanList(); });
+['gp-sy','gp-mo','gp-yr','gp-t'].forEach(function(id){ $('#'+id).addEventListener('change',renderPlanList); });
+$('#gp-go').addEventListener('click',gpGenerate);
 /* ---------- Annual Supervisory Plan rows ---------- */
 var ANCOLS=[['time','Month',1,'white-space:pre;overflow-wrap:normal;word-break:keep-all;font-size:8.5pt'],['kra','Key Result Areas',1.2],['obj','Objectives',1.6],['act','Enabling Projects and/or Activities',1.75],['ind','Success Indicators',1.5],['mov','Means of Verification',1.45],['status','Accomplishment / Status',1.2],['rem','Remarks',1.1]];
 var AN_ACT=['LAC session','FGD session','Seminar/Training','Workshop','One-on-One Coaching and Mentoring'];
@@ -2399,6 +2517,14 @@ function shortNames(list){
     return properName(l)+(dup?', '+firstOf(n).split(/\s+/).filter(Boolean).map(function(w){return w.charAt(0).toUpperCase()+'.'}).join(''):''); });
 }
 /* the objective for a KRA: the PPST indicator itself (from the COT list of the school year when it is classroom-observable) */
+/* KRA and objectives of a plan row from a teacher's IDP need, by PPSSH and PPST */
+function ppKO(r,sy){
+  if(r.strand){ var ssh=ppsshOf(r.strand), code=/^\d\.\d\.[23]$/.test(r.code||'')?r.code:r.strand+'.2';
+    var hit=(cotSet(sy)||[]).filter(function(t){ return new RegExp('\\('+r.strand.replace('.','\\.')+'\\.\\d\\)\\s*$').test(t); })[0];
+    return {kra:ppKra(ssh,[r.strand]),obj:ppObj(ssh,[code],hit?'Look for (COT): '+hit.replace(/\s*\([\d.]+\)\s*$/,'')+'.':'')}; }
+  var nm=kCore(r.kra), lead=/^Leadership/.test(nm), ssh=lead?'4.6':'4.4', c=nm.replace(/^.*?[–-]\s*/,'');
+  return {kra:ppKra(ssh,'Teacher: '+nm),obj:ppObj(ssh,[],'Teacher: '+(/^other/i.test(c)?'Demonstrate the competencies identified in the IDP in the performance of duties.':'Demonstrate '+c+' in the performance of duties.'))};
+}
 function annualObj(r,sy){
   if(!r.strand){ var nm=r.kra.replace(/^.*?\u2013\s*/,''); return /^other/i.test(nm)?'Demonstrate the core behavioral competencies identified in the IDP in the performance of duties.':'Demonstrate '+nm+' in the performance of duties.'; }
   var hit=(cotSet(sy)||[]).filter(function(t){ return new RegExp('\\('+r.strand.replace('.','\\.')+'\\.\\d\\)\\s*$').test(t); })[0];
@@ -2419,13 +2545,13 @@ function annualRows(rows,sy){
   rows.forEach(function(r){ var k=r.key; if(!g[k]){ g[k]={r:r,teachers:[],months:{},acts:[]}; order.push(k); } var x=g[k]; if(x.teachers.indexOf(r.teacher)<0) x.teachers.push(r.teacher); (r.months||[r.month]).forEach(function(m){ x.months[m]=1; }); x.acts.push(r.act||''); });
   return order.map(function(k){ var x=g[k], r=x.r, n=x.teachers.length;
     var ms=Object.keys(x.months).sort(), mlab=ms.map(function(k2){ var a=k2.split('-'); return MONTHS[+a[1]-1]+'\u00a0'+a[0]; });
-    var kra=r.strand?r.kra.replace(/PPST \d\.\d\.\d/,'PPST '+r.strand):r.kra;
+    var ko=ppKO(r,sy), kra=ko.kra;
     var nm=r.kra.replace(/^.*?\u2013\s*/,'');
     var ind=(r.strand?String(r.ind||'').replace(/\.$/,'').split(/\s*;\s*|,\s*(?=rated )/):['Agreed targets on '+(/^other/i.test(nm)?'the competencies in the IDP':nm)+' met','Progress recorded in the PMCF','Competency reviewed in the mid-year and end-of-year IDP review']).filter(Boolean).map(function(t){ return t.charAt(0).toUpperCase()+t.slice(1).replace(/\.?$/,'.'); });
     if(n>1&&ind.length) ind[0]='All '+n+' teachers: '+ind[0].charAt(0).toLowerCase()+ind[0].slice(1);
     var mov=String(r.mov||'').split('\nResources:')[0].replace(/\.$/,'').split(/\s*;\s*/).filter(Boolean).map(function(t){ return t.charAt(0).toUpperCase()+t.slice(1); });
     var u=S.coach.filter(function(c){ return c.sy===sy&&x.teachers.indexOf(c.ratee)>=0&&entryMatches(c,r); }).sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
-    return {key:k,strand:r.strand,kra:kra,obj:annualObj(r,sy),act:numList(annualActs(r,x.acts)),ind:numList(ind),mov:numList(mov),time:mlab.join('\n'),first:ms[0]||'',
+    return {key:k,strand:r.strand,kra:kra,obj:ko.obj,act:numList(annualActs(r,x.acts)),ind:numList(ind),mov:numList(mov),time:mlab.join('\n'),first:ms[0]||'',
       status:u.map(function(c){ return '\u2022 '+scShort(c.date)+' \u2013 '+shortNames([c.ratee])[0]+': '+shortText(c.incident,110); }).join('\n'),rem:'Teachers: '+shortNames(x.teachers).join('; '),n:n}; })
     .sort(function(a,b){ return a.first.localeCompare(b.first)||String(a.strand||'9').localeCompare(String(b.strand||'9')); });
 }
@@ -3893,7 +4019,7 @@ function renderSched(){
   var dp=$('#sc-dept').value, mk=scMonth(), sts=scStates(), ed=sts.some(function(x){ return scCanEdit(x.dp); });
   $('#sc-off').value=SC.rec.off||''; $('#sc-off').disabled=!ed;
   $('#sc-sups').hidden=true;
-  $('#sc-table').innerHTML=SC.all?sts.map(function(x){ return '<div class="scdept"><h3>'+esc(x.dp)+' Department</h3><div class="scsl">'+scSupLine(x.dp)+'</div>'+scBlock(x,mk)+'</div>'; }).join(''):scBlock(SC,mk);
+  if(false) $('#sc-table').innerHTML=SC.all?sts.map(function(x){ return '<div class="scdept"><h3>'+esc(x.dp)+' Department</h3><div class="scsl">'+scSupLine(x.dp)+'</div>'+scBlock(x,mk)+'</div>'; }).join(''):scBlock(SC,mk);
   var dirty=sts.some(function(x){return x.dirty&&Object.keys(x.rec.items||{}).length}), sug=sts.some(function(x){return x.suggested&&Object.keys(x.rec.items||{}).length}), sv=SC.all?null:scSaved(dp,mk);
   $('#sc-state').textContent=dirty?'Changes not yet saved.':sug?'Suggested dates, not yet saved. Adjust any date, then save.':sv?'Saved'+(sv.savedAt?' '+longDate(sv.savedAt.slice(0,10)):'')+(sv.by?' by '+sv.by:'')+'.':SC.all?'All saved.':'';
   ['sc-save','sc-suggest','sc-clear'].forEach(function(id){ $('#'+id).disabled=!ed; });
@@ -3901,21 +4027,79 @@ function renderSched(){
   scCal(); scLeaf();
 }
 function scShortDept(n){ return /^Master Teachers/.test(n||'')?'MT & DH':n; }
+/* The calendar is the schedule: + on a day adds an activity for a teacher; click an activity to remove it or change its supervisor,
+   then click (or drag it to) another day to move it. */
+var SCSEL={ev:'',add:''};
+function scDoneDates(n,mk){ var inM=function(o){ return o.teacher===n&&String(o.date||'').slice(0,7)===mk; }, r={dll:{},walk:{},ots:{},cot:{}};
+  (S.lp||[]).filter(inM).forEach(function(o){ r.dll[o.date]=1; }); S.obs.filter(inM).forEach(function(o){ if(isWalk(o)) r.walk[o.date]=1; else if(o.no===1||o.no===2) r.cot[o.date]=1; }); (S.ots||[]).filter(inM).forEach(function(o){ r.ots[o.date]=1; });
+  return r; }
+var SC_LAB={dll:['DLL','DLL Checking'],walk:['WT','Walk-through Observation'],ots:['OTS','On-the-Spot Test'],cot:['COT','Classroom Observation (COT)']};
+function scEvSt(key){ var a=String(key).split('|'); return {st:SC_ST[a[0]+'|'+scMonth()],dp:a[0],n:a[1],k:a[2],i:+a[3]}; }
 function scCal(){
-  var mk=scMonth(), all=!!SC.all||$('#sc-calall').checked&&!S.myDept, dp=$('#sc-dept').value, list=[];
-  var recs=SC.all?SC.list.map(function(x){return x.rec}):all?(S.scheds||[]).filter(function(x){return x.month===mk&&x.id!==scId(dp,mk)}).concat([SC.rec]):[SC.rec];
-  recs.forEach(function(r){ Object.keys(r.items||{}).forEach(function(n){ var it=r.items[n];
-    SC_ACT.forEach(function(x){ (it[x[0]]||[]).forEach(function(d){ if(d) list.push({d:d,k:x[0],t:x[2],n:n,sup:it.sup,dept:scShortDept(r.dept)}); }); });
-    if(it.cotNo&&it.cot) list.push({d:it.cot,k:'cot',t:'COT '+(it.cotNo==1?'1st':'2nd'),n:n,sup:it.sup,dept:scShortDept(r.dept)}); }); });
-  var only=curSub.sched||'all'; if(only!=='all') list=list.filter(function(x){ return x.k===only; });
-  var a=mk.split('-').map(Number), first=new Date(a[0],a[1]-1,1), last=new Date(a[0],a[1],0).getDate(), off={};
+  var mk=scMonth(), all=!!SC.all||$('#sc-calall').checked&&!S.myDept, dp=$('#sc-dept').value, list=[], only=curSub.sched||'all';
+  if(SCSEL.add&&SCSEL.add.slice(0,7)!==mk) SCSEL.add=''; if(SCSEL.ev&&!scEvSt(SCSEL.ev).st) SCSEL.ev='';
+  var src=scStates().map(function(st){ return {rec:st.rec,dp:st.dp,ed:scCanEdit(st.dp)}; });
+  if(!SC.all&&all) (S.scheds||[]).filter(function(x){return x.month===mk&&x.id!==scId(dp,mk)}).forEach(function(r){ src.push({rec:r,dp:'',ed:false}); });
+  src.forEach(function(s0){ var r=s0.rec; Object.keys(r.items||{}).forEach(function(n){ var it=r.items[n], dd=scDoneDates(n,mk), base={n:n,sup:it.sup,dept:scShortDept(r.dept),dp:s0.dp,ed:s0.ed};
+    SC_ACT.forEach(function(x){ (it[x[0]]||[]).forEach(function(d,i){ if(d) list.push(Object.assign({d:d,k:x[0],t:x[2],i:i,done:!!dd[x[0]][d]},base)); }); });
+    if(it.cotNo&&it.cot) list.push(Object.assign({d:it.cot,k:'cot',t:'COT '+(it.cotNo==1?'1st':'2nd'),i:0,done:!!dd.cot[it.cot]},base)); }); });
+  if(only!=='all') list=list.filter(function(x){ return x.k===only; });
+  var a=mk.split('-').map(Number), first=new Date(a[0],a[1]-1,1), last=new Date(a[0],a[1],0).getDate(), off={}, anyEd=src.some(function(x){return x.ed});
   String(SC.rec.off||'').split(/[^0-9]+/).forEach(function(x){ if(x) off[+x]=1; });
   var fd=first.getDay(), cells=[], lead=fd>=1&&fd<=5?fd-1:0; for(var i=0;i<lead;i++) cells.push('');
   for(var d=1;d<=last;d++){ var w=new Date(a[0],a[1]-1,d).getDay(); if(w===0||w===6) continue; cells.push(d); }
-  var day=function(d){ if(!d) return '<td class="scday empty"></td>'; var iso=mk+'-'+pad(d), L=list.filter(function(x){return x.d===iso}).sort(function(x,y){return (x.sup||'').localeCompare(y.sup||'')||x.t.localeCompare(y.t)});
-    return '<td class="scday'+(off[d]?' off':'')+'"><div class="scdn">'+d+(L.length?' <span class="mini">('+L.length+')</span>':'')+(off[d]?' <span class="mini">no classes</span>':'')+'</div>'+L.map(function(x){ return '<div class="scev '+x.k+'" title="'+esc(x.n+' · '+x.t+' · '+(x.sup||'')+(all?' · '+x.dept:''))+'"><b>'+esc(x.t)+'</b> '+esc(lastFirst(x.n).split(',')[0])+(x.sup?' <span class="mini">· '+esc(lastFirst(x.sup).split(',')[0])+'</span>':'')+(all?' <span class="mini">· '+esc(x.dept)+'</span>':'')+'</div>'; }).join('')+'</td>'; };
+  var many=all||SC.all;
+  var day=function(d){ if(!d) return '<td class="scday empty"></td>'; var iso=mk+'-'+pad(d), L=list.filter(function(x){return x.d===iso}).sort(function(x,y){return (x.dept||'').localeCompare(y.dept||'')||x.t.localeCompare(y.t)||lastFirst(x.n).localeCompare(lastFirst(y.n))});
+    return '<td class="scday'+(off[d]?' off':'')+(SCSEL.ev?' pick':'')+'" data-day="'+iso+'"><div class="scdn">'+d+(L.length?' <span class="mini">('+L.length+')</span>':'')+(anyEd?'<button class="scadd" type="button" data-scadd="'+iso+'" title="Add an activity on '+esc(longDate(iso))+'" aria-label="Add an activity on '+esc(longDate(iso))+'">+</button>':'')+'</div>'+
+      L.map(function(x){ var key=x.dp+'|'+x.n+'|'+x.k+'|'+x.i, late=!x.done&&x.d<TODAY;
+        return '<div class="scev '+x.k+(x.done?' done':late?' late':'')+(SCSEL.ev===key?' sel':'')+'"'+(x.ed?' draggable="true" data-ev="'+esc(key)+'" tabindex="0" role="button"':'')+' title="'+esc(lastFirst(x.n)+' · '+SC_LAB[x.k][1]+(x.k==='cot'?' ('+x.t.slice(4)+')':'')+' · '+(x.sup?lastFirst(x.sup):'no supervisor')+(many?' · '+x.dept:'')+(x.done?' · done':late?' · not yet done':''))+'">'+(x.done?'<span class="ck">&#10003;</span> ':'')+'<b>'+esc(x.t)+'</b> '+esc(lastFirst(x.n).split(',')[0])+(x.sup?' <span class="mini">· '+esc(lastFirst(x.sup).split(',')[0])+'</span>':'')+(many?' <span class="mini">· '+esc(x.dept)+'</span>':'')+'</div>'; }).join('')+'</td>'; };
   var rows=[]; for(var k=0;k<cells.length;k+=5){ var wk=cells.slice(k,k+5); while(wk.length<5) wk.push(''); rows.push('<tr>'+wk.map(day).join('')+'</tr>'); }
   $('#sc-cal').innerHTML='<table class="sccal"><thead><tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
+  scTool();
+}
+function scSupSel(dp,cur,attr){ var sups=deptSups(dp); if(sups.length<2) return sups[0]?'<span>Supervisor: <b>'+esc(lastFirst(sups[0]))+'</b></span>':'';
+  return '<label>Supervisor <select '+attr+'>'+sups.map(function(n){return '<option value="'+esc(n)+'"'+(n===cur?' selected':'')+'>'+esc(lastFirst(n))+'</option>'}).join('')+'</select></label>'; }
+function scTool(){
+  var T=$('#sc-tool'), mk=scMonth(), only=curSub.sched||'all';
+  if(SCSEL.ev){ var e=scEvSt(SCSEL.ev); if(!e.st||!e.st.rec.items[e.n]){ SCSEL.ev=''; T.innerHTML=''; return; } var it=e.st.rec.items[e.n], d=e.k==='cot'?it.cot:(it[e.k]||[])[e.i];
+    T.innerHTML='<b>'+esc(e.k==='cot'?'COT '+(it.cotNo==1?'1st':'2nd'):SC_LAB[e.k][1])+'</b><span>'+esc(lastFirst(e.n))+(SC.all?' · '+esc(e.dp):'')+' · '+esc(longDate(d||''))+'</span>'+scSupSel(e.dp,it.sup,'id="sc-tsup"')+
+      '<span class="mini">Click another day to move it.</span><button class="btn danger small" id="sc-trem" type="button">Remove</button><button class="btn ghost small" id="sc-tx" type="button">Cancel</button>'; return; }
+  if(SCSEL.add){ var opts=[]; scStates().forEach(function(st){ if(!scCanEdit(st.dp)) return; scTeachers(st.dp).forEach(function(p){ opts.push({v:st.dp+'|'+p.n,l:lastFirst(p.n)+(SC.all?' – '+st.dp:''),dp:st.dp}); }); });
+    var acts=[['walk','Walk-through Observation'],['ots','On-the-Spot Test'],['dll','DLL Checking'],['cot1','Classroom Observation (COT) – 1st'],['cot2','Classroom Observation (COT) – 2nd']].filter(function(x){ return only==='all'||x[0].indexOf(only)===0; });
+    var tv=T.dataset.t&&opts.some(function(o){return o.v===T.dataset.t})?T.dataset.t:(opts[0]||{}).v||'', tdp=tv.split('|')[0], tn=tv.split('|')[1], it0=tdp&&SC_ST[tdp+'|'+mk]?(SC_ST[tdp+'|'+mk].rec.items[tn]||{}):{};
+    T.innerHTML='<b>Add on '+esc(longDate(SCSEL.add))+'</b><label>Activity <select id="sc-ta">'+acts.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===T.dataset.a?' selected':'')+'>'+x[1]+'</option>'}).join('')+'</select></label>'+
+      '<label>Teacher <select id="sc-tt">'+(opts.length?opts.map(function(o){return '<option value="'+esc(o.v)+'"'+(o.v===tv?' selected':'')+'>'+esc(o.l)+'</option>'}).join(''):'<option value="">No teachers assigned</option>')+'</select></label>'+(tdp?scSupSel(tdp,it0.sup,'id="sc-tsup"'):'')+
+      '<button class="btn gold small" id="sc-tadd" type="button"'+(opts.length?'':' disabled')+'>Add</button><button class="btn ghost small" id="sc-tx" type="button">Cancel</button>'; return; }
+  T.innerHTML='';
+}
+function scMoveEv(key,iso){ var e=scEvSt(key); if(!e.st) return; var it=e.st.rec.items[e.n]; if(!it) return;
+  if(e.k==='cot') it.cot=iso; else { it[e.k]=it[e.k]||[]; it[e.k][e.i]=iso; }
+  SCSEL.ev=''; scDirty(e.st); renderSched(); toast(SC_LAB[e.k][1]+' of '+lastFirst(e.n)+' moved to '+longDate(iso)+'.'); }
+function scCalInit(){
+  var C=$('#sc-cal'), T=$('#sc-tool');
+  C.addEventListener('click',function(e){
+    var ad=e.target.closest('[data-scadd]'); if(ad){ SCSEL={ev:'',add:ad.dataset.scadd}; scCal(); var f=$('#sc-ta'); if(f) f.focus(); return; }
+    var ev=e.target.closest('[data-ev]'); if(ev){ SCSEL={ev:SCSEL.ev===ev.dataset.ev?'':ev.dataset.ev,add:''}; scCal(); return; }
+    var td=e.target.closest('td[data-day]'); if(td&&SCSEL.ev){ scMoveEv(SCSEL.ev,td.dataset.day); } });
+  C.addEventListener('keydown',function(e){ var ev=e.target.closest('[data-ev]'); if(ev&&(e.key==='Enter'||e.key===' ')){ e.preventDefault(); ev.click(); } });
+  C.addEventListener('dragstart',function(e){ var ev=e.target.closest('[data-ev]'); if(!ev) return; e.dataTransfer.setData('text/plain',ev.dataset.ev); e.dataTransfer.effectAllowed='move'; });
+  C.addEventListener('dragover',function(e){ var td=e.target.closest('td[data-day]'); if(!td) return; e.preventDefault(); $$('#sc-cal td.drop').forEach(function(x){ if(x!==td) x.classList.remove('drop'); }); td.classList.add('drop'); });
+  C.addEventListener('dragleave',function(e){ var td=e.target.closest('td[data-day]'); if(td&&!td.contains(e.relatedTarget)) td.classList.remove('drop'); });
+  C.addEventListener('drop',function(e){ var td=e.target.closest('td[data-day]'), key=e.dataTransfer.getData('text/plain'); if(!td||!key) return; e.preventDefault(); scMoveEv(key,td.dataset.day); });
+  T.addEventListener('change',function(e){ var t=e.target;
+    if(t.id==='sc-tt'){ T.dataset.t=t.value; scTool(); }
+    else if(t.id==='sc-ta'){ T.dataset.a=t.value; }
+    else if(t.id==='sc-tsup'&&SCSEL.ev){ var x=scEvSt(SCSEL.ev); x.st.rec.items[x.n].sup=t.value; scDirty(x.st); renderSched(); } });
+  T.addEventListener('click',function(e){ var id=e.target.id;
+    if(id==='sc-tx'){ SCSEL={ev:'',add:''}; scCal(); }
+    else if(id==='sc-trem'){ var x=scEvSt(SCSEL.ev), it=x.st.rec.items[x.n]; if(x.k==='cot'){ it.cot=''; it.cotNo=''; } else (it[x.k]||[]).splice(x.i,1);
+      SCSEL={ev:'',add:''}; scDirty(x.st); renderSched(); toast(SC_LAB[x.k][1]+' of '+lastFirst(x.n)+' removed.'); }
+    else if(id==='sc-tadd'){ var v=$('#sc-tt').value.split('|'), act=$('#sc-ta').value, st=SC_ST[v[0]+'|'+scMonth()]; if(!st||!v[1]) return;
+      var it=st.rec.items[v[1]]||(st.rec.items[v[1]]={sup:deptSups(v[0])[0]||'',dll:[],walk:[],ots:[],cot:'',cotNo:''}), iso=SCSEL.add, k=act.slice(0,3)==='cot'?'cot':act;
+      if($('#sc-tsup')) it.sup=$('#sc-tsup').value;
+      if(k==='cot'){ it.cotNo=+act.slice(3); it.cot=iso; }
+      else { it[k]=it[k]||[]; var j=it[k].indexOf(''); if(j<0) j=it[k].indexOf(undefined); if(j<0) j=it[k].length; it[k][j]=iso; }
+      SCSEL={ev:'',add:''}; scDirty(st); renderSched(); toast(SC_LAB[k][1]+' of '+lastFirst(v[1])+' added on '+longDate(iso)+'.'); } });
 }
 function scLeaf(){
   var dp=$('#sc-dept').value, mk=scMonth(), sts=scStates(), sups=SC.all?[]:deptSups(dp), hp=byName(sups[0]||'')||{}, n=0;
@@ -3930,19 +4114,24 @@ function scLeaf(){
 }
 /* monthly plan rows built from the schedule */
 var SC_ROWS={
-  dll:{kra:'Curriculum and Planning (PPST Domain 4) – Lesson planning',obj:function(n){return 'To check the Daily Lesson Logs / lesson plans of '+n+' twice this month and give feedback on their alignment with the learning competencies.';},act:'DLL Checking using the Lesson Plan Monitoring Tool, 2 per teacher; feedback and coaching recorded in the PMCF:',ind:function(n){return 'DLLs of '+n+' checked twice this month; feedback given to each teacher.';},mov:'Accomplished Lesson Plan Monitoring Tools; PMCF entries'},
-  walk:{kra:'Learning Environment and Teaching Practice (PPST Domains 1–3) – Walk-through observation',obj:function(n){return 'To conduct two walk-through observations of '+n+' this month to monitor classroom practice and learner engagement.';},act:'Walk-through Observation, 2 per teacher; observation notes and feedback recorded in the PMCF:',ind:function(n){return 'Two walk-through observations of '+n+' conducted; feedback given after each visit.';},mov:'Classroom Observation Notes Forms (Walk-through); PMCF entries'},
-  ots:{kra:'Assessment and Reporting (PPST Domain 5) – Learners’ mastery',obj:function(n){return 'To give two on-the-spot tests in the classes of '+n+' this month to check the learners’ mastery of the competencies taught.';},act:'On-the-Spot Test (5 items), 2 per teacher; results analyzed and remediation recommended:',ind:function(n){return 'MPS of the tested classes of '+n+' determined; learning gaps identified and remediation recommended.';},mov:'On-the-Spot Test Results Forms; PMCF entries'},
-  cot:{kra:'RPMS – Classroom Observation using the COT',obj:function(n){return 'To conduct the classroom observation of '+n+' using the Classroom Observation Tool.';},act:'Classroom observation with pre- and post-observation conference:',ind:function(n){return 'COT Rating Sheets of '+n+' accomplished; feedback given in the post-observation conference.';},mov:'COT Rating Sheets / IOA Forms; Classroom Observation Notes Forms'}
+  dll:{kra:ppKra('3.1',['4.1','4.2','5.1']),obj:function(){ return ppObj('3.1',['4.1.2','4.2.2','5.1.2'],'Check in each DLL/lesson plan that:\n1. the learning intentions are clearly stated and aligned with the learning competencies;\n2. the intentions are evident and coherent across all parts of the lesson;\n3. the learning experience is clear and well designed, with the Learning Design Principles;\n4. it maximizes integration and is inclusive of learners with disabilities, barriers and unique contexts;\n5. assessment is integrated throughout and generates evidence of learning; and\n6. the interventions are actionable, based on reflection.'); },
+    act:'1. DLL Checking using the Lesson Plan Monitoring Tool, twice a month for each teacher\n2. One-on-One Coaching and Mentoring on the results, recorded in the PMCF',ind:function(n){return 'DLLs of '+n+' checked twice this month; feedback given to each teacher.';},mov:'1. Accomplished Lesson Plan Monitoring Tools\n2. Checked DLLs/lesson plans\n3. PMCF entries'},
+  walk:{kra:ppKra('3.2',['1.4','2.3','2.6']),obj:function(){ return ppObj('3.2',['1.4.2','2.3.2','2.6.2'],'Observe during each walk-through:\n1. the teaching strategies used for literacy and numeracy;\n2. learner engagement, individually or in groups, in meaningful activities;\n3. classroom structure and routines that keep learning time productive; and\n4. positive and non-violent management of learner behavior.'); },
+    act:'1. Walk-through Observation, twice a month for each teacher\n2. One-on-One Coaching and Mentoring after each visit, recorded in the PMCF',ind:function(n){return 'Two walk-through observations of '+n+' conducted; feedback given after each visit.';},mov:'1. Classroom Observation Notes Forms (Walk-through)\n2. PMCF entries'},
+  ots:{kra:ppKra('3.5',['5.1','5.2']),obj:function(){ return ppObj('3.5',['5.1.2','5.2.2'],'Through the on-the-spot test:\n1. determine the learners’ MPS and level of mastery;\n2. identify the least-mastered competencies;\n3. check that the test items match the competencies taught; and\n4. agree with the teacher on remediation and enrichment.'); },
+    act:'1. On-the-Spot Test (5 items), twice a month for each teacher\n2. One-on-One Coaching and Mentoring on the results and the remediation, recorded in the PMCF',ind:function(n){return 'MPS of the tested classes of '+n+' determined; learning gaps identified and remediation recommended.';},mov:'1. On-the-Spot Test Results Forms\n2. PMCF entries'},
+  cot:{kra:ppKra('4.4','PPST Domains 1–5: the COT indicators of the teacher’s career stage (RPMS)'),obj:function(){ return ppObj('4.4',[],'Through the classroom observation:\n1. hold the pre-observation conference on the lesson plan;\n2. observe and rate the lesson on the COT indicators for the school year;\n3. hold the post-observation conference and agree on the teacher’s strengths and areas for improvement; and\n4. record the agreements in the PMCF and the IDP.'); },
+    act:'1. Classroom Observation using the COT, with pre- and post-observation conferences\n2. One-on-One Coaching and Mentoring on the agreed areas for improvement',ind:function(n){return 'COT Rating Sheets of '+n+' accomplished; feedback given in the post-observation conference.';},mov:'1. COT Rating Sheets / IOA Forms\n2. Classroom Observation Notes Forms\n3. PMCF entries'}
 };
+var SC_OLD={dll:'Curriculum and Planning (PPST Domain 4) – Lesson planning',walk:'Learning Environment and Teaching Practice (PPST Domains 1–3) – Walk-through observation',ots:'Assessment and Reporting (PPST Domain 5) – Learners’ mastery',cot:'RPMS – Classroom Observation using the COT'};
 function scPlanRows(dp,mk){
   var b=SC_ST[dp+'|'+mk]?{rec:SC_ST[dp+'|'+mk].rec}:scBuild(dp,mk), rec=b.rec, ts=scTeachers(dp), out=[];
   ['dll','walk','ots','cot'].forEach(function(k){ var lines=[], dates=[], sups={};
     ts.forEach(function(p){ var it=rec.items[p.n]||{}, ds=k==='cot'?(it.cotNo&&it.cot?[it.cot]:[]):(it[k]||[]).filter(Boolean); if(!ds.length) return;
-      lines.push('• '+lastFirst(p.n)+' – '+(k==='cot'?(it.cotNo==1?'1st':'2nd')+', '+scShort(it.cot):scDays(ds))); dates=dates.concat(ds); if(it.sup) sups[lastFirst(it.sup)]=1; });
+      lines.push(p.n); dates=dates.concat(ds); if(it.sup) sups[lastFirst(it.sup)]=1; });
     if(!lines.length) return;
     dates.sort(); var n=lines.length, who=n===1?'1 teacher':n+' teachers', R=SC_ROWS[k];
-    out.push(Object.assign(blankRow(),{kra:R.kra,obj:R.obj(who),act:R.act+'\n'+lines.join('\n'),ind:R.ind(n===1?'the teacher':'all '+n+' teachers'),mov:R.mov,time:dates[0]===dates[dates.length-1]?longDate(dates[0]):longDate(dates[0])+' – '+longDate(dates[dates.length-1]),status:'',rem:'Conducted by: '+Object.keys(sups).join('; '),src:'sched',skey:k})); });
+    out.push(Object.assign(blankRow(),{kra:R.kra,obj:R.obj(who),act:R.act,ind:R.ind(n===1?'the teacher':'all '+n+' teachers'),mov:R.mov,time:dates[0]===dates[dates.length-1]?longDate(dates[0]):longDate(dates[0])+' – '+longDate(dates[dates.length-1]),status:'',rem:'Conducted by: '+Object.keys(sups).join('; '),src:'sched',skey:k})); });
   return out;
 }
 function scFillPlan(quiet){
@@ -3960,7 +4149,7 @@ function scInit(){
   var now=new Date(); $('#sc-month').value=String(now.getMonth()+1); $('#sc-year').value=now.getFullYear();
   $('#sc-dept').innerHTML='<option value="'+SC_ALL+'">'+SC_ALLN+'</option>'+DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join('')+'<option value="'+SC_SH+'">'+SC_SHN+'</option>';
   ['sc-month','sc-year','sc-dept'].forEach(function(id){ $('#'+id).addEventListener('change',function(){ renderSched(); }); });
-  $('#sc-calall').addEventListener('change',scCal);
+  $('#sc-calall').addEventListener('change',scCal); scCalInit();
   $('#sc-off').addEventListener('change',function(){ var v=this.value.replace(/[^0-9,\s]/g,''); scStates().forEach(function(x){ if(scCanEdit(x.dp)){ x.rec.off=v; scDirty(x); } }); renderSched(); });
   $('#sc-table').addEventListener('change',function(e){ var t=e.target, it, box=t.closest('[data-scdp]'), st=box&&SC_ST[box.dataset.scdp+'|'+scMonth()]; if(!st) return;
     if(t.dataset.sct){ it=st.rec.items[t.dataset.sct]; if(t.dataset.sck==='cot') it.cot=t.value; else { it[t.dataset.sck]=it[t.dataset.sck]||['','']; it[t.dataset.sck][+t.dataset.sci]=t.value; } }
@@ -3993,10 +4182,10 @@ function scDirty(st){ st=st||SC; st.dirty=true; st.suggested=false; SC_ST[st.key
 
 /* ================================================================== KRA & OBJECTIVES LINK (PMCF ↔ IS plans ↔ Supervisory Report) */
 function kNorm(s){ return String(s||'').toUpperCase().replace(/[^A-Z0-9.]+/g,' ').trim(); }
-function kStrand(s){ var m=/PPST\s*(\d)\.(\d)/i.exec(String(s||'')); return m?m[1]+'.'+m[2]:''; }
-function schedKeyOfKra(kra){ var n=kNorm(kra), hit=''; Object.keys(SC_ROWS).forEach(function(k){ if(kNorm(SC_ROWS[k].kra)===n) hit=k; }); return hit; }
+function kStrand(s){ s=String(s||''); var m=/PPST\s*(\d)\.(\d)/i.exec(s)||/PPST[^\n]*?Strands?\s*(\d)\.(\d)/i.exec(s); return m?m[1]+'.'+m[2]:''; }
+function schedKeyOfKra(kra){ var n=kNorm(kra), hit=''; Object.keys(SC_ROWS).forEach(function(k){ if(kNorm(SC_ROWS[k].kra)===n||kNorm(SC_OLD[k])===n) hit=k; }); return hit; }
 /* the key that ties a PMCF entry to a plan row */
-function rowKey(r){ if(r.skey) return 'sched:'+r.skey; var sk=schedKeyOfKra(r.kra); if(sk) return 'sched:'+sk; if(r.key) return /^core:/.test(r.key)?'kra:'+kNorm(r.kra):'k:'+r.key; var st=kStrand(r.kra); return st?'k:'+st:'kra:'+kNorm(r.kra); }
+function rowKey(r){ if(r.skey) return 'sched:'+r.skey; var sk=schedKeyOfKra(r.kra); if(sk) return 'sched:'+sk; if(r.key) return /^core:/.test(r.key)?'kra:'+kNorm(kCore(r.kra)):'k:'+r.key; var st=kStrand(r.kra); return st?'k:'+st:'kra:'+kNorm(kCore(r.kra)); }
 function kraText(c){ return [c.kra,c.obj].filter(function(x){return String(x||'').trim()}).join(' – '); }
 /* the PMCF "Significant incidents description": 1. KRA and Objectives, 2. Description */
 function incText(c){ var k=kraText(c); return k?'1. KRA and Objectives: '+k+'\n2. Description: '+(c.incident||''):(c.incident||''); }
@@ -4028,8 +4217,8 @@ function autoKra(t,date,k,dp){
   var mk=String(date||'').slice(0,7), opts=kraOptions(t,mk,dp||deptOf(t)), hit=opts.filter(function(o){return o.kkey==='sched:'+k&&!/^Standard/.test(o.g)})[0]||opts.filter(function(o){return o.kkey==='sched:'+k})[0];
   return hit?{kra:hit.kra,obj:hit.obj,kkey:hit.kkey}:{kra:'',obj:'',kkey:''};
 }
-function entryKey(c){ return c.kkey||(c.kra?(schedKeyOfKra(c.kra)?'sched:'+schedKeyOfKra(c.kra):kStrand(c.kra)?'k:'+kStrand(c.kra):'kra:'+kNorm(c.kra)):''); }
-function entryMatches(c,r){ var ek=entryKey(c); if(!ek) return false; return ek===rowKey(r)||(c.kra&&kNorm(c.kra)===kNorm(r.kra)); }
+function entryKey(c){ return c.kkey||(c.kra?(schedKeyOfKra(c.kra)?'sched:'+schedKeyOfKra(c.kra):kStrand(c.kra)?'k:'+kStrand(c.kra):'kra:'+kNorm(kCore(c.kra))):''); }
+function entryMatches(c,r){ var ek=entryKey(c); if(!ek) return false; return ek===rowKey(r)||(c.kra&&(kNorm(c.kra)===kNorm(r.kra)||kNorm(kCore(c.kra))===kNorm(kCore(r.kra)))); }
 function entryMonths(c){ var m={}; m[entryMonth(c)]=1; (c.fu||[]).forEach(function(f){ if(f.date) m[f.date.slice(0,7)]=1; }); return m; }
 function updLine(c,mk){ var f=(c.fu||[]).filter(function(x){return fuFilled(x)&&(!mk||String(x.date||'').slice(0,7)===mk)}), lf=f[f.length-1];
   return '• '+scShort(c.date)+' – '+lastFirst(c.ratee)+': '+shortText(c.incident,150)+(lf&&lf.obs?' Progress ('+scShort(lf.date)+'): '+shortText(lf.obs,110):''); }
@@ -4058,7 +4247,75 @@ function renderSrep(){
   $('#sr-count').textContent=rows.length+' entr'+(rows.length===1?'y':'ies');
   $('#sr-table').innerHTML='<thead><tr><th>#</th><th>Date</th><th>Teacher</th><th>Activity</th><th>KRA and Objectives</th><th>Findings</th><th>Recommendation</th><th>Source</th></tr></thead><tbody>'+
     (rows.length?rows.map(function(r,i){ return '<tr><td class="num">'+(i+1)+'</td><td class="mono">'+esc(scShort(r.date))+'</td><td><b>'+esc(lastFirst(r.teacher))+'</b><div class="mini">'+esc(r.subj||'')+'</div></td><td>'+esc(r.act)+'</td><td>'+esc(shortText(r.kra,140))+'</td><td style="white-space:pre-wrap">'+esc(shortText(r.find,260))+'</td><td style="white-space:pre-wrap">'+esc(shortText(r.rec,200))+'</td><td>'+(r.srid?'<span class="mini">Added here</span><br><button class="btn ghost small" type="button" data-sredit="'+esc(r.srid)+'">Edit</button>':'<span class="mini">'+esc(r.src||'')+'</span>')+'</td></tr>'; }).join(''):'<tr><td colspan="8" class="c mini">No supervisory activities for this month yet.</td></tr>')+'</tbody>';
-  $('#sr-leaf').innerHTML=monthlySheetHTML(rows,m.fm,m.fy,m.fd,getPerson('sr-prep'),getPerson('sr-noted'));
+  $('#sr-leaf').innerHTML=srReportHTML(m.fm,m.fy,m.fd,getPerson('sr-prep'),getPerson('sr-noted'));
+}
+/* The Supervisory Report uses the format of the Monthly Supervisory Plan: the plan's rows, with the Accomplishment/Status
+   taken from the results of the activities and the Remarks giving the recommendations and the follow-up needed. */
+function srShort(n){ var p=byName(n), s0=p&&p.s?p.s:lastFirst(n), a=String(s0).split(','); return a.length>1?properName(a[0].trim())+', '+a[1].trim().split(/\s+/).map(function(w){return w.charAt(0).toUpperCase()+'.'}).join(''):properName(s0); }
+function srEnd(t){ return /\.$/.test(t)?t:t+'.'; }
+function srUniq(a){ var seen={}; return a.filter(function(x){ var k=String(x||'').trim().toLowerCase(); if(!k||seen[k]) return false; seen[k]=1; return true; }); }
+function srNext(c){ var fl=(c.fu||[]).filter(function(f){return fuFilled(f)&&String(f.next||'').trim()}); return fl.length?fl[fl.length-1].next:(c.feedback||''); }
+function srPlanRows(d,mo,yr){ var mk=yr+'-'+pad(mo), sv=gpSavedMonthly(d,mo,yr);
+  return sv?(sv.rows||[]).map(function(r){return Object.assign(blankRow(),r)}):scPlanRows(d,mk).concat(ipMonthRows(d,mo,yr)); }
+/* the results of one scheduled activity type in a department and month */
+function srResults(k,d,mk){
+  var inD=function(o){ return String(o.date||'').slice(0,7)===mk&&(o.dept||deptOf(o.teacher))===d; }, out=[];
+  var coachOf=function(src,id,key){ return S.coach.filter(function(c){ return c.source===src&&(c[key]===id); })[0]; };
+  if(k==='dll') (S.lp||[]).filter(inD).forEach(function(o){ var c=lpCalc(o), ce=S.coach.filter(function(x){return x.id===o.coachId})[0];
+    out.push({t:o.teacher,date:o.date,res:c.yes+' of '+c.n+' criteria met ('+Math.round(c.pct)+'%)'+(c.notYet.length?'; not yet met: '+c.notYet.map(function(i){return LPC[i].b.replace(/,$/,'')}).join('; '):''),rec:[o.rec,ce&&srNext(ce)]}); });
+  if(k==='walk') S.obs.filter(function(o){return inD(o)&&isWalk(o)}).forEach(function(o){ var ce=S.coach.filter(function(x){return x.source==='walk'&&x.obsId===o.id})[0];
+    out.push({t:o.teacher,date:o.date,res:'Walk-through observation conducted'+(o.subject?' ('+o.subject+')':'')+(ce&&ce.feedback?'; '+shortText(ce.feedback.replace(/\s+/g,' '),150):''),rec:[ce&&srNext(ce),o.comments]}); });
+  if(k==='ots') (S.ots||[]).filter(inD).forEach(function(o){ var c=otCalc(o), ce=S.coach.filter(function(x){return x.id===o.coachId})[0];
+    out.push({t:o.teacher,date:o.date,res:'MPS '+fmt(c.mps)+'% ('+c.lv[1]+'); '+c.passed+' passed, '+c.dnm+' did not meet expectation',rec:[otRecLines(o,c).join('; '),ce&&srNext(ce)]}); });
+  if(k==='cot') S.obs.filter(function(o){return inD(o)&&!isWalk(o)&&hasCOT(o)}).forEach(function(o){ var st=STAGES[o.stage], sc=(o.ratings||[]).map(function(r){ return st?scoreOf(String(r),st):null; }).filter(function(v){return v!=null}), avg=sc.length?sc.reduce(function(a,b){return a+b},0)/sc.length:0;
+    out.push({t:o.teacher,date:o.date,res:'COT '+obsKind(o)+' observation'+(sc.length?'; average rating '+fmt(avg):''),rec:[o.comments]}); });
+  return out.sort(function(a,b){ return String(a.date).localeCompare(b.date); });
+}
+function srRow(r,d,mk,used){
+  var k=r.skey||schedKeyOfKra(r.kra), past=mk+'-31'<TODAY||mk<TODAY.slice(0,7), status=[], rem=[];
+  // PMCF entries and entries added in the Supervisory Report for this row
+  var ce=S.coach.filter(function(c){ return recDept('coach',c)===d&&entryMonths(c)[mk]&&entryMatches(c,r); });
+  var se=(S.sreps||[]).filter(function(e){ return String(e.date||'').slice(0,7)===mk&&(e.dept||deptOf(e.teacher))===d&&entryMatches(e,r); });
+  ce.forEach(function(c){ used[c.id]=1; }); se.forEach(function(e){ used[e.id]=1; });
+  if(k){
+    var res=srResults(k,d,mk), st=SC_ST[d+'|'+mk], rec=(st?st.rec:(scSaved(d,mk)||{items:{}})), sch={}, nSch=0;
+    Object.keys(rec.items||{}).forEach(function(n){ var it=rec.items[n], ds=k==='cot'?(it.cotNo&&it.cot?[it.cot]:[]):(it[k]||[]).filter(Boolean); if(ds.length){ sch[n]=ds; nSch+=ds.length; } });
+    var done={}; res.forEach(function(x){ done[x.t]=(done[x.t]||0)+1; });
+    status.push((nSch?'Conducted: '+res.length+' of '+nSch+' scheduled ('+Math.round(Math.min(res.length,nSch)/nSch*100)+'%)':'Conducted: '+res.length)+(res.length?':':'.'));
+    res.forEach(function(x){ status.push('• '+scShort(x.date)+' – '+srShort(x.t)+': '+x.res); x.rec.forEach(function(v){ v=String(v||'').replace(/\s+/g,' ').trim(); if(v) rem.push('• '+srShort(x.t)+': '+shortText(v,180)); }); });
+    var pend=Object.keys(sch).filter(function(n){ return (done[n]||0)<sch[n].length; }).sort(function(a,b){return lastFirst(a).localeCompare(lastFirst(b))});
+    if(pend.length){ var late=pend.filter(function(n){ return sch[n].some(function(x){return x<TODAY}); });
+      if(past||late.length) rem.push('Follow-up: conduct the remaining '+({dll:'DLL checks',walk:'walk-through observations',ots:'on-the-spot tests',cot:'classroom observations'})[k]+' of '+srEnd((past?pend:late).map(srShort).join('; ')+(past?' next month':'')));
+      if(!past){ var later=pend.filter(function(n){return late.indexOf(n)<0}); if(later.length) rem.push('Still scheduled this month: '+srEnd(later.map(srShort).join('; '))); } }
+  }
+  ce.forEach(function(c){ if(k&&c.source&&c.source===({dll:'lp',walk:'walk',ots:'ots',cot:''})[k]) return; status.push(updLine(c,mk)); var n=srNext(c); if(String(n||'').trim()) rem.push('• '+srShort(c.ratee)+': '+shortText(String(n).replace(/\s+/g,' '),180)); });
+  se.forEach(function(e){ status.push('• '+scShort(e.date)+' – '+srShort(e.teacher)+': '+[e.act,e.find].filter(Boolean).join(' – ')); if(String(e.rec||'').trim()) rem.push('• '+srShort(e.teacher)+': '+e.rec); });
+  if(!k&&!ce.length&&!se.length){ status.push(past?'Not conducted.':'Not yet conducted.'); rem.push(past?'Follow-up: carry the activity over to next month.':'Follow-up: conduct the activity before the month ends.'); }
+  if(!rem.length) rem.push('No further action needed; continue monitoring.');
+  return Object.assign({},r,{status:srUniq(status).join('\n'),rem:srUniq(rem).join('\n')});
+}
+function srDeptRows(d,mo,yr){
+  var mk=yr+'-'+pad(mo), used={}, rows=srPlanRows(d,mo,yr), have={};
+  rows.forEach(function(r){ var k=r.skey||schedKeyOfKra(r.kra); if(k) have[k]=1; });
+  ['dll','walk','ots','cot'].forEach(function(k){ if(!have[k]&&srResults(k,d,mk).length){ var R=SC_ROWS[k]; rows.push(Object.assign(blankRow(),{kra:R.kra,obj:R.obj('the teachers'),act:R.act,ind:R.ind('the teachers'),mov:R.mov,time:monthLabel(mk),skey:k})); } });
+  var out=rows.map(function(r){ return srRow(r,d,mk,used); });
+  // activities that match no row of the plan
+  S.coach.filter(function(c){ return !used[c.id]&&recDept('coach',c)===d&&entryMonths(c)[mk]&&['lp','ots','walk'].indexOf(c.source)<0; }).forEach(function(c){
+    out.push(Object.assign(blankRow(),{kra:c.kra||'Coaching and mentoring',obj:c.obj||'',act:(c.mech||[]).join('\n')||'Coaching and feedback',ind:'',mov:'PMCF',time:longDate(c.date),status:updLine(c,mk),rem:String(srNext(c)||'').trim()?'• '+srShort(c.ratee)+': '+srNext(c):'Continue monitoring.'})); });
+  (S.sreps||[]).filter(function(e){ return !used[e.id]&&String(e.date||'').slice(0,7)===mk&&(e.dept||deptOf(e.teacher))===d; }).forEach(function(e){
+    out.push(Object.assign(blankRow(),{kra:e.kra||'',obj:e.obj||'',act:e.act||'',ind:'',mov:'',time:longDate(e.date),status:'• '+srShort(e.teacher)+': '+(e.find||''),rem:e.rec||'Continue monitoring.'})); });
+  return out;
+}
+function srReportHTML(fm,fy,fd,prep,noted){
+  if(!prep.n&&fd&&deptSups(fd)[0]){ var hp=byName(deptSups(fd)[0]); prep={n:deptSups(fd)[0],p:hp?hp.p:'Department Head'}; }
+  var ds=fd?[fd]:(S.myDept?S.myDepts:DEPTS), TD='white-space:pre-wrap', ml=(MONTHS[fm-1]||'')+' '+fy, body='';
+  ds.forEach(function(d){ var rows=fm&&fy?srDeptRows(d,fm,fy):[]; if(!fd&&!rows.length) return;
+    if(!fd) body+='<tr><td colspan="'+PCOLS.length+'" style="background:#f2f2f2;font-weight:700">'+esc(d)+' Department</td></tr>';
+    body+=rows.map(function(r){ return '<tr>'+PCOLS.map(function(c){ return '<td style="'+TD+'">'+esc(r[c[0]]||'')+'</td>'; }).join('')+'</tr>'; }).join(''); });
+  if(!body) body='<tr><td colspan="'+PCOLS.length+'" style="text-align:center;padding:12pt">No plan or supervisory activities for '+esc(ml)+(fd?' in '+esc(fd):'')+'.</td></tr>';
+  return '<div class="leaf folio">'+LH_HTML()+'<img class="lh-bot" src="'+LH_BOT+'" alt=""><h4>MONTHLY INSTRUCTIONAL SUPERVISORY REPORT</h4><h4 style="font-weight:400">'+esc(ml)+' &middot; '+(fd?esc(fd)+' Department':'All Learning Areas')+'</h4>'+
+    '<table class="plantbl" style="margin-top:8pt"><colgroup>'+PCOL_IN.map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+PCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+body+'</table>'+
+    '<div class="psig"><div><div>Prepared by:</div><b>'+esc(prep.n||'')+'</b><div>'+esc(prep.p||'')+'</div></div><div><div>Noted by:</div><b>'+esc(noted.n||'')+'</b><div>'+esc(noted.p||'')+'</div></div></div></div>';
 }
 function srKraPick(){
   var t=getPerson('sr-teacher').n, mk=(getDate('sr-date')||(srMonth().fy+'-'+pad(srMonth().fm)+'-01')).slice(0,7); var opts=kraOptions(t,mk,$('#sr-dept').value||deptOf(t)); SR.opts=opts;
@@ -4069,7 +4326,7 @@ function srClear(){ SR={id:''}; setPerson('sr-teacher',''); ['sr-subj','sr-act',
 function srInit(){
   $('#sr-month').innerHTML=MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join('');
   var now=new Date(); $('#sr-month').value=String(now.getMonth()+1); $('#sr-year').value=now.getFullYear();
-  $('#sr-dept').innerHTML='<option value="">All departments</option>'+DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join('');
+  $('#sr-dept').innerHTML='<option value="">All Learning Areas</option>'+DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join('');
   ['sr-month','sr-year','sr-dept'].forEach(function(id){ $('#'+id).addEventListener('change',function(){ renderSrep(); srKraPick(); }); });
   $('#p-srep').addEventListener('personchange',function(e){ if(e.target.id==='sr-teacher'){ var dp=deptOf(getPerson('sr-teacher').n); srKraPick(); } renderSrep(); });
   $('#sr-date').addEventListener('datechange',srKraPick);
