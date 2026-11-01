@@ -419,7 +419,9 @@ table.pmt .pmi{width:100%;min-height:100%;box-sizing:border-box;border:0;margin:
 table.pmt select.pmi{height:100%;min-height:20px;text-align-last:center}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
 .kpi{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--teal);border-radius:2px;padding:14px 16px;box-shadow:var(--shadow)}
-.kpi .kl{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.kpi .kl{font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .kw{font-size:12.5px;color:var(--ink-3);margin-top:2px}
+#h-kpis{display:block}.kgrp{margin-top:16px}.kgrp h3{margin:0 0 -4px;font-size:15px;font-weight:700;color:var(--ink)}.kgrp .kpis{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 .kpi .kbody{display:flex;align-items:stretch;gap:12px;margin-top:6px;min-height:78px}
 .kpi .kv{flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--geo);font-size:46px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
 .kpi .kv small{font-size:22px;color:var(--ink-3);font-weight:400;margin-left:4px}
@@ -3975,8 +3977,12 @@ function renderHome(){
   var cnt=function(k){return all.filter(function(t){return t[k]}).length};
   var N=all.length;
   var pct=function(a,b){return b?Math.round(100*a/b):0};
-  var kpi=function(lab,a){ return '<div class="kpi"><div class="kl">'+lab+'</div><div class="kbody"><div class="kv">'+a+'<small> / '+N+'</small></div><div class="kcol" title="'+pct(a,N)+'%"><span class="kp">'+pct(a,N)+'%</span><div class="kbar"><i style="height:'+pct(a,N)+'%"></i></div></div></div></div>'; };
-  $('#h-kpis').innerHTML=kpi('1st Classroom Observation · SY '+sy,cnt('o1'))+kpi('2nd Classroom Observation · SY '+sy,cnt('o2'))+kpi('1st Walk-through · '+ml,cnt('w1'))+kpi('2nd Walk-through · '+ml,cnt('w2'))+kpi('1st On-the-Spot Test · '+ml,cnt('t1'))+kpi('2nd On-the-Spot Test · '+ml,cnt('t2'))+kpi('1st DLL Checking · '+ml,cnt('d1'))+kpi('2nd DLL Checking · '+ml,cnt('d2'))+kpi('Complete (all eight)',all.filter(done).length);
+  var kpi=function(lab,when,a){ return '<div class="kpi"><div class="kl">'+lab+'</div><div class="kw">'+esc(when||'')+'</div><div class="kbody"><div class="kv">'+a+'<small> / '+N+'</small></div><div class="kcol" title="'+pct(a,N)+'%"><span class="kp">'+pct(a,N)+'%</span><div class="kbar"><i style="height:'+pct(a,N)+'%"></i></div></div></div></div>'; };
+  var grp=function(t,cards){ return '<section class="kgrp"><h3>'+t+'</h3><div class="kpis">'+cards+'</div></section>'; };
+  $('#h-kpis').innerHTML=grp('Classroom Observation (COT) and Walk-through Observation',kpi('1st Classroom Observation','SY '+sy,cnt('o1'))+kpi('2nd Classroom Observation','SY '+sy,cnt('o2'))+kpi('1st Walk-through',ml,cnt('w1'))+kpi('2nd Walk-through',ml,cnt('w2')))+
+    grp('DLL Monitoring',kpi('1st DLL Checking',ml,cnt('d1'))+kpi('2nd DLL Checking',ml,cnt('d2')))+
+    grp('On-the-Spot Test',kpi('1st On-the-Spot Test',ml,cnt('t1'))+kpi('2nd On-the-Spot Test',ml,cnt('t2')))+
+    grp('All Activities',kpi('Complete (all eight)',ml,all.filter(done).length));
   var no='<span class="dot no" title="Not yet" aria-label="Not yet"></span>';
   var dot=function(o,lab){ return o?'<button class="dot ok" type="button" data-open-cot="'+esc(o.id)+'" title="'+lab+' · '+esc(longDate(o.date))+'" aria-label="'+lab+' done, '+esc(longDate(o.date))+'">&#10003;</button>':no; };
   var tdot=function(o,lab){ return o?'<button class="dot ok" type="button" data-open-ots="'+esc(o.id)+'" title="'+lab+' · '+esc(longDate(o.date))+'" aria-label="'+lab+' done, '+esc(longDate(o.date))+'">&#10003;</button>':no; };
