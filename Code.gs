@@ -18,10 +18,11 @@
  * Web app (Execute as: Me, Who has access: Anyone) ▸ copy the /exec address into the app's Connection page.
  * setup() writes a School Head code in the Access tab; change it to your own.
  */
-var VERSION = 'email-passcode-2';
+var VERSION = 'email-passcode-4';
 var SHEET_REC = 'Records', SHEET_ACC = 'Access';
 var COLLS = ['obs', 'coach', 'plans', 'config'];
-var MAX_JSON = 49000;
+var CELL = 45000;            // characters per cell; a longer record continues in the next cells of its row (columns G, H, …)
+var MAX_PARTS = 40;
 
 function ss_() { return SpreadsheetApp.getActiveSpreadsheet(); }
 function sheet_(name, header) {
@@ -116,9 +117,20 @@ function readAll_() {
   for (var i = 1; i < v.length; i++) {
     var coll = String(v[i][0]), id = String(v[i][1]);
     if (!out[coll] || !id) continue;
-    try { var o = JSON.parse(v[i][3]); o.id = id; out[coll].push({ o: o, row: i + 1 }); } catch (e) {}
+    try { var o = JSON.parse(String(v[i][3]) + v[i].slice(6).join('')); o.id = id; out[coll].push({ o: o, row: i + 1 }); } catch (e) {}
   }
   return out;
+}
+/* the row of one record, found from the first two columns only (fast even when the sheet is large) */
+function findRow_(sh, coll, id) {
+  var n = sh.getLastRow(); if (n < 2) return 0;
+  var v = sh.getRange(2, 1, n - 1, 2).getValues();
+  for (var i = v.length - 1; i >= 0; i--) if (String(v[i][0]) === coll && String(v[i][1]) === id) return i + 2;
+  return 0;
+}
+function rowObj_(sh, row) {
+  var r = sh.getRange(row, 1, 1, Math.max(6, sh.getLastColumn())).getValues()[0];
+  try { return JSON.parse(String(r[3]) + r.slice(6).join('')); } catch (e) { return null; }
 }
 function assignOf_(all) {
   var s = (all.config || []).filter(function (r) { return r.o.id === 'school'; })[0];
@@ -139,8 +151,9 @@ function mtNames_(all) {
 }
 function isMT_(coll, o, mts) {
   if (coll === 'config' || !o) return false;
-  var pos = coll === 'plans' ? (o.kind === 'tplan' ? o.teacherPos : o.prepPos) : coll === 'coach' ? o.rateePos : o.teacherPos;
-  var who = coll === 'plans' ? (o.kind === 'tplan' ? o.teacher : o.prep) : coll === 'coach' ? o.ratee : o.teacher;
+  var tp = coll === 'plans' && (o.kind === 'tplan' || o.kind === 'srep');   // a teacher's own plan or Supervisory Report entry
+  var pos = coll === 'plans' ? (tp ? o.teacherPos : o.prepPos) : coll === 'coach' ? o.rateePos : o.teacherPos;
+  var who = coll === 'plans' ? (tp ? o.teacher : o.prep) : coll === 'coach' ? o.ratee : o.teacher;
   return /^\s*master\s+teacher/i.test(String(pos || '')) || !!(who && mts[who]);
 }
 /* is department d one of the departments this sign-in handles? */
@@ -176,39 +189,53 @@ function doGet(e) {
 function doPost(e) {
   var body;
   try { body = JSON.parse(e.postData.contents); } catch (err) { return json_({ ok: false, error: 'bad_request' }); }
-  var a = access_(body.code);
-  if (a && a.locked) return json_({ ok: false, error: 'locked_out' });
-  if (!a) return json_({ ok: false, error: 'code' });
-  if (a.role === 'view') return json_({ ok: false, error: 'readonly' });
-  var lock = LockService.getScriptLock(); lock.waitLock(20000);
+  var lock = null;
   try {
+    var a = access_(body.code);
+    if (a && a.locked) return json_({ ok: false, error: 'locked_out' });
+    if (!a) return json_({ ok: false, error: 'code' });
+    if (a.role === 'view') return json_({ ok: false, error: 'readonly' });
+    lock = LockService.getScriptLock();
+    if (!lock.tryLock(28000)) { lock = null; return json_({ ok: false, error: 'busy' }); }   // someone else is saving: the app tries again
     if (body.action === 'codes') return json_(saveCodes_(a, body.codes));
     var coll = String(body.coll || ''), id = String(body.id || '');
     if (COLLS.indexOf(coll) < 0 || !id) return json_({ ok: false, error: 'bad_request' });
     if (coll === 'config' && a.role !== 'admin') return json_({ ok: false, error: 'admin' });
-    var all = readAll_(), assign = assignOf_(all), mts = mtNames_(all), sh = recSheet_();
-    var cur = all[coll].filter(function (r) { return r.o.id === id; })[0];
-    if (a.role !== 'admin' && ((cur && isMT_(coll, cur.o, mts)) || (body.action === 'put' && isMT_(coll, body.data || {}, mts)))) return json_({ ok: false, error: 'mt' });
-    if (a.role === 'dept' && cur && !inDept_(a, deptOf_(coll, cur.o, assign))) return json_({ ok: false, error: 'dept' });
+    var sh = recSheet_(), srow = findRow_(sh, 'config', 'school'), school = (srow && rowObj_(sh, srow)) || {};
+    var assign = school.assign || {}, mts = {}; (school.mts || []).forEach(function (n) { mts[n] = 1; });
+    var row0 = findRow_(sh, coll, id), curO = row0 ? rowObj_(sh, row0) : null;
+    if (a.role !== 'admin' && ((curO && isMT_(coll, curO, mts)) || (body.action === 'put' && isMT_(coll, body.data || {}, mts)))) return json_({ ok: false, error: 'mt' });
+    if (a.role === 'dept' && curO && !inDept_(a, deptOf_(coll, curO, assign))) return json_({ ok: false, error: 'dept' });
     if (body.action === 'del') {
-      if (cur) sh.deleteRow(cur.row);
+      if (row0) sh.deleteRow(row0);
       return json_({ ok: true });
     }
     if (body.action !== 'put') return json_({ ok: false, error: 'bad_request' });
     var data = body.data || {};
     var dept = deptOf_(coll, data, assign);
     if (a.role === 'dept') {
+      // a record with no department yet belongs to the department of the one who saves it
+      if (!dept && coll !== 'config' && a.depts.length) { dept = a.depts[0]; data.dept = dept; }
       var who = coll === 'coach' ? data.ratee : data.teacher;
       if (!inDept_(a, dept) || (who && assign[who] && !inDept_(a, assign[who]))) return json_({ ok: false, error: 'dept' });
     }
     var copy = {}; Object.keys(data).forEach(function (k) { if (k !== 'id') copy[k] = data[k]; });
-    var txt = JSON.stringify(copy);
-    if (txt.length > MAX_JSON) return json_({ ok: false, error: 'too_large' });
-    var row = [coll, id, dept, txt, new Date(), a.email || a.name || a.role];
-    if (cur) sh.getRange(cur.row, 1, 1, row.length).setValues([row]);
-    else sh.appendRow(row);
+    var txt = JSON.stringify(copy), parts = [];
+    for (var p = 0; p < txt.length; ) { var q = Math.min(txt.length, p + CELL);
+      while (q < txt.length && q > p + 1 && /[=+\-@\s]/.test(txt.charAt(q))) q--;   // a cell never starts with = + - @ (Sheets would read a formula)
+      parts.push(txt.slice(p, q)); p = q; }
+    if (!parts.length) parts = ['{}'];
+    if (parts.length > MAX_PARTS) return json_({ ok: false, error: 'too_large' });
+    var row = [coll, id, dept, parts[0], new Date(), a.email || a.name || a.role].concat(parts.slice(1));
+    var width = Math.max(row.length, sh.getLastColumn());
+    while (row.length < width) row.push('');      // clears the extra cells of a record that became shorter
+    var at = row0 || sh.getLastRow() + 1;
+    sh.getRange(at, 4).setNumberFormat('@'); if (width > 6) sh.getRange(at, 7, 1, width - 6).setNumberFormat('@');
+    sh.getRange(at, 1, 1, width).setValues([row]);
     return json_({ ok: true });
-  } finally { lock.releaseLock(); }
+  } catch (err) {
+    return json_({ ok: false, error: 'server', detail: String(err && err.message || err) });
+  } finally { if (lock) lock.releaseLock(); }
 }
 
 /* School Head only: replace the department heads' sign-ins (rows with role dept/edit/view); School Head rows are kept */
