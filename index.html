@@ -1597,7 +1597,7 @@ var LH_BOT='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB54AAAC7CAMAAACKAcJPAA
 var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 /* a short message at the bottom; a save (or a failed save) shows as a large card in the middle of the screen */
-function toast(m){var t=$('#toast'), bad=/^not saved|could not (save|be saved)/i.test(m), ok=!bad&&/\b(saved|added to the)\b/i.test(m)&&!/^(still )?saving/i.test(m), big=ok||bad;
+function toast(m){var t=$('#toast'), bad=/^not saved|could not (save|be saved)/i.test(m), ok=!bad&&/\b(saved|deleted|added to the)\b/i.test(m)&&!/^(still )?saving/i.test(m), big=ok||bad;
   t.className='toast'+(big?' big '+(ok?'ok':'bad'):''); t.innerHTML=big?'<span class="tic" aria-hidden="true">'+(ok?'&#10003;':'!')+'</span><span>'+esc(m)+'</span>':esc(m);
   t.setAttribute('role',bad?'alert':'status'); void t.offsetWidth; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('on')},big?(bad?9000:4500):3000)}
 document.getElementById('toast').addEventListener('click',function(){ this.classList.remove('on'); });
@@ -2056,6 +2056,8 @@ $('#pl-new').addEventListener('click',function(){ newPlan(); go('plan','form'); 
 ['pl-month','pl-year','pl-dept'].forEach(function(id){ $('#'+id).addEventListener('input',planLeafSoon); });
 $('#p-plan').addEventListener('personchange',planLeafSoon); $('#p-plan').addEventListener('datechange',planLeafSoon);
 $('#p-plan').addEventListener('input',function(e){ if(e.target.classList.contains('other')||e.target.id.slice(-4)==='-pos') planLeafSoon(); });
+function planFrame(){ var tf=monthFrame($('#pl-month').value,$('#pl-year').value); if(!tf) return; plan.rows.forEach(function(r,i){ if(PCOLS.some(function(c){return c[0]!=='time'&&String(r[c[0]]||'').trim()})&&r.time!==tf){ r.time=tf; var ta=$('#pl-time-'+i); if(ta) ta.value=tf; } }); }
+['pl-month','pl-year'].forEach(function(id){ $('#'+id).addEventListener('change',function(){ planFrame(); planLeafSoon(); }); });
 function readPlan(){
   var prep=getPerson('pl-prep'), appr=getPerson('pl-appr');
   var role=$('#pl-role').value||'ht', nt=role==='mt'?getPerson('pl-noted'):{n:'',p:''};
@@ -2067,7 +2069,7 @@ function planLeaf(){
   if(typeof planAutoStatus==='function') planAutoStatus();
   var d=readPlan(), rows=d.rows.length?d.rows:[blankRow()];
   $('#pl-leaf').innerHTML=LH_HTML()+'<img class="lh-bot" src="'+LH_BOT+'" alt=""><h4>MONTHLY INSTRUCTIONAL SUPERVISORY PLAN</h4><h4 style="font-weight:400">for the Month of '+esc(MONTHS[d.month-1]||'')+' '+esc(d.year||'')+'</h4>'+(d.role!=='sh'&&d.dept?'<p style="margin:0">&nbsp;</p><h4>'+esc(d.dept.toUpperCase())+' DEPARTMENT</h4>':'')+
-    '<table class="plantbl" style="margin-top:8pt"><colgroup>'+PCOL_IN.map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+PCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+rows.map(function(r){return '<tr>'+PCOLS.map(function(c){return '<td style="white-space:pre-wrap">'+pcell(c[0],r[c[0]])+'</td>'}).join('')+'</tr>'}).join('')+'</table>'+
+    '<table class="plantbl" style="margin-top:8pt"><colgroup>'+PCOL_IN.map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+PCOLS.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+rows.map(function(r){ return planRowHTML(r,PCOLS); }).join('')+'</table>'+
     plSigHTML({prep:{n:d.prep,p:d.prepPos},date:d.date,noted:d.role==='mt'?{n:d.noted,p:d.notedPos}:null,appr:{n:d.appr,p:d.apprPos}});
 }
 $('#pl-save').addEventListener('click',async function(){
@@ -2085,7 +2087,7 @@ $('#pl-save').addEventListener('click',async function(){
 $('#pl-del').addEventListener('click',function(){ var b=this; armDelete(b,async function(){ try{ await Store.del('plans',plan.id); toast('Plan deleted'); newPlan(); }catch(e){ saveErr(e); } }); });
 function openPlan(id,step){
   var p=S.plans.filter(function(x){return x.id===id})[0]; if(!p) return;
-  plan={id:id,rows:(p.rows||[]).map(function(r){return Object.assign(blankRow(),r)})}; if(!plan.rows.length) plan.rows=[blankRow()];
+  var tf0=monthFrame(p.month,p.year); plan={id:id,rows:(p.rows||[]).map(function(r){ var o=Object.assign(blankRow(),r); if(tf0&&PCOLS.some(function(c){return c[0]!=='time'&&String(o[c[0]]||'').trim()})) o.time=tf0; return o; })}; if(!plan.rows.length) plan.rows=[blankRow()];
   $('#pl-month').value=String(p.month); $('#pl-year').value=p.year; $('#pl-dept').value=p.dept||''; $('#pl-role').value=plRoleOfRec(p); plApplyRole(false,true);
   setPerson('pl-prep',p.prep,p.prepPos); setPerson('pl-noted',p.noted||'',p.notedPos||''); setPerson('pl-appr',p.appr,p.apprPos); setDate('pl-date',p.date||'');
   $('#pl-del').hidden=false; $('#pl-state').textContent='Opened the saved plan. Save again after changes.';
@@ -2320,6 +2322,21 @@ function pcell(k,t){ t=String(t==null?'':t); if(k==='time') t=t.replace(/\b(Janu
     else if(!num&&/:\s*$/.test(body)) h='<b>'+esc(body)+'</b>';
     else h=esc(body);
     return num?'<div style="padding-left:11pt;text-indent:-11pt">'+esc(num[1])+' '+h+'</div>':'<div>'+(h||'&nbsp;')+'</div>'; }).join(''); }
+/* a plan or report row in the table. When the KRA and the Objectives name the PPSSH and the PPST, the row is shown in two parts:
+   first the PPSSH (KRA: the PPSSH domain and strand; Objectives: the PPSSH indicator and what is checked), then, one line below and
+   level across both columns, the PPST that goes with it (KRA: the PPST domains and strands; Objectives: the PPST indicators). */
+function ppSplit(r){ var k=String(r.kra||'').split('\n'), o=String(r.obj||'').split('\n');
+  if(!/^PPSSH\b/.test(k[0]||'')||!/^PPSSH\b/.test(o[0]||'')||!k.slice(1).some(function(L){return /^PPST\b/.test(L)})) return null;
+  var kS=[], kP=[], oS=[], oP=[], inP=false;
+  k.forEach(function(L){ if(/^PPST\b/.test(L)) inP=true; (inP?kP:kS).push(L); });
+  o.forEach(function(L){ if(/^PPSSH\b/.test(L)) oS.push(L); else if(/^PPST\b/.test(L)||/^(Look for|Teacher:)/.test(L)) oP.push(L); else if(oP.length&&!/^(\d+\.|•)\s/.test(L)&&!/:\s*$/.test(L)&&oS.length<2) oP.push(L); else oS.push(L); });
+  if(!kP.length) return null;
+  return {kS:kS.join('\n'),kP:kP.join('\n'),oS:oS.join('\n'),oP:oP.join('\n')}; }
+function planRowHTML(r,cols,tdStyle){ var sp=ppSplit(r), st=function(c){ return tdStyle?tdStyle(c):'white-space:pre-wrap'+(c[3]?';'+c[3]:''); };
+  if(!sp) return '<tr>'+cols.map(function(c){ return '<td style="'+st(c)+'">'+pcell(c[0],r[c[0]])+'</td>'; }).join('')+'</tr>';
+  var two=function(c){ return c[0]==='kra'||c[0]==='obj'; };
+  return '<tr>'+cols.map(function(c){ return two(c)?'<td style="'+st(c)+';border-bottom:none;padding-bottom:0">'+pcell(c[0],c[0]==='kra'?sp.kS:sp.oS)+'</td>':'<td rowspan="2" style="'+st(c)+'">'+pcell(c[0],r[c[0]])+'</td>'; }).join('')+'</tr>'+
+    '<tr>'+cols.filter(two).map(function(c){ return '<td style="'+st(c)+';border-top:none;padding-top:11pt">'+pcell(c[0],c[0]==='kra'?sp.kP:sp.oP)+'</td>'; }).join('')+'</tr>'; }
 function ppCap(t){ t=String(t||''); return t.charAt(0).toUpperCase()+t.slice(1); }
 /* the school head's PPSSH strand that supports a teacher's PPST strand */
 function ppsshOf(st){ st=String(st||''); var d=+st.charAt(0); if(st==='4.4') return '4.5'; if(st==='4.5') return '3.2'; if(st==='5.2'||st==='5.5') return '3.4'; if(st==='6.1'||st==='6.2') return '5.5'; return {1:'3.2',2:'3.6',3:'3.2',4:'3.1',5:'3.5',6:'1.3',7:'4.5'}[d]||'3.2'; }
@@ -2562,7 +2579,7 @@ function ipRender(){
     return '<tr><td>'+esc(r.file)+'</td><td><input type="text" list="imp-people" data-ipi="'+i+'" value="'+esc(r.teacher)+'" style="min-width:220px"></td><td>'+esc(deptOf(r.teacher)||'Not set')+'</td><td class="c">'+r.items.length+'</td><td class="c">'+ipRows(r,sy).length+'</td></tr>'; }).join('')+'</tbody></table>':'';
   $('#ip-save').hidden=!IPQ.length;
   var list=(S.tplans||[]).filter(function(p){ return p.sy===sy; }).sort(function(a,b){ return lastFirst(a.teacher).localeCompare(lastFirst(b.teacher)); });
-  $('#ip-list').innerHTML=list.length?'<p class="mini" style="margin:4px 0">Teachers with IDPs, SY '+esc(sy)+': '+list.length+'</p>'+list.map(function(p){ return '<div class="listrow"><div class="what"><b>'+esc(lastFirst(p.teacher))+'</b> &middot; '+esc(p.dept||deptOf(p.teacher)||'No department')+'<div>'+p.rows.length+' plan rows &middot; from '+esc(p.source||'IDP')+'</div></div><button class="btn ghost small" type="button" data-ipview="'+esc(p.id)+'">View</button></div>'; }).join(''):'';
+  $('#ip-list').innerHTML=list.length?'<p class="mini" style="margin:4px 0">Teachers with IDPs, SY '+esc(sy)+': '+list.length+'</p>'+list.map(function(p){ return '<div class="listrow"><div class="what"><b>'+esc(lastFirst(p.teacher))+'</b> &middot; '+esc(p.dept||deptOf(p.teacher)||'No department')+'<div>'+p.rows.length+' plan rows &middot; from '+esc(p.source||'IDP')+'</div></div><button class="btn ghost small" type="button" data-ipview="'+esc(p.id)+'">View</button>'+(S.canWrite?'<button class="btn danger small" type="button" data-ipdel="'+esc(p.id)+'">Delete</button>':'')+'</div>'; }).join(''):'';
   $('#ip-actions').hidden=true;
   if(!$('#ip-annual-dept').options.length||$('#ip-annual-dept').dataset.v!==String(S.myDept)){ $('#ip-annual-dept').innerHTML=S.myDept?S.myDepts.map(function(x){return '<option>'+esc(x)+'</option>'}).join(''):'<option value="">Whole school</option>'+DEPTS.map(function(d){return '<option>'+esc(d)+'</option>'}).join(''); $('#ip-annual-dept').dataset.v=String(S.myDept); }
 }
@@ -2587,13 +2604,14 @@ function ipLeaf(title,sub,rows,cols,sig){
   var W=cols.map(function(c){return c[2]});
   return LH_HTML()+'<img class="lh-bot" src="'+LH_BOT+'" alt=""><h4>'+esc(title)+'</h4><h4 style="font-weight:400">'+esc(sub)+'</h4>'+
     '<table class="plantbl" style="margin-top:8pt"><colgroup>'+W.map(function(w){return '<col style="width:'+(w*72)+'pt">'}).join('')+'</colgroup><tr>'+cols.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'</tr>'+
-    (rows.length?rows.map(function(r){return '<tr>'+cols.map(function(c){return '<td style="white-space:pre-wrap'+(c[3]?';'+c[3]:'')+'">'+pcell(c[0],r[c[0]])+'</td>'}).join('')+'</tr>'}).join(''):'<tr><td colspan="'+cols.length+'" style="text-align:center">No rows.</td></tr>')+'</table>'+
+    (rows.length?rows.map(function(r){ return planRowHTML(r,cols); }).join(''):'<tr><td colspan="'+cols.length+'" style="text-align:center">No rows.</td></tr>')+'</table>'+
     plSigHTML({prep:{n:sig.prep||'',p:sig.prepPos||''},date:TODAY,noted:sig.noted&&sig.noted.n?sig.noted:null,appr:sig.appr||{n:PRINCIPAL.n,p:PRINCIPAL.p}});
 }
 var IPCOLS=[['time','Month',1],['kra','Key Result Areas',1.3],['obj','Objectives',1.6],['act','Enabling Projects and/or Activities',1.9],['ind','Success Indicators',1.4],['mov','Means of Verification',1.4],['status','Accomplishment / Status',1.1],['rem','Remarks',1.1]];
 var IP_VIEW={title:''};
 function ipShow(title,html,meta){ IP_VIEW.rec=meta?Object.assign({},meta,{title:title,leaf:IP_LAST}):null; $('#ip-vsave').hidden=!meta||!S.canWrite; $('#ip-vstate').textContent=meta&&meta.savedAt?'Saved '+longDate(meta.savedAt.slice(0,10))+'.':''; $('#ip-leaf').innerHTML=html; $('#ip-viewtitle').textContent=title; IP_VIEW.title=title; $('#ip-viewbar').hidden=false; $('#ip-viewwrap').hidden=false; if(typeof fitSoon==='function') fitSoon(); $('#ip-viewbar').scrollIntoView({behavior:'smooth',block:'start'}); }
-$('#ip-list').addEventListener('click',function(e){ var b=e.target.closest('[data-ipview]'); if(!b) return; var p=(S.tplans||[]).filter(function(x){return x.id===b.dataset.ipview})[0]; if(!p) return;
+$('#ip-list').addEventListener('click',function(e){ var d=e.target.closest('[data-ipdel]'); if(d){ armDelete(d,async function(){ var p=(S.tplans||[]).filter(function(x){return x.id===d.dataset.ipdel})[0]; try{ await Store.del('plans',d.dataset.ipdel); toast('IDP'+(p?' of '+(p.teacher?properName(lastFirst(p.teacher)):(p.source||'')):'')+' deleted.'); }catch(err){ saveErr(err); } }); return; }
+  var b=e.target.closest('[data-ipview]'); if(!b) return; var p=(S.tplans||[]).filter(function(x){return x.id===b.dataset.ipview})[0]; if(!p) return;
   var hd=(S.cfg.heads||{})[p.dept||deptOf(p.teacher)]||'', hp=byName(hd);
   ipShow('Supervisory Plan '+p.teacher+' SY '+p.sy, ipLeaf('INSTRUCTIONAL SUPERVISORY PLAN FOR THE TEACHER','SY '+p.sy+' · '+p.teacher+(p.teacherPos?', '+p.teacherPos:'')+(p.dept?' · '+p.dept+' Department':''),tplanUpdates(p),IPCOLS,{prep:hd,prepPos:hp?hp.p:'Department Head'})); });
 $('#ip-vclose').addEventListener('click',function(){ $('#ip-viewbar').hidden=true; $('#ip-viewwrap').hidden=true; });
@@ -2612,7 +2630,7 @@ function ipGroup(rows,withMonths){ var g={}, order=[];
 function ipMonthRows(dp,mo,yr,teacher){
   var key=yr+'-'+pad(mo), sy=syOfMonth(key), rows=[];
   (S.tplans||[]).filter(function(p){ return p.sy===sy&&(!dp||(p.dept||deptOf(p.teacher))===dp)&&(!teacher||p.teacher===teacher); }).forEach(function(p){ p.rows.forEach(function(r){ if((r.months||[r.month]).indexOf(key)>=0) rows.push(Object.assign({teacher:p.teacher},r)); }); });
-  var last=new Date(yr,mo,0).getDate(), tf=MONTHS[mo-1]+' 1, '+yr+' – '+MONTHS[mo-1]+' '+last+', '+yr;
+  var tf=monthFrame(mo,yr);
   return ipGroup(rows,false).map(function(r){ return Object.assign(blankRow(),{kra:r.kra,obj:r.obj,act:r.act,ind:r.ind,mov:r.mov,time:tf,status:'',rem:r.rem}); });
 }
 $('#ip-month').addEventListener('click',function(){
@@ -2624,7 +2642,7 @@ $('#ip-month').addEventListener('click',function(){
   var sy=syOfMonth(key), rows=[];
   (S.tplans||[]).filter(function(p){ return p.sy===sy&&(p.dept||deptOf(p.teacher))===dp; }).forEach(function(p){ p.rows.forEach(function(r){ if((r.months||[r.month]).indexOf(key)>=0) rows.push(Object.assign({teacher:p.teacher},r)); }); });
   if(!rows.length){ toast('No teacher in '+dp+' has an IDP focus in '+MONTHS[mo-1]+' '+yr+'.'); return; }
-  var last=new Date(yr,mo,0).getDate(), tf=MONTHS[mo-1]+' 1, '+yr+' – '+MONTHS[mo-1]+' '+last+', '+yr;
+  var tf=monthFrame(mo,yr);
   var g=ipGroup(rows,false).map(function(r){ return Object.assign(blankRow(),{kra:r.kra,obj:r.obj,act:r.act,ind:r.ind,mov:r.mov,time:tf,status:'',rem:r.rem}); });
   var keep=plan.rows.filter(function(r){ return PCOLS.some(function(c){return String(r[c[0]]).trim()}); });
   plan.rows=keep.concat(g); drawPlanRows(); planLeaf(); wizGo($('#p-plan'),2);
@@ -2661,7 +2679,7 @@ function scTeacherRows(dp,mk,n){
   var st=SC_ST[dp+'|'+mk], rec=st?st.rec:scBuild(dp,mk).rec, it=(rec.items||{})[n]; if(!it) return [];
   var out=[];
   ['dll','walk','ots','cot'].forEach(function(k){ var ds=k==='cot'?(it.cotNo&&it.cot?[it.cot]:[]):(it[k]||[]).filter(Boolean); if(!ds.length) return; ds.sort();
-    var R=SC_ROWS[k], r=Object.assign(blankRow(),{kra:R.kra,obj:R.obj(lastFirst(n)),act:R.act,ind:R.ind('the teacher'),mov:R.mov,time:ds[0]===ds[ds.length-1]?longDate(ds[0]):longDate(ds[0])+' – '+longDate(ds[ds.length-1]),rem:it.sup?'Conducted by: '+lastFirst(it.sup):'',src:'sched',skey:k});
+    var R=SC_ROWS[k], r=Object.assign(blankRow(),{kra:R.kra,obj:R.obj(lastFirst(n)),act:R.act,ind:R.ind('the teacher'),mov:R.mov,time:monthFrame(+mk.slice(5,7),+mk.slice(0,4)),rem:it.sup?'Conducted by: '+lastFirst(it.sup):'',src:'sched',skey:k});
     out.push(r); });
   return out;
 }
@@ -3950,6 +3968,7 @@ function initReports(){
   $('#rp-q').addEventListener('input',renderReports);
   $('#rp-table').addEventListener('click',function(e){
     var dl=e.target.closest('[data-rpdl]'); if(dl){ rpQuickDl(dl.dataset.rpdl.split('|')); return; }
+    var del=e.target.closest('[data-rpdel]'); if(del){ armDelete(del,function(){ rpDelete(del.dataset.rpdel.split('|')); }); return; }
     var b=e.target.closest('[data-rp]'); if(!b) return; var a=b.dataset.rp.split('|');
     if(a[0]==='plan') openPlan(a[1],3);
     else if(a[0]==='notes') openObs(a[1],'notes');
@@ -3959,6 +3978,26 @@ function initReports(){
     else if(a[0]==='ots') openOts(a[1]);
     else if(a[0]==='lp') openLp(a[1]);
   });
+}
+/* delete a saved record from the list. The Notes Form and the COT ratings of one observation are kept together:
+   deleting the COT Rating Sheet clears only the ratings (the notes stay), and deleting the Notes Form clears only the notes (the ratings stay). */
+async function rpDelete(a){
+  var kind=a[0], id=a[1];
+  try{
+    if(kind==='pmcf'){ var list=S.coach.filter(function(c){ return c.ratee===a[1]&&entryMonth(c)===a[2]; });
+      for(var i=0;i<list.length;i++) await Store.del('coach',list[i].id); toast('PMCF of '+properName(lastFirst(a[1]))+' for '+monthLabel(a[2])+' deleted ('+list.length+' entr'+(list.length===1?'y':'ies')+').'); return; }
+    if(kind==='plan'){ await Store.del('plans',id); toast('Plan deleted.'); return; }
+    var o=(kind==='ots'?S.ots:kind==='lp'?S.lp:S.obs).filter(function(x){return x.id===id})[0]; if(!o){ toast('That record was not found. Reload the page.'); return; }
+    var name=properName(lastFirst(o.teacher))+' ('+longDate(o.date)+')';
+    var hasNotes=String(o.notes||'').trim()||(o.per||[]).some(function(x){return String(x.notes||'').trim()}), hasRate=(o.ratings||[]).some(function(r){return r!==''&&r!=null});
+    if(kind==='cot'&&hasNotes){ var d=JSON.parse(JSON.stringify(o)); delete d.id; d.ratings=(d.ratings||[]).map(function(){return ''}); d.finds=[]; d.comments=''; (d.per||[]).forEach(function(x){ x.ratings=(x.ratings||[]).map(function(){return ''}); x.finds=[]; x.comments=''; }); d.savedAt=new Date().toISOString();
+      await Store.put('obs',id,d); toast('COT Rating Sheet of '+name+' deleted. Its Classroom Observation Notes are kept.'); return; }
+    if(kind==='notes'&&hasRate){ var d2=JSON.parse(JSON.stringify(o)); delete d2.id; d2.notes=''; d2.sum=null; (d2.per||[]).forEach(function(x){ x.notes=''; x.sum=null; }); d2.savedAt=new Date().toISOString();
+      await Store.put('obs',id,d2); toast('Classroom Observation Notes of '+name+' deleted. Its COT ratings are kept.'); return; }
+    if(o.coachId) await Store.del('coach',o.coachId);
+    await Store.del('obs',id);
+    toast(({ots:'On-the-spot test',lp:'DLL monitoring',walk:'Walk-through observation',cot:'COT Rating Sheet',notes:'Classroom Observation Notes'})[kind]+' of '+name+' deleted.');
+  }catch(e){ saveErr(e); }
 }
 /* download a saved form straight from the list, without opening it */
 async function rpQuickDl(a){
@@ -4031,7 +4070,7 @@ function renderReports(){
   $('#rp-count').textContent=rows.length+' found';
   var when=(fm?MONTHS[fm-1]+' ':'')+(fy||'');
   $('#rp-table').innerHTML='<thead><tr>'+head.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr></thead><tbody>'+
-    (rows.length?rows.map(function(r){ return '<tr>'+r.slice(0,5).map(function(c,i){return '<td'+(i===0?' class="mono"':'')+'>'+esc(c)+'</td>'}).join('')+'<td style="white-space:nowrap"><button class="btn ghost small" type="button" data-rp="'+esc(r[5])+'">Open</button>'+(/^(cot|notes|walk|ots|lp)\|/.test(r[5])?' <button class="btn small" type="button" data-rpdl="pdf|'+esc(r[5])+'" title="Download the PDF">PDF</button> <button class="btn ghost small" type="button" data-rpdl="word|'+esc(r[5])+'" title="Download the Word file">Word</button>':'')+'</td></tr>'; }).join('')
+    (rows.length?rows.map(function(r){ return '<tr>'+r.slice(0,5).map(function(c,i){return '<td'+(i===0?' class="mono"':'')+'>'+esc(c)+'</td>'}).join('')+'<td style="white-space:nowrap"><button class="btn ghost small" type="button" data-rp="'+esc(r[5])+'">Open</button>'+(/^(cot|notes|walk|ots|lp)\|/.test(r[5])?' <button class="btn small" type="button" data-rpdl="pdf|'+esc(r[5])+'" title="Download the PDF">PDF</button> <button class="btn ghost small" type="button" data-rpdl="word|'+esc(r[5])+'" title="Download the Word file">Word</button>':'')+(S.canWrite?' <button class="btn danger small" type="button" data-rpdel="'+esc(r[5])+'" title="Delete this record">Delete</button>':'')+'</td></tr>'; }).join('')
       :'<tr><td colspan="6" class="c mini" style="padding:18px">Nothing saved yet'+(when?' for '+esc(when):'')+(fd?' in '+esc(fd):'')+'.</td></tr>')+'</tbody>';
 }
 initReports();
@@ -4169,6 +4208,18 @@ function scTeachers(dp){
   return PEOPLE.filter(function(p){ return ['t','mt','ht'].indexOf(p.g)>=0&&as[p.n]===dp&&p.g!=='mt'&&mine.indexOf(p.n)<0&&sups.indexOf(p.n)<0; }).sort(function(a,b){return a.s<b.s?-1:1});
 }
 function scSaved(dp,mk){ return (S.scheds||[]).filter(function(x){return x.id===scId(dp,mk)})[0]||null; }
+/* Philippine regular and special non-working holidays that fall on fixed dates or on dates that can be worked out (Holy Week, National Heroes Day) */
+function phHolidays(y){ var h={}, add=function(m,d){ h[y+'-'+pad(m)+'-'+pad(d)]=1; };
+  [[1,1],[4,9],[5,1],[6,12],[8,21],[11,1],[11,2],[11,30],[12,8],[12,24],[12,25],[12,30],[12,31]].forEach(function(x){ add(x[0],x[1]); });
+  var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),hh=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-hh-k)%7,m=Math.floor((a+11*hh+22*l)/451),mo=Math.floor((hh+l-7*m+114)/31),dy=(hh+l-7*m+114)%31+1;
+  var easter=new Date(y,mo-1,dy); [-3,-2,-1].forEach(function(o){ var t=new Date(easter); t.setDate(t.getDate()+o); add(t.getMonth()+1,t.getDate()); });
+  var lm=new Date(y,8,0); while(lm.getDay()!==1) lm.setDate(lm.getDate()-1); add(8,lm.getDate());
+  ({2026:['02-17'],2027:['02-06'],2028:['01-26']}[y]||[]).forEach(function(md){ h[y+'-'+md]=1; });   // Chinese New Year (by proclamation)
+  return h; }
+/* the time frame of a monthly plan or report: the first to the last day of the month, moved in when that day is a weekend or a holiday */
+function monthFrame(mo,yr){ mo=+mo; yr=+yr; if(!mo||!yr) return ''; var H=phHolidays(yr), last=new Date(yr,mo,0).getDate(), ok=function(d){ var w=new Date(yr,mo-1,d).getDay(); return w>0&&w<6&&!H[yr+'-'+pad(mo)+'-'+pad(d)]; };
+  var a=1, z=last; while(a<last&&!ok(a)) a++; while(z>a&&!ok(z)) z--;
+  return longDate(yr+'-'+pad(mo)+'-'+pad(a))+' – '+longDate(yr+'-'+pad(mo)+'-'+pad(z)); }
 function scWeekdays(mk,off){
   var a=mk.split('-').map(Number), last=new Date(a[0],a[1],0).getDate(), out=[], skip={};
   String(off||'').split(/[^0-9]+/).forEach(function(x){ if(x) skip[+x]=1; });
@@ -4401,7 +4452,7 @@ function scPlanRows(dp,mk,sup){
       lines.push(p.n); dates=dates.concat(ds); if(it.sup) sups[lastFirst(it.sup)]=1; });
     if(!lines.length) return;
     dates.sort(); var n=lines.length, who=n===1?'1 teacher':n+' teachers', R=SC_ROWS[k];
-    out.push(Object.assign(blankRow(),{kra:R.kra,obj:R.obj(who),act:R.act,ind:R.ind(n===1?'the teacher':'all '+n+' teachers'),mov:R.mov,time:dates[0]===dates[dates.length-1]?longDate(dates[0]):longDate(dates[0])+' – '+longDate(dates[dates.length-1]),status:'',rem:'Conducted by: '+Object.keys(sups).join('; '),src:'sched',skey:k})); });
+    out.push(Object.assign(blankRow(),{kra:R.kra,obj:R.obj(who),act:R.act,ind:R.ind(n===1?'the teacher':'all '+n+' teachers'),mov:R.mov,time:monthFrame(+mk.slice(5,7),+mk.slice(0,4)),status:'',rem:'Conducted by: '+Object.keys(sups).join('; '),src:'sched',skey:k})); });
   return out;
 }
 /* the whole school's activities of the month: one row for each kind of activity, over all departments */
@@ -4411,7 +4462,7 @@ function scSchoolRows(mk){ var by={}, ord=[];
     var tm=String(r.time||'').split(' – '); g.from.push(parseDate(tm[0])||''); g.to.push(parseDate(tm[tm.length-1])||'');
     String(r.rem||'').replace(/^Conducted by:\s*/,'').split(/;\s*/).forEach(function(x){ if(x.trim()) g.sup[x.trim()]=1; }); }); });
   return ord.map(function(k){ var g=by[k], R=SC_ROWS[k], a=g.from.filter(Boolean).sort(), z=g.to.filter(Boolean).sort(), who=g.n===1?'the teacher':'all '+g.n+' teachers';
-    return Object.assign(g.r,{obj:R.obj(who),ind:R.ind(who),time:a.length?(a[0]===z[z.length-1]?longDate(a[0]):longDate(a[0])+' – '+longDate(z[z.length-1])):g.r.time,rem:'Conducted by the Head Teachers and Master Teachers of the '+DEPTS.length+' departments',src:'sched',skey:k}); }); }
+    return Object.assign(g.r,{obj:R.obj(who),ind:R.ind(who),time:monthFrame(+mk.slice(5,7),+mk.slice(0,4)),rem:'Conducted by the Head Teachers and Master Teachers of the '+DEPTS.length+' departments',src:'sched',skey:k}); }); }
 function scFillPlan(quiet){
   var mo=+$('#pl-month').value, yr=+$('#pl-year').value, role=$('#pl-role').value||'ht', dp=role==='sh'?'':$('#pl-dept').value; if((!dp&&role!=='sh')||!mo||!yr) return 0;
   var mk=yr+'-'+pad(mo), rows=(role==='sh'?scSchoolRows(mk):scPlanRows(dp,mk,role==='mt'?getPerson('pl-prep').n:'')).map(function(r){ return koFor(role,r); });
@@ -4591,12 +4642,12 @@ function srDeptRows(d,mo,yr,role){
   var mk=yr+'-'+pad(mo), used={}, rows=srPlanRows(d,mo,yr,role), have={};
   rows.forEach(function(r){ var k=r.skey||schedKeyOfKra(r.kra); if(k) have[k]=1; });
   ['dll','walk','ots','cot'].forEach(function(k){ if(!have[k]&&srResults(k,d,mk).length){ var R=SC_ROWS[k]; rows.push(Object.assign(blankRow(),{kra:R.kra,obj:R.obj('the teachers'),act:R.act,ind:R.ind('the teachers'),mov:R.mov,time:monthLabel(mk),skey:k})); } });
-  var out=rows.map(function(r){ return srRow(r,d,mk,used); });
+  var tf=monthFrame(mo,yr), out=rows.map(function(r){ return Object.assign(srRow(r,d,mk,used),{time:tf}); });
   // activities that match no row of the plan
   S.coach.filter(function(c){ return !used[c.id]&&recDept('coach',c)===d&&entryMonths(c)[mk]&&['lp','ots','walk'].indexOf(c.source)<0; }).forEach(function(c){
-    out.push(Object.assign(blankRow(),{kra:c.kra||'Coaching and mentoring',obj:c.obj||'',act:(c.mech||[]).join('\n')||'Coaching and feedback',ind:'',mov:'PMCF',time:longDate(c.date),status:updLine(c,mk),rem:String(srNext(c)||'').trim()?'• '+srShort(c.ratee)+': '+srNext(c):'Continue monitoring.'})); });
+    out.push(Object.assign(blankRow(),{kra:c.kra||'Coaching and mentoring',obj:c.obj||'',act:(c.mech||[]).join('\n')||'Coaching and feedback',ind:'',mov:'PMCF',time:tf,status:updLine(c,mk),rem:String(srNext(c)||'').trim()?'• '+srShort(c.ratee)+': '+srNext(c):'Continue monitoring.'})); });
   (S.sreps||[]).filter(function(e){ return !used[e.id]&&String(e.date||'').slice(0,7)===mk&&(e.dept||deptOf(e.teacher))===d; }).forEach(function(e){
-    out.push(Object.assign(blankRow(),{kra:e.kra||'',obj:e.obj||'',act:e.act||'',ind:'',mov:'',time:longDate(e.date),status:'• '+srShort(e.teacher)+': '+(e.find||''),rem:e.rec||'Continue monitoring.'})); });
+    out.push(Object.assign(blankRow(),{kra:e.kra||'',obj:e.obj||'',act:e.act||'',ind:'',mov:'',time:tf,status:'• '+srShort(e.teacher)+': '+(e.find||''),rem:e.rec||'Continue monitoring.'})); });
   return out;
 }
 /* the report's level follows the department chosen: a department's report is the Head Teacher's or a Master Teacher's; All Learning Areas is the School Principal's */
@@ -4614,7 +4665,7 @@ function srReportHTML(fm,fy,fd,prep,noted,appr,role){
   months.forEach(function(mm){ var part='';
     ds.forEach(function(d){ var rows=srDeptRows(d,mm[0],mm[1],role).map(function(r){ return koFor(role==='mt'?'mt':'ht',r); }); if(!fd&&!rows.length) return;
       if(!fd) part+='<tr><td colspan="'+PCOLS.length+'" style="'+G+'">'+esc(d)+' Department</td></tr>';
-      part+=rows.map(function(r){ return '<tr>'+PCOLS.map(function(c){ return '<td style="'+TD+'">'+pcell(c[0],r[c[0]])+'</td>'; }).join('')+'</tr>'; }).join(''); });
+      part+=rows.map(function(r){ return planRowHTML(r,PCOLS,function(){ return TD; }); }).join(''); });
     if(part&&!fm) part='<tr><td colspan="'+PCOLS.length+'" style="'+G+';background:#d9d9d9;text-transform:uppercase">'+esc(MONTHS[mm[0]-1]+' '+mm[1])+'</td></tr>'+part;
     body+=part; });
   if(!body) body='<tr><td colspan="'+PCOLS.length+'" style="text-align:center;padding:12pt">No plan or supervisory activities for '+esc(ml)+(fd?' in '+esc(fd):'')+'.</td></tr>';
