@@ -136,8 +136,8 @@ main.wrap>.inner{max-width:1180px;margin:0 auto;padding:22px 26px 0}
 }
 .nav button:not(.subnav){color:var(--gold-mark)}
 .nav button:not(.subnav):hover,.nav button:not(.subnav)[aria-selected="true"],.nav button.subpar[aria-selected="true"]{color:#F4CF63}
-.nav button.subnav{color:#fff}
-.nav button.subnav[aria-selected="true"]{color:#fff}
+.nav button.subnav,.nav button.subnav:hover{color:#fff!important;font-weight:500}
+.nav button.subnav[aria-selected="true"]{color:#fff;font-weight:700}
 .nav button:focus-visible{outline:2px solid var(--gold-mark);outline-offset:-2px}
 .btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
 
@@ -567,11 +567,11 @@ table.rate .finds li{margin:2px 0}
   <nav class="nav" role="tablist" aria-label="Sections">
     <button role="tab" aria-selected="true" data-panel="home">Dashboard</button>
     <div class="navhead navsep" aria-hidden="true"></div>
-    <button role="tab" aria-selected="false" class="navgrp" data-panel="plan" data-sub="create" data-grp="plan">Supervisory Plan</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="create" data-grp="plan">New Supervisory Plan</button>
+    <button role="tab" aria-selected="false" class="navgrp" data-panel="sched" data-sub="all" data-grp="plan">Supervisory Plan</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="all" data-grp="plan">Supervisory Schedule</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="monthly" data-grp="plan">Saved Monthly Supervisory Plans</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="annual" data-grp="plan">Saved Annual Supervisory Plans</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="all" data-grp="plan">Supervisory Schedule</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="create" data-grp="plan">New Supervisory Plan</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="srep" data-sub="saved" data-grp="srep">Supervisory Report</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="srep" data-sub="saved" data-grp="srep">Saved Supervisory Reports</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="srep" data-sub="add" data-grp="srep">New Supervisory Report Entry</button>
