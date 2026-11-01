@@ -534,6 +534,12 @@ table.rate .finds li{margin:2px 0}
 @media (max-width:600px){.samp .sf{grid-template-columns:1fr}}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:90;background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:2px;font-size:14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s;max-width:calc(100vw - 32px)}
 .toast.on{opacity:1}
+.donebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid var(--rule,#ddd)}
+.donebar .o-done{font-size:16px;padding:12px 26px}
+.toast.big{top:50%;bottom:auto;transform:translate(-50%,-50%);display:flex;align-items:center;gap:16px;padding:22px 28px;font-size:19px;font-weight:600;line-height:1.35;border-radius:10px;min-width:min(420px,calc(100vw - 32px));max-width:min(620px,calc(100vw - 32px));box-shadow:0 18px 50px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer}
+.toast.big.ok{background:#1e7a46;color:#fff}
+.toast.big.bad{background:#a32020;color:#fff}
+.toast.big .tic{flex:none;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:28px;font-weight:700}
 .foot{margin-top:26px;font-size:12px;color:var(--ink-3);text-align:center}
 #printarea{display:none}
 @page{size:A4;margin:0}
@@ -742,6 +748,11 @@ table.rate .finds li{margin:2px 0}
     <div id="ip-viewbar" class="row" style="margin-top:12px;gap:10px" hidden><b id="ip-viewtitle"></b><button class="btn gold" id="ip-vsave" type="button" hidden>Save plan</button><button class="btn" id="ip-vpdf" type="button">Download PDF</button><button class="btn ghost" id="ip-vdoc" type="button">Download Word (.docx)</button><button class="btn ghost" id="ip-vclose" type="button">Close</button><span class="mini" id="ip-vstate"></span></div>
     <div class="leafwrap" id="ip-viewwrap" hidden><div class="leaf folio" id="ip-leaf"></div></div>
   </div>
+  <div class="card" data-pv="create" id="pli-card">
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">OPTIONAL</span> Import past supervisory plans</h2><label class="btn ghost" style="cursor:pointer">Choose files (Word, PDF or picture)<input type="file" id="pli-file" accept=".docx,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden></label><span class="mini" id="pli-msg"></span></div>
+    <div id="pli-out"></div>
+    <div class="row" style="margin-top:12px"><button class="btn gold" id="pli-go" type="button" hidden>Save</button></div>
+  </div>
   <div class="card" data-pv="annual">
     <div class="gpbar" style="margin-bottom:12px"><label class="gpf">School Year <select id="sa-sy"></select></label><label class="gpf">Learning Area <select id="sa-dp"></select></label></div>
     <div id="sa-list"></div>
@@ -803,7 +814,7 @@ table.rate .finds li{margin:2px 0}
 <!-- ============ CLASSROOM OBSERVATION (Annex E) ============ -->
 <section class="panel wiz" id="p-obs">
   <div class="whobar" id="o-who" hidden></div>
-  <div class="card" data-ov="cot" id="o-fromcard"><div class="lines" style="max-width:none"><label class="fline"><span class="lk">Rate from a saved Notes Form</span><span class="lv"><select id="o-fromnotes"></select></span></label></div></div>
+  <div class="card" data-ov="cot" id="o-fromcard"><h2 style="margin-top:0"><span class="step">START HERE</span> Pull data from a saved Classroom Observation Notes</h2><p class="hint" style="margin:4px 0 10px">Choose the Notes Form of the observation you are rating. The teacher, subject, section, date, term, time and observers are filled in, and the notes are shown beside each indicator. Then rate each indicator and save. To rate without notes, leave this blank and fill in Step 1.</p><div class="lines" style="max-width:none"><label class="fline"><span class="lk">Saved Notes Form</span><span class="lv"><select id="o-fromnotes"></select></span></label></div></div>
   <div class="card" data-ov="notes cot walk" data-step="1">
     <h2><span class="step">STEP 1</span> Teacher and observation</h2>
     <div class="lines">
@@ -844,6 +855,7 @@ table.rate .finds li{margin:2px 0}
       <button class="btn gold" id="o-notes-save" type="button">Save observation</button>
       <span class="mini" id="o-notes-count"></span>
     </div>
+    <div class="donebar"><button class="btn gold o-done" type="button">Done &ndash; Save Now</button><span class="o-donemsg mini" hidden>Saved. To rate this observation, open <button class="link" type="button" data-panel-go="cot">New COT Rating</button> and choose it under &ldquo;Pull data from a saved Classroom Observation Notes&rdquo;.</span></div>
     <div class="leafwrap" id="o-notesleaf"></div>
   </div>
   <div class="card" data-ov="notes" data-step="4">
@@ -853,11 +865,12 @@ table.rate .finds li{margin:2px 0}
       <button class="btn" id="sm-pdf" type="button">Download Summary (PDF)</button>
       <button class="btn ghost" id="sm-doc" type="button">Download Summary (Word)</button>
       <button class="btn ghost" id="sm-print" type="button">Print Summary</button>
-      <button class="btn gold" id="sm-save" type="button">Save observation</button>
+      <button class="btn ghost" id="sm-save" type="button">Save observation</button>
       <span class="mini" id="sm-state"></span>
     </div>
     <div id="sm-out"></div>
     <div class="leafwrap" id="sm-leaf"></div>
+    <div class="donebar"><button class="btn gold o-done" type="button">Done &ndash; Save Now</button><span class="o-donemsg mini" hidden>Saved. To rate this observation, open <button class="link" type="button" data-panel-go="cot">New COT Rating</button> and choose it under &ldquo;Pull data from a saved Classroom Observation Notes&rdquo;.</span></div>
   </div>
   <div class="card" data-ov="cot" data-step="3">
     <h2><span class="step">STEP 3</span> COT ratings <span class="tag" id="o-formtag">Rating Sheet &middot; E-2</span></h2>
@@ -945,6 +958,11 @@ table.rate .finds li{margin:2px 0}
 
 <!-- ============ ON-THE-SPOT TEST ============ -->
 <section class="panel wiz" id="p-ots">
+  <div class="card" id="oti-card">
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">OPTIONAL</span> Import past on-the-spot test results</h2><label class="btn ghost" style="cursor:pointer">Choose files (Word, PDF or picture)<input type="file" id="oti-file" accept=".docx,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden></label><span class="mini" id="oti-msg"></span></div>
+    <div id="oti-out"></div>
+    <div class="row" style="margin-top:12px"><button class="btn gold" id="oti-go" type="button" hidden>Save</button></div>
+  </div>
   <div class="card" id="ot-cur" hidden>
     <div id="ot-list" hidden></div>
     <div class="row" style="align-items:center;gap:12px;flex-wrap:wrap"><span id="ot-curtx"></span><button class="btn ghost small" id="ot-new" type="button">Start a new on-the-spot test</button></div>
@@ -1570,7 +1588,11 @@ var LH_BOT='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB54AAAC7CAMAAACKAcJPAA
 
 var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('on')},3000)}
+/* a short message at the bottom; a save (or a failed save) shows as a large card in the middle of the screen */
+function toast(m){var t=$('#toast'), bad=/^not saved|could not (save|be saved)/i.test(m), ok=!bad&&/\b(saved|added to the)\b/i.test(m)&&!/^(still )?saving/i.test(m), big=ok||bad;
+  t.className='toast'+(big?' big '+(ok?'ok':'bad'):''); t.innerHTML=big?'<span class="tic" aria-hidden="true">'+(ok?'&#10003;':'!')+'</span><span>'+esc(m)+'</span>':esc(m);
+  t.setAttribute('role',bad?'alert':'status'); void t.offsetWidth; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('on')},big?(bad?9000:4500):3000)}
+document.getElementById('toast').addEventListener('click',function(){ this.classList.remove('on'); });
 function ls(k,v){try{if(v===undefined){return JSON.parse(localStorage.getItem('canhs-is-'+k)||'null')}localStorage.setItem('canhs-is-'+k,JSON.stringify(v))}catch(e){return null}}
 function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 
@@ -1709,32 +1731,44 @@ var COLLS=['obs','coach','plans','config'];
 var Store={
   subs:{}, cache:{}, ready:null, timer:null, lastErr:'',
   shared:function(){ return S.mode==='shared'; },
-  init:function(){
+  init:function(){ this.ready=this.connect(); return this.ready; },
+  /* sign in and load the record; tried again a few times, and again every 30 seconds while it cannot be reached */
+  connect:async function(){
     var self=this;
-    this.ready=(async function(){
-      if(!API.url){ S.mode='local'; S.canWrite=true; S.canEdit=true; connUI(); return; }
-      if(!API.code){ S.mode='locked'; S.canWrite=false; S.canEdit=false; connUI(); return; }
-      try{
-        var res=await self.get('all');
-        if(!res.ok){ S.mode='locked'; self.lastErr=res.error||''; S.canWrite=false; S.canEdit=false;
-          if(res.error==='code'){ try{ var pg=await self.get('ping'); self.diag=pg&&pg.version?(pg.hasHead?'ok':'nohead'):'old'; self.diagSheet=pg&&pg.sheet||''; }catch(e){ self.diag='old'; } }
-          connUI(); return; }
-        S.mode='shared'; S.role=res.role; S.myDepts=res.role==='dept'?((res.depts&&res.depts.length)?res.depts.map(String):String(res.dept||'').split(/\s*[,;&\/]\s*/).filter(String)):[]; S.myDept=S.myDepts.join(' & '); S.myName=String(res.name||''); S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
-        self.apply(res.data); connUI();
-        clearInterval(self.timer); self.timer=setInterval(function(){ self.refresh(); },30000);
-        document.addEventListener('visibilitychange',function(){ if(!document.hidden) self.refresh(); });
-      }catch(e){ S.mode='offline'; S.canWrite=false; S.canEdit=false; connUI(); }
-    })();
-    return this.ready;
+    if(!API.url){ S.mode='local'; S.canWrite=true; S.canEdit=true; connUI(); return; }
+    if(!API.code){ S.mode='locked'; S.canWrite=false; S.canEdit=false; connUI(); return; }
+    var res=null, err=null;
+    for(var t=0;t<3;t++){ try{ res=await self.get('all'); err=null; break; }catch(e){ err=e; await self.wait(1500*(t+1)); } }
+    if(err||!res){ S.mode='offline'; S.canWrite=false; S.canEdit=false; connUI(); self.keepTrying(); return; }
+    if(!res.ok){ S.mode='locked'; self.lastErr=res.error||''; S.canWrite=false; S.canEdit=false;
+      if(res.error==='code'){ try{ var pg=await self.get('ping'); self.diag=pg&&pg.version?(pg.hasHead?'ok':'nohead'):'old'; self.diagSheet=pg&&pg.sheet||''; }catch(e){ self.diag='old'; } }
+      connUI(); return; }
+    S.mode='shared'; S.role=res.role; S.myDepts=res.role==='dept'?((res.depts&&res.depts.length)?res.depts.map(String):String(res.dept||'').split(/\s*[,;&\/]\s*/).filter(String)):[]; S.myDept=S.myDepts.join(' & '); S.myName=String(res.name||''); S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
+    self.apply(res.data); connUI();
+    clearInterval(self.timer); self.timer=setInterval(function(){ self.refresh(); },30000);
+    if(!self.visBound){ self.visBound=true; document.addEventListener('visibilitychange',function(){ if(!document.hidden) self.refresh(); }); }
   },
+  keepTrying:function(){ var self=this; clearInterval(self.timer); self.timer=setInterval(function(){ if(S.mode==='offline'&&!self.busy){ self.busy=true; self.connect().finally(function(){ self.busy=false; }); } },30000); },
+  wait:function(ms){ return new Promise(function(r){ setTimeout(r,ms); }); },
   get:async function(action){
-    var r=await fetch(API.url+(API.url.indexOf('?')<0?'?':'&')+'action='+action+'&code='+encodeURIComponent(API.code)+'&t='+Date.now(),{method:'GET',redirect:'follow'});
-    return r.json();
+    var ac=window.AbortController?new AbortController():null, tm=ac?setTimeout(function(){ ac.abort(); },60000):0;
+    try{ var r=await fetch(API.url+(API.url.indexOf('?')<0?'?':'&')+'action='+action+'&code='+encodeURIComponent(API.code)+'&t='+Date.now(),{method:'GET',redirect:'follow',signal:ac?ac.signal:undefined});
+      return await r.json(); } finally { clearTimeout(tm); }
   },
+  /* a save is tried up to 4 times: when the connection drops, when the reply is not readable, or when someone else is saving at the same moment */
   post:async function(body){
-    body.code=API.code;
-    var r=await fetch(API.url,{method:'POST',redirect:'follow',body:JSON.stringify(body)});
-    var j=await r.json(); if(!j.ok) throw {code:j.error||'error'}; return j;
+    body.code=API.code; var last=null;
+    for(var t=0;t<4;t++){
+      if(t){ toast('Still saving\u2026 trying again ('+(t+1)+' of 4)'); await this.wait([0,2000,4000,8000][t]); }
+      var ac=window.AbortController?new AbortController():null, tm=ac?setTimeout(function(){ ac.abort(); },60000):0, j=null;
+      try{ var r=await fetch(API.url,{method:'POST',redirect:'follow',body:JSON.stringify(body),signal:ac?ac.signal:undefined}); j=await r.json(); }
+      catch(e){ last={code:'network'}; continue; }
+      finally{ clearTimeout(tm); }
+      if(j&&j.ok) return j;
+      last={code:(j&&j.error)||'error',detail:j&&j.detail};
+      if(last.code!=='busy'&&last.code!=='server') break;
+    }
+    throw last||{code:'network'};
   },
   refresh:async function(){
     if(S.mode!=='shared') return;
@@ -1750,6 +1784,8 @@ var Store={
   },
   put:async function(coll,id,data){
     await this.ready;
+    if(S.mode==='offline'&&API.url&&API.code){ await this.connect(); }
+    if(S.mode==='shared'&&S.role==='dept'&&coll!=='config'&&data&&!data.dept&&S.myDepts.length===1){ var who=coll==='coach'?data.ratee:data.teacher; if(!who||!(S.cfg.assign||{})[who]) data.dept=S.myDepts[0]; }
     if(S.mode==='shared'){
       await this.post({action:'put',coll:coll,id:id,data:data});
       var list=(this.cache[coll]||[]).filter(function(x){return x.id!==id}); var o=Object.assign({},data); o.id=id; list.push(o); this.cache[coll]=list; this._emit(coll);
@@ -1760,6 +1796,7 @@ var Store={
   },
   del:async function(coll,id){
     await this.ready;
+    if(S.mode==='offline'&&API.url&&API.code){ await this.connect(); }
     if(S.mode==='shared'){ await this.post({action:'del',coll:coll,id:id}); this.cache[coll]=(this.cache[coll]||[]).filter(function(x){return x.id!==id}); this._emit(coll); return; }
     if(S.mode!=='local') throw {code:S.mode};
     var all=ls(this.lsKey(coll))||{}; delete all[id]; ls(this.lsKey(coll),all); this._emit(coll);
@@ -1805,8 +1842,10 @@ function saveErr(e){
   if(c==='code'){ toast('Not saved: your sign-in was not accepted. Sign in again under Connection.'); return; }
   if(c==='mt'){ toast('Not saved: Master Teachers\u2019 plans and supervisory records are for the School Head only.'); return; }
   if(c==='dept'){ toast('Not saved: this record belongs to another department. You are signed in for the '+(S.myDept||'other')+' Department'+(S.myDepts.length>1?'s':'')+' only.'); return; }
-  if(c==='too_large'){ toast('Not saved: this entry is too long for one row. Shorten the notes and try again.'); return; }
+  if(c==='too_large'){ toast('Not saved: this entry is too long for the shared record. Update the Apps Script to the newest Code.gs (it saves long entries), or shorten the notes.'); return; }
   if(c==='locked'||c==='offline'){ toast('Not saved: the shared record is not connected.'); return; }
+  if(c==='network'||c==='busy') { toast('Not saved: the shared record did not answer after 4 tries. Check the internet connection, then click Save again. Nothing you typed was lost.'); return; }
+  if(c==='server'){ toast('Not saved: the shared record had a problem'+(e.detail?' ('+String(e.detail).slice(0,80)+')':'')+'. Click Save again.'); return; }
   toast('Not saved ('+(c||'no connection')+'). Check the connection and try again.');
 }
 
@@ -3175,19 +3214,20 @@ $('#o-notes-docx').addEventListener('click',async function(){
   var d=readObs();
   try{ await offerFile('COT Observation Notes '+obsFileBase(d)+'.docx',await notesDocx(d)); }catch(e){ toast('The official template file was not found on the site; downloading the Word copy made from the preview instead.'); EXP.word(notesSheetHTML(d),'COT Observation Notes '+obsFileBase(d)); }
 });
-$('#o-save').addEventListener('click',async function(){
-  var d=readObsFull(); if(!validObs(d)) return;
+async function saveObsNow(btn,doneMsg){
+  var d=readObsFull(); if(!validObs(d)) return false;
   var miss=d.no===3?0:d.ratings.filter(function(r){return r===''}).length;
   var id=obs.id||uid('o'); d.savedAt=new Date().toISOString();
-  this.disabled=true;
+  if(btn) btn.disabled=true; var ok=false;
   try{ obs.id=id;
     if(isWalk(d)){ var cid=obs.coachId||uid('c'), ce=keepFu(walkCoachEntry(d,id),cid); ce.savedAt=d.savedAt; await Store.put('coach',cid,ce); obs.coachId=cid; }
     else if(obs.coachId){ await Store.del('coach',obs.coachId); obs.coachId=''; }
     d.coachId=obs.coachId||'';
-    await Store.put('obs',id,d); obs.sy=d.sy; $('#o-del').hidden=false; if(isWalk(d)&&d.coachId){ $('#o-state').textContent='Saved '+longDate(TODAY)+' · added to the PMCF of '+d.teacher+' for '+monthLabel(d.date.slice(0,7))+'.'; toast('Walk-through saved and added to the PMCF'); } else { $('#o-state').textContent='Saved '+longDate(TODAY)+(miss?' \u00b7 '+miss+' indicator'+(miss===1?'':'s')+' still unrated':'')+'.'; toast('Observation saved'+(miss?'; '+miss+' indicator'+(miss===1?' is':'s are')+' still unrated':'')); } }
+    await Store.put('obs',id,d); ok=true; obs.sy=d.sy; $('#o-del').hidden=false; if(isWalk(d)&&d.coachId){ $('#o-state').textContent='Saved '+longDate(TODAY)+' · added to the PMCF of '+d.teacher+' for '+monthLabel(d.date.slice(0,7))+'.'; toast('Walk-through saved and added to the PMCF'); } else { $('#o-state').textContent='Saved '+longDate(TODAY)+(miss?' \u00b7 '+miss+' indicator'+(miss===1?'':'s')+' still unrated':'')+'.'; toast('Observation saved'+(miss?'; '+miss+' indicator'+(miss===1?' is':'s are')+' still unrated':'')); } }
   catch(e){ saveErr(e); }
-  this.disabled=!S.canWrite;
-});
+  if(btn) btn.disabled=!S.canWrite; return ok;
+}
+$('#o-save').addEventListener('click',function(){ saveObsNow(this); });
 $('#o-dl').addEventListener('click',async function(){
   var d=readObs(); if(!validObs(d)) return;
   var miss=d.ratings.filter(function(r){return r===''}).length; if(miss) toast(miss+' indicator'+(miss===1?' is':'s are')+' not rated; '+(miss===1?'its row stays':'their rows stay')+' blank on the form.');
@@ -3195,8 +3235,11 @@ $('#o-dl').addEventListener('click',async function(){
 });
 $('#o-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ if(obs.coachId) await Store.del('coach',obs.coachId); await Store.del('obs',obs.id); toast('Observation deleted'); newObs(); }catch(e){ saveErr(e); } }); });
 $('#o-new').addEventListener('click',newObs);
-$('#o-notes-save').addEventListener('click',function(){ $('#o-save').click(); });
-$('#sm-save').addEventListener('click',function(){ $('#o-save').click(); });
+$('#o-notes-save').addEventListener('click',function(){ saveObsNow(this); });
+$('#sm-save').addEventListener('click',function(){ saveObsNow(this); });
+/* the Notes Form is finished: save it; the COT rating is done later from Saved Notes (New COT Rating > Pull from a saved Notes Form) */
+$$('.o-done').forEach(function(b){ b.addEventListener('click',async function(){ var walk=curSub.obs==='walk'; if(await saveObsNow(this)){ var d=readObs(); if(walk) return; toast(('Classroom Observation Notes saved'+(d.teacher?' for '+properName(lastFirst(d.teacher)):'')).replace(/\.$/,'')+'. Rate it later under New COT Rating.'); $$('.o-donemsg').forEach(function(m){ m.hidden=false; }); } }); });
+document.addEventListener('click',function(e){ var b=e.target.closest('[data-panel-go]'); if(!b) return; go('obs',b.dataset.panelGo); cotFromNotes(); window.scrollTo({top:0,behavior:'smooth'}); });
 /* ---------- notes with bold: stored as plain text, **bold** marks the highlighted words ---------- */
 function walkCoachEntry(d,id){
   var ents=noteEntries(d.notes), obsd=[], fb=[];
@@ -3278,7 +3321,7 @@ function notesEdLoad(){
   $('#o-bold').addEventListener('click',function(){ ed.focus(); document.execCommand('bold'); $('#o-notes').value=edToText(ed); obsLeafSoon(); });
   $('#o-notes').addEventListener('change',function(){ notesEdLoad(); obsLeafSoon(); });
 })();
-function newObs(){
+function newObs(){ $$('.o-donemsg').forEach(function(m){ m.hidden=true; });
   obs={id:'',ratings:[],finds:[],sum:null,coachId:'',slots:{0:obsBlank()},view:0}; obsPage=0; $('#o-cap-pmcf').checked=true;
   setPerson('o-teacher',''); $('#o-stage').value=''; $('#o-dept').value=''; setSubject(''); setDate('o-date',TODAY);
   $('#o-no1').checked=true; $('#o-noother').value=''; $('#o-noother').hidden=true; $('#o-q').value='Term 1'; $('#o-t1').value=''; $('#o-t2').value='';
@@ -3286,7 +3329,7 @@ function newObs(){
   $('#o-comments').value=''; $('#o-notes').value=''; notesEdLoad(); $('#o-del').hidden=true; wizGo($('#p-obs'),1); $('#o-state').textContent='New observation, not yet saved.';
   drawRate(); obsWhoBar(); obsLeafSoon();
 }
-function openObs(id,sub){
+function openObs(id,sub){ $$('.o-donemsg').forEach(function(m){ m.hidden=true; });
   var o=S.obs.filter(function(x){return x.id===id})[0]; if(!o) return;
   obsPage=0; $('#o-cap-pmcf').checked=true; obs={id:id,coachId:o.coachId||'',sum:o.sum||null,sy:o.sy,ratings:(o.ratings||[]).map(String),finds:(o.finds||[]).map(function(a){return (a||[]).slice()})};
   setPerson('o-teacher',o.teacher,o.teacherPos); $('#o-stage').value=o.stage||''; $('#o-dept').value=o.dept||''; setSubject(o.subject||''); setDate('o-date',o.date||'');
@@ -5124,23 +5167,24 @@ function otCoachEntry(d,c){
     impact:c.dnm?Math.round(c.pctOf(c.dnm))+'% of the learners ('+c.dnm+') need remediation on the tested competencies.':'All learners met the expected score on the tested competencies.',
     mech:[M_OTS],kra:autoKra(d.teacher,d.date,'ots',d.dept).kra,obj:autoKra(d.teacher,d.date,'ots',d.dept).obj,kkey:'sched:ots',feedback:otRecLines(d,c).join('\n'),progress:'',source:'ots',otsId:ots.id};
 }
-$('#ot-save').addEventListener('click',async function(){
+async function otSaveNow(quiet){
   var d=otRead(), c=otCalc(d);
-  if(!d.teacher){ toast('Choose the teacher.'); wizGo($('#p-ots'),1); $('#ot-teacher').focus(); return; }
-  if(!d.date){ toast('Enter the date of the test.'); wizGo($('#p-ots'),1); $('#ot-date').focus(); return; }
-  if(!c.N){ toast('Enter the number of learners who took the test.'); wizGo($('#p-ots'),2); $('#ot-took').focus(); return; }
-  this.disabled=true;
+  if(!d.teacher){ toast('Choose the teacher.'); wizGo($('#p-ots'),1); $('#ot-teacher').focus(); return false; }
+  if(!d.date){ toast('Enter the date of the test.'); wizGo($('#p-ots'),1); $('#ot-date').focus(); return false; }
+  if(!c.N){ toast('Enter the number of learners who took the test.'); wizGo($('#p-ots'),2); $('#ot-took').focus(); return false; }
   try{
     var id=ots.id||uid('t'); ots.id=id;
     if(d.capPmcf){ var cid=ots.coachId||uid('c'), ce=keepFu(otCoachEntry(d,c),cid); ce.otsId=id; ce.savedAt=new Date().toISOString(); await Store.put('coach',cid,ce); ots.coachId=cid; }
     else if(ots.coachId){ await Store.del('coach',ots.coachId); ots.coachId=''; }
+    if(d.date) d.sy=syOfMonth(d.date.slice(0,7));
     d.coachId=ots.coachId; d.mps=r1(c.mps); d.mean=r1(c.mean); d.savedAt=new Date().toISOString();
     await Store.put('obs',id,d);
     $('#ot-del').hidden=false; $('#ot-state').textContent='Saved '+longDate(TODAY)+(d.capPmcf?' · added to the PMCF of '+d.teacher+' for '+monthLabel(d.date.slice(0,7)):'')+(d.capRep?' · in the Monthly Supervisory Report':'')+'.';
-    toast('On-the-spot test saved'+(d.capPmcf?' and added to the PMCF':''));
-  }catch(e){ saveErr(e); }
-  this.disabled=!S.canWrite;
-});
+    if(!quiet) toast('On-the-spot test saved'+(d.capPmcf?' and added to the PMCF':''));
+    return true;
+  }catch(e){ saveErr(e); return false; }
+}
+$('#ot-save').addEventListener('click',async function(){ this.disabled=true; await otSaveNow(); this.disabled=!S.canWrite; });
 $('#ot-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ if(ots.coachId) await Store.del('coach',ots.coachId); await Store.del('obs',ots.id); toast('On-the-spot test deleted'); newOts(); }catch(e){ saveErr(e); } }); });
 $('#ot-new').addEventListener('click',newOts);
 $('#ot-regen').addEventListener('click',function(){ otClearEdits(); otRefresh(); toast('Analysis and recommendations rewritten from the results.'); });
@@ -5350,6 +5394,273 @@ $('#lp-teacher').addEventListener('personchange',function(){ var dp=deptOf(getPe
 $('#lp-mon').addEventListener('personchange',function(){ lpLeafSoon(); });
 
 /* ================================================================== boot */
+/* ================================================================== IMPORT PAST SUPERVISORY PLANS AND ON-THE-SPOT TESTS (Word, PDF or picture) */
+/* reading a form from a picture: enlarged, in black and white, and read as scattered text so table cells are not missed */
+async function pxOcr(src){
+  var im=src; if(!(src instanceof HTMLCanvasElement)){ im=await createImageBitmap(src); }
+  var W=im.width, H=im.height, k=Math.min(3,Math.max(1,2400/W)), cv=document.createElement('canvas'); cv.width=Math.round(W*k); cv.height=Math.round(H*k);
+  var cx=cv.getContext('2d'); cx.fillStyle='#fff'; cx.fillRect(0,0,cv.width,cv.height); cx.imageSmoothingQuality='high'; cx.drawImage(im,0,0,cv.width,cv.height);
+  var px=cx.getImageData(0,0,cv.width,cv.height), a=px.data; for(var i=0;i<a.length;i+=4){ var g=0.3*a[i]+0.59*a[i+1]+0.11*a[i+2], v=g>165?255:g<110?0:Math.round((g-110)*255/55); a[i]=a[i+1]=a[i+2]=v; } cx.putImageData(px,0,0);
+  var w=await ocrWorker(); try{ await w.setParameters({tessedit_pageseg_mode:'11'}); }catch(e){}
+  var res; try{ res=await w.recognize(cv); } finally { try{ await w.setParameters({tessedit_pageseg_mode:'3'}); }catch(e){} }
+  var words=(res.data&&res.data.words)||[];
+  return {items:words.filter(function(x){return x.confidence>20}).map(function(x){ return {s:x.text,x:x.bbox.x0/k,y:x.bbox.y0/k,w:(x.bbox.x1-x.bbox.x0)/k,h:(x.bbox.y1-x.bbox.y0)/k}; }),text:(res.data&&res.data.text)||''}; }
+/* the text of a file: its lines, the tables it holds, and the words with their place on each page */
+async function pxRead(file,msg){
+  var n=file.name.toLowerCase(), out={lines:[],grids:[],pages:[]};
+  if(/\.docx$/.test(n)){
+    var z=await JSZip.loadAsync(await file.arrayBuffer()), f=z.file('word/document.xml'); if(!f) throw new Error('docx');
+    var doc=new DOMParser().parseFromString(await f.async('string'),'application/xml'), WN='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+    out.lines=[].map.call(doc.getElementsByTagNameNS(WN,'p'),function(p){ return [].map.call(p.getElementsByTagNameNS(WN,'t'),function(t){return t.textContent}).join(''); }).filter(function(t){return t.trim()});
+    out.grids=ipDocxTables(doc); return out; }
+  if(/\.doc$/.test(n)) throw new Error('doc');
+  var pdf=/\.pdf$/.test(n)||file.type==='application/pdf', img=/\.(png|jpe?g|webp|bmp)$/.test(n)||/^image\//.test(file.type);
+  if(!pdf&&!img) throw new Error('type');
+  if(img){ msg('Recognizing the text in '+file.name+'…'); var o=await pxOcr(file), its=deskew(o.items); out.pages.push(its); out.lines=posLines(its).map(function(L){return L.text}); return out; }
+  await loadLib(LIB.pdf); pdfjsLib.GlobalWorkerOptions.workerSrc=LIB.pdfWorker;
+  var doc2=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise, ruled=[];
+  for(var p=1;p<=doc2.numPages;p++){
+    msg('Reading '+file.name+', page '+p+' of '+doc2.numPages+'…');
+    var page=await doc2.getPage(p), vp=page.getViewport({scale:1}), tc=await page.getTextContent(), scanned=false;
+    var items=tc.items.map(function(it){ var t=it.transform, h=Math.abs(t[3])||it.height||8; return {s:it.str,x:t[4],y:vp.height-t[5]-h,w:it.width,h:h}; }).filter(function(it){return it.s.trim()});
+    if(items.reduce(function(a,b){return a+b.s.length},0)<30){ scanned=true;
+      var v2=page.getViewport({scale:2.2}), cv=document.createElement('canvas'); cv.width=v2.width; cv.height=v2.height; await page.render({canvasContext:cv.getContext('2d'),viewport:v2}).promise;
+      msg('Page '+p+' of '+file.name+' is a scanned image; recognizing the text…'); var oc=await pxOcr(cv);
+      items=deskew(oc.items.map(function(it){ return {s:it.s,x:it.x/2.2,y:it.y/2.2,w:it.w/2.2,h:it.h/2.2}; })); }
+    out.pages.push(items); posLines(items).forEach(function(L){ out.lines.push(L.text); });
+    if(!scanned){ try{ ruled.push({items:items,rules:await pdfRules(page,vp)}); }catch(e){} }
+  }
+  var rg=ruled.length?ruledGrid(ruled):null; if(rg) out.grids=[rg];
+  return out; }
+function pxMsg(id,t){ $('#'+id).textContent=t; }
+function pxErr(file,err){ return file.name+(err&&err.message==='doc'?' (old .doc format: save it as .docx or PDF first)':err&&err.message==='type'?' (use Word .docx, PDF or a picture)':err&&err.message==='lib'?' (the reader did not load; check the internet connection)':''); }
+var PX_MON=MONTHS.map(function(m){return m.toUpperCase()});
+function pxMonth(text){ var U=String(text||'').toUpperCase().replace(/\s+/g,' '), best=null;
+  var rx=new RegExp('\\b('+PX_MON.join('|')+'|'+PX_MON.map(function(m){return m.slice(0,3)}).join('|')+')\\.?\\s*,?\\s*(20\\d\\d)\\b','g'), m;
+  while((m=rx.exec(U))){ var k=PX_MON.findIndex(function(x){ return x===m[1]||x.slice(0,3)===m[1]; }); var pri=/MONTH OF|FOR THE|PLAN|REPORT/.test(U.slice(Math.max(0,m.index-40),m.index))?0:1; if(!best||pri<best.pri) best={month:k+1,year:+m[2],pri:pri}; if(pri===0) break; }
+  return best; }
+function pxSy(text){ var m=/\b(20\d\d)\s*[-–—]\s*(20\d\d)\b/.exec(String(text||'')); return m&&+m[2]===+m[1]+1?m[1]+'-'+m[2]:''; }
+function pxDept(text){ var U=' '+impNorm(text)+' ', hit='', at=1e9;
+  DEPTS.forEach(function(d){ var w=impNorm(d), i=U.indexOf(' '+w+' DEPARTMENT '); if(i<0) i=U.indexOf(' '+w+' '); if(i>=0&&i<at){ at=i; hit=d; } }); return hit; }
+
+/* ---------- supervisory plans ---------- */
+var PX_KEYS=[['kra',/key\s*result|\bkras?\b/i],['obj',/objective/i],['act',/enabling|activit|strateg/i],['ind',/success|indicator/i],['mov',/means\s*of|verification|\bmovs?\b/i],['time',/time\s*frame|timeline|schedule|^month$|^date$/i],['status',/accomplish|status/i],['rem',/remark/i]];
+function pxHead(cells){ var m={}, n=0; cells.forEach(function(c,i){ var t=String(c||'').replace(/\s+/g,' ').trim(); if(!t||t.length>60) return; for(var k=0;k<PX_KEYS.length;k++){ if(m[PX_KEYS[k][0]]==null&&PX_KEYS[k][1].test(t)){ m[PX_KEYS[k][0]]=i; n++; break; } } }); return n>=3?m:null; }
+function pxRowsFromGrid(rows){ var map=null, out=[];
+  rows.forEach(function(r){ var h=pxHead(r); if(h){ map=h; return; } if(!map) return;
+    var o=blankRow(), any=false; Object.keys(map).forEach(function(k){ var v=String(r[map[k]]||'').trim(); if(v){ o[k]=v; any=true; } });
+    if(!any) return; if(/prepared by|approved by|noted by/i.test(r.join(' '))) { map=null; return; }
+    out.push(o); });
+  return out; }
+/* a table without ruling lines (a photo or a scan): the columns come from where the headings sit */
+var PX_TOK={kra:/^(key|result|kras?)$/i,obj:/^objectives?$/i,act:/^(enabling|projects?|activities)$/i,ind:/^(success|indicators?)$/i,mov:/^(means|verification|movs?)$/i,time:/^(time|frame|timeline)$/i,status:/^(accomplishment|status)$/i,rem:/^remarks?$/i};
+function pxRowsFromWords(pages){ var out=[];
+  pages.forEach(function(items){ var lines=posLines(items), cols=null, hl=-1;
+    for(var i=0;i<lines.length&&!cols;i++){ var acc={}, last=i;
+      lines.slice(i,i+3).forEach(function(L,n){ L.items.forEach(function(it){ var t=it.s.replace(/[^A-Za-z]/g,''); Object.keys(PX_TOK).forEach(function(k){ if(PX_TOK[k].test(t)){ (acc[k]=acc[k]||[]).push(it.x+it.w/2); last=Math.max(last,i+n); } }); }); });
+      var ks=Object.keys(acc); if(ks.length>=5){ cols=ks.map(function(k){ var a=acc[k]; return {k:k,c:a.reduce(function(x,y){return x+y},0)/a.length}; }).sort(function(a,b){return a.c-b.c}); hl=last; } }
+    if(!cols) return;
+    var colOf=function(x){ var k=0; for(var i=0;i<cols.length-1;i++) if(x>(cols[i].c+cols[i+1].c)/2) k=i+1; return cols[k].k; };
+    var cur=null, prev=null, first=cols[0].k;
+    for(var j=hl+1;j<lines.length;j++){ var L=lines[j]; if(/prepared by|approved by|noted by/i.test(L.text)) break;
+      var cells={}; L.items.forEach(function(it){ var k=colOf(it.x+Math.min(it.w,30)/2); cells[k]=(cells[k]?cells[k]+' ':'')+it.s.trim(); });
+      var gap=prev?L.y-(prev.y+prev.h):99;
+      if(!cur||(cells[first]&&(gap>Math.max(6,L.h*1.1)||(/^(KRA\s*\d|PPSSH\b|PPST\s+Domain|Domain\s*\d)/i.test(cells[first])&&cur[first]&&!/^(PPST\s+Domain)/i.test(cells[first]))))){ cur=blankRow(); out.push(cur); }
+      Object.keys(cells).forEach(function(k){ cur[k]=(cur[k]?cur[k]+'\n':'')+cells[k]; }); prev=L; } });
+  // rows that are only stray marks (a logo or a stamp read as letters) are left out
+  return out.filter(function(r){ var t=PCOLS.map(function(c){return r[c[0]]}).join(' '); return (t.match(/[A-Za-z]{4,}/g)||[]).length>=3&&(t.match(/\b[a-z]{4,}\b/g)||[]).length>=2; }); }
+async function pxPlanParse(file){
+  var d=await pxRead(file,function(t){pxMsg('pli-msg',t)}), text=d.lines.join('\n'), rows=[];
+  d.grids.forEach(function(g){ rows=rows.concat(pxRowsFromGrid(g)); });
+  if(!rows.length) rows=pxRowsFromWords(d.pages);
+  var mo=pxMonth(text), sy=pxSy(text), annual=/\bANNUAL\b/i.test(text)&&!/\bMONTHLY\b/i.test(text);
+  if(!mo){ var fm=pxMonth(file.name.replace(/[_.]+/g,' ')); if(fm) mo=fm; }
+  return {file:file.name,rows:rows,type:annual?'year':'month',month:mo?mo.month:'',year:mo?mo.year:'',sy:sy||(mo?syOfMonth(mo.year+'-'+pad(mo.month)):S.sy),dept:pxDept(text+' '+file.name)||(S.myDept?S.myDepts[0]:''),on:true};
+}
+var PLI=[];
+function pliDup(x){ return x.type==='month'&&x.dept&&x.month&&x.year?!!gpSavedMonthly(x.dept,+x.month,+x.year):x.type==='year'?(S.gplans||[]).some(function(g){ return g.id===gpSavedId({type:'year',sy:x.sy,dept:x.dept,teacher:''}); }):false; }
+function pliRender(){
+  var box=$('#pli-out'); if(!PLI.length){ box.innerHTML=''; $('#pli-go').hidden=true; return; }
+  var L=function(k,v){ return '<label class="fline"><span class="lk">'+k+'</span><span class="lv">'+v+'</span></label>'; };
+  box.innerHTML=PLI.map(function(x,i){ var warn=[], dup=pliDup(x);
+    if(!x.rows.length) warn.push('no plan table was found; open it in the form and type the rows');
+    if(x.type==='month'&&(!x.month||!x.year)) warn.push('choose the month and year');
+    if(!x.dept) warn.push('choose the learning area');
+    if(dup) warn.push('a saved '+(x.type==='year'?'annual':'monthly')+' plan already exists for this '+(x.type==='year'?'school year':'month')+' and learning area; saving replaces it');
+    var prev=x.rows.slice(0,3).map(function(r){ return '<li>'+esc(String(r.kra||r.obj||r.act||'').split('\n')[0].slice(0,110))+'</li>'; }).join('');
+    return '<div class="prow"><div class="ph"><label class="row" style="gap:8px;font-weight:600"><input type="checkbox" data-pli="'+i+'"'+(x.on?' checked':'')+'> '+esc(x.file)+'</label><span class="mini">'+x.rows.length+' plan row'+(x.rows.length===1?'':'s')+' read</span></div>'+
+      (warn.length?'<div class="mini" style="color:var(--stamp);margin-top:6px">'+esc(warn.join(' · '))+'</div>':'')+
+      '<div class="lines" style="max-width:none">'+
+      L('Plan','<select data-plx="'+i+'" data-f="type"><option value="month"'+(x.type==='month'?' selected':'')+'>Monthly</option><option value="year"'+(x.type==='year'?' selected':'')+'>Annual</option></select>')+
+      (x.type==='month'?L('Month','<select data-plx="'+i+'" data-f="month"><option value="">Choose</option>'+MONTHS.map(function(m,k){ return '<option value="'+(k+1)+'"'+(+x.month===k+1?' selected':'')+'>'+m+'</option>'; }).join('')+'</select>')+L('Year','<input type="number" min="2015" max="2035" data-plx="'+i+'" data-f="year" value="'+esc(x.year)+'">')
+        :L('School year','<input type="text" data-plx="'+i+'" data-f="sy" value="'+esc(x.sy)+'" placeholder="2025-2026">'))+
+      L('Learning area','<select data-plx="'+i+'" data-f="dept"><option value="">Choose</option>'+(S.myDept?S.myDepts:DEPTS).map(function(d){ return '<option'+(d===x.dept?' selected':'')+'>'+esc(d)+'</option>'; }).join('')+'</select>')+
+      '</div>'+(prev?'<ul class="mini" style="margin:8px 0 0 18px">'+prev+(x.rows.length>3?'<li>and '+(x.rows.length-3)+' more</li>':'')+'</ul>':'')+
+      (x.type==='month'?'<div class="row" style="margin-top:8px"><button class="btn ghost small" type="button" data-pli-open="'+i+'">Open in the form to check or edit</button></div>':'')+'</div>'; }).join('');
+  var n=PLI.filter(function(x){return x.on}).length; $('#pli-go').hidden=false; $('#pli-go').disabled=!n||!S.canWrite; $('#pli-go').textContent='Save '+n+' plan'+(n===1?'':'s');
+}
+$('#pli-file').addEventListener('change',async function(){
+  var files=[].slice.call(this.files||[]); if(!files.length) return; this.disabled=true; PLI=[]; var bad=[];
+  for(var i=0;i<files.length;i++){ try{ var x=await pxPlanParse(files[i]); x.on=!!x.rows.length&&!pliDup(x)&&!!x.dept&&(x.type==='year'||(!!x.month&&!!x.year)); PLI.push(x); }catch(err){ bad.push(pxErr(files[i],err)); } }
+  this.disabled=false; this.value='';
+  pxMsg('pli-msg',PLI.length?'Read '+PLI.length+' file'+(PLI.length===1?'':'s')+'. Check the month and learning area of each, then save.'+(bad.length?' Could not read: '+bad.join(', ')+'.':''):'Could not read: '+bad.join(', ')+'.');
+  pliRender(); });
+$('#pli-out').addEventListener('change',function(e){ var t=e.target;
+  if(t.dataset.pli!=null){ PLI[+t.dataset.pli].on=t.checked; pliRender(); return; }
+  if(t.dataset.plx==null) return; var x=PLI[+t.dataset.plx], f=t.dataset.f; x[f]=f==='month'||f==='year'?(t.value?+t.value:''):t.value.trim();
+  if(f==='month'||f==='year'){ if(x.month&&x.year) x.sy=syOfMonth(x.year+'-'+pad(x.month)); }
+  pliRender(); });
+$('#pli-out').addEventListener('click',function(e){ var b=e.target.closest('[data-pli-open]'); if(!b) return; var x=PLI[+b.dataset.pliOpen];
+  var sv=x.dept&&x.month&&x.year?gpSavedMonthly(x.dept,+x.month,+x.year):null;
+  newPlan(); if(sv) plan.id=sv.id; if(x.month) $('#pl-month').value=String(x.month); if(x.year) $('#pl-year').value=x.year; $('#pl-dept').value=x.dept||'';
+  var h=pliHead(x.dept); setPerson('pl-prep',h.n,h.p); setDate('pl-date','');
+  plan.rows=x.rows.length?x.rows.map(function(r){return Object.assign(blankRow(),r)}):[blankRow()];
+  $('#pl-state').textContent='Read from '+x.file+(sv?'; saving replaces the saved plan of this month.':'. Check the rows, then save.');
+  go('plan','form'); drawPlanRows(); planLeaf(); wizGo($('#p-plan'),2); });
+function pliHead(dp){ var h=dp?deptSups(dp)[0]||'':'', p=h?byName(h):null; return h?{n:h,p:p?p.p:'Department Head'}:{n:PRINCIPAL.n,p:PRINCIPAL.p}; }
+$('#pli-go').addEventListener('click',async function(){
+  var todo=PLI.filter(function(x){return x.on}), bad=todo.filter(function(x){ return !x.dept||(x.type==='month'&&(!x.month||!x.year))||(x.type==='year'&&!/^\d{4}-\d{4}$/.test(x.sy)); });
+  if(bad.length){ toast('Choose the '+(bad[0].dept?'month and year':'learning area')+' of '+bad[0].file+' first.'); return; }
+  this.disabled=true; var ok=0;
+  try{ for(var i=0;i<todo.length;i++){ var x=todo[i], h=pliHead(x.dept);
+      if(x.type==='month'){ var sv=gpSavedMonthly(x.dept,+x.month,+x.year);
+        await Store.put('plans',sv?sv.id:uid('p'),{month:+x.month,year:+x.year,dept:x.dept,prep:h.n,prepPos:h.p,appr:PRINCIPAL.n,apprPos:PRINCIPAL.p,date:'',rows:x.rows,savedAt:new Date().toISOString(),sy:syOfMonth(x.year+'-'+pad(x.month)),source:x.file}); }
+      else { var m={type:'year',sy:x.sy,dept:x.dept,teacher:''};
+        await Store.put('plans',gpSavedId(m),{kind:'gplan',type:'year',sy:x.sy,month:'',year:'',dept:x.dept,teacher:'',title:'Annual Supervisory Plan SY '+x.sy+' '+x.dept,
+          leaf:{title:'ANNUAL INSTRUCTIONAL SUPERVISORY PLAN',sub:'SY '+x.sy+' · '+x.dept+' Department',rows:x.rows,cols:ANCOLS,sig:{prep:h.n,prepPos:h.p}},prep:h.n,prepPos:h.p,savedAt:new Date().toISOString(),savedDay:TODAY,by:S.myName||'',source:x.file}); }
+      x.on=false; ok++; } }
+  catch(err){ saveErr(err); }
+  pliRender(); if(ok) toast(ok+' plan'+(ok===1?'':'s')+' saved. They are under Saved Monthly / Saved Annual Supervisory Plans.'); });
+
+/* ---------- on-the-spot tests ---------- */
+function pxAfter(text,rx,stop){ var m=rx.exec(text); if(!m) return ''; var rest=text.slice(m.index+m[0].length).replace(/^[\s:]+/,''); var line=rest.split('\n')[0]; if(stop) line=line.split(stop)[0]; return line.replace(/[_]{2,}/g,' ').trim(); }
+function pxNum(s){ var m=/\d+/.exec(String(s||'')); return m?+m[0]:0; }
+async function pxOtsParse(file){
+  var d=await pxRead(file,function(t){pxMsg('oti-msg',t)}), text=d.lines.join('\n'), o={file:file.name,counts:[0,0,0,0,0,0],items:[],term:1};
+  var tName=pxAfter(text,/Name of Teacher/i,/\s{2,}|Term\b/i), tp=findPersonIn(tName)||impPerson(tName);
+  o.teacher=tp?tp.n:tName.toUpperCase(); o.teacherPos=tp?tp.p:'';
+  var area=pxAfter(text,/Learning Area/i,/\s{2,}|Grade\s*(&|and)/i), gs=pxAfter(text,/Grade\s*(?:&|and)\s*Section/i,/\s{2,}|Date\b/i);
+  var g=/^(\d{1,2})\s*[-– ]\s*(.+)$/.exec(gs); o.subject=(area+(g?' '+g[1]:'')).trim(); o.section=g?g[2].trim():gs;
+  var ds=pxAfter(text,/\bDate\b(?!\s*prepared)/i,/\s{2,}|Time\b/i); o.date=parseDate(ds)||impDate(ds,'')||'';
+  if(!o.date){ var dm=DATE_RX.exec(text); if(dm) o.date=parseDate(dm[0]+(/\d{4}/.test(dm[0])?'':' '+(pxMonth(text)||{year:+TODAY.slice(0,4)}).year))||''; }
+  o.time=(/Time:?\s*(\d{1,2}:\d{2}\s*[AP]\.?\s*M\.?)/i.exec(text)||[])[1]||'';
+  o.topic=pxAfter(text,/(^|\n)\s*Topic\b(?!\s*\/)\s*:?/i); o.competency=pxAfter(text,/(^|\n)\s*Competency\b\s*:?/i);
+  var tm=/Term\s*:?\s*([\s\S]{0,40})/i.exec(text); if(tm){ var ck=/[☑☒■●✓✔xX]\s*([123])/.exec(tm[1]); if(ck) o.term=+ck[1]; else { var toks=tm[1].split(/\s+/).filter(function(t){return /^\S?[123]$/.test(t)}), hit=toks.filter(function(t){ return t.length===2&&!/^[O0o☐□Q]/.test(t); }); if(toks.length>=2&&hit.length===1) o.term=+hit[0].slice(-1); } }
+  var mon=null, mi=d.lines.findIndex(function(t){ return /monitored by/i.test(t); }); if(mi>=0) for(var j=mi;j<Math.min(d.lines.length,mi+4)&&!mon;j++) mon=findPersonIn(d.lines[j].replace(/monitored by:?/i,''));
+  if(mon&&mon.n===o.teacher) mon=null; o.mon=mon?mon.n:''; o.monPos=mon?mon.p:'';
+  o.present=pxNum((/\bpresent\b\s*:?\s*(\d+)/i.exec(text)||[])[1]); o.took=pxNum((/took the test\s*:?\s*(\d+)/i.exec(text)||[])[1]);
+  // the score and item tables: from Word tables, or from the words on the page
+  var rowsAll=[]; d.grids.forEach(function(gr){ gr.forEach(function(r){ rowsAll.push(r.map(function(c){return String(c||'').trim()})); }); });
+  var gotS=false;
+  rowsAll.forEach(function(r){ var c=r.filter(function(x){return x!==''});
+    if(c.length>=2&&c.length<=3&&/^[0-5]$/.test(c[0])&&/^\d+$/.test(c[1])){ o.counts[+c[0]]=+c[1]; gotS=true; }
+    else if(c.length>=3&&/^[1-5]$/.test(c[0])&&!/^\d+$/.test(c[1])&&/^\d+$/.test(c[2])) o.items[+c[0]-1]={comp:c[1],correct:+c[2]}; });
+  if(!gotS) d.pages.forEach(function(items){ var lines=posLines(items), sH=null, iH=null, pctX=null, corX=null;
+    lines.forEach(function(L){ L.items.forEach(function(it){ var t=it.s.trim(); if(!sH&&/^score$/i.test(t)&&!/mean/i.test(L.text)) sH=it; if(!iH&&/^item$/i.test(t)) iH=it; if(/^correct$/i.test(t)&&(corX==null||it.x<corX)) corX=it.x; }); });
+    var pass=null; lines.forEach(function(L){ L.items.forEach(function(it){ if(!pass&&/^passed$/i.test(it.s.trim())) pass=it; }); });
+    if(!sH&&pass){ var tl=lines.filter(function(L){ return /summary|learners/i.test(L.text)&&L.y<pass.y; })[0]; sH={x:pass.x+20,y:tl?tl.y:pass.y-260}; }
+    if(!sH) return; var split=iH?iH.x-6:1e9;
+    lines.forEach(function(L){ L.items.forEach(function(it){ if(it.s.trim()==='%'&&it.x<split&&it.y>sH.y-30&&it.y<sH.y+60&&pctX==null) pctX=it.x; }); });
+    var pct={}, next=0, cur=null, top=sH.y+8, stopI=false, stopS=false, srows=[];
+    lines.filter(function(L){return L.y>top}).forEach(function(L){
+      var left=L.items.filter(function(it){return it.x<split}), right=L.items.filter(function(it){return it.x>=split});
+      var lt=left.map(function(i){return i.s.trim()}).join(' ');
+      var pm=/passed[^\d]*4\s*[-–]\s*5\)?\s*(\d+)/i.exec(lt); if(pm) o.passed=+pm[1];
+      var dm=/0\s*[-–]\s*3\)?\s*(\d+)/i.exec(lt); if(dm&&/expectation|meet/i.test(lt)) o.dnm=+dm[1];
+      var dp=/^(\d+)\s*\(\s*\d+\s*%\s*\)$/.exec(lt); if(dp&&o.passed!=null&&o.dnm==null) o.dnm=+dp[1];
+      if(/mean\s*score|findings/i.test(L.text)) stopS=true; if(/96\s*[-–:]\s*100|findings|remarks/i.test(L.text)) stopI=true;
+      if(pass&&L.y>=pass.y-4) stopS=true;
+      if(!stopS&&left.length&&!/passed|meet|mean|mps|sd|learners|score/i.test(lt)){ var nn=left.filter(function(it){return /^\d+$/.test(it.s.trim())}); if(nn.length) srows.push({y:L.y,toks:nn}); }
+      if(stopI||!iH||!right.length||corX==null) return;
+      var nums=right.filter(function(it){ return it.x>=corX-25&&/^\d+$/.test(it.s.trim()); }), words=right.filter(function(it){ return it.x<corX-25; });
+      var lead=words.length&&/^[1-5]$/.test(words[0].s.trim())&&words[0].x<iH.x+40?+words[0].s.trim():null; if(lead!=null) words=words.slice(1);
+      var tx=words.map(function(i){return i.s.trim()}).join(' ').trim();
+      if(/topic|description|response|mastery|level|^item|^no\.?$/i.test(tx)&&!nums.length) return;
+      if(nums.length){ var k=lead!=null?lead-1:next; if(k<OT_ITEMS){ cur=o.items[k]=o.items[k]||{comp:'',correct:0}; cur.correct=+nums[0].s.trim(); if(tx) cur.comp=(cur.comp?cur.comp+' ':'')+tx; next=k+1; } }
+      else if(tx&&lead!=null){ cur=o.items[lead-1]={comp:tx,correct:0}; next=lead-1; }
+      else if(tx&&cur&&L.y-cur._y<30) cur.comp+=' '+tx;
+      if(cur) cur._y=L.y; });
+    // a count the reader missed: from its percentage and the number of learners
+    // the score rows: 5 down to 0, each placed by its height on the page between the first row and "Passed"
+    if(srows.length){ var y5=srows[0].y, yP=pass?pass.y:srows[srows.length-1].y+(srows[srows.length-1].y-y5)/Math.max(1,srows.length-1), pitch=(yP-y5)/6;
+      srows.forEach(function(r,i){ var toks=r.toks.slice(), sc=null;
+        if(toks.length>1&&/^[0-5]$/.test(toks[0].s.trim())&&Math.abs(toks[0].x-sH.x)<40){ sc=+toks.shift().s.trim(); }
+        if(sc==null) sc=5-Math.max(0,Math.min(5,pitch>0?Math.round((r.y-y5)/pitch):i));
+        toks.forEach(function(it){ var t=+it.s.trim(); if(pctX!=null&&it.x>=pctX-15) pct[sc]=t; else { o.counts[sc]=t; gotS=true; } }); }); }
+    var N=o.passed!=null&&o.dnm!=null?o.passed+o.dnm:0;
+    if(!N){ var est=Object.keys(pct).filter(function(sc){return o.counts[sc]&&pct[sc]}).map(function(sc){return o.counts[sc]*100/pct[sc]}).sort(function(a,b){return a-b}); if(est.length) N=Math.round(est[Math.floor(est.length/2)]); }
+    Object.keys(pct).forEach(function(sc){ if(!o.counts[sc]&&N){ o.counts[sc]=Math.round(pct[sc]*N/100); gotS=true; } });
+    // the last missing score, from the totals
+    if(o.passed!=null&&(!o.counts[5])!==(!o.counts[4])){ if(!o.counts[5]) o.counts[5]=Math.max(0,o.passed-o.counts[4]); else o.counts[4]=Math.max(0,o.passed-o.counts[5]); }
+    if(N){ var miss=[0,1,2,3].filter(function(sc){return !o.counts[sc]}); if(miss.length===1){ var rest=N-o.counts.reduce(function(a,b){return a+b},0); if(rest>0) o.counts[miss[0]]=rest; } }
+    if(N&&!o.took) o.took=N; });
+  o.items=Array.apply(null,{length:OT_ITEMS}).map(function(_,i){ var it=o.items[i]||{}; return {comp:String(it.comp||'').replace(/\s*[_\u2014\u2013|]{1,}\s*$/,'').replace(/[_]{2,}/g,' ').trim(),correct:+it.correct||0}; });
+  if(!o.took) o.took=o.counts.reduce(function(a,b){return a+b},0); if(!o.present) o.present=o.took;
+  var flat=text.replace(/\r/g,'');
+  o.a1=(/Findings\s*\/?\s*Remarks\s*\n?\s*1\.?\s*([\s\S]*?)\n\s*2\.?\s*Competencies/i.exec(flat)||[])[1]||'';
+  o.a2=(/moving towards mastery\s*:\s*([\s\S]*?)\n\s*3\.?\s*Learning gaps/i.exec(flat)||[])[1]||'';
+  o.a3=(/less than 35%\s*of learners\)?\s*:\s*([\s\S]*?)(?=\n\s*Recommendations|\n\s*Monitored by|$)/i.exec(flat)||[])[1]||'';
+  var rec=(/\n\s*Recommendations\s*\n([\s\S]*?)(?=\n\s*Monitored by|$)/i.exec(flat)||[])[1]||'';
+  o.r3=(/(^|\n)\s*3\.\s*([^\n]+)/.exec(rec)||[])[2]||''; o.r4=(/(^|\n)\s*4\.\s*([^\n]+)/.exec(rec)||[])[2]||'';
+  ['a1','a2','a3','r3','r4'].forEach(function(k){ o[k]=String(o[k]).replace(/[ \t]+\n/g,'\n').trim(); });
+  o.dept=deptOf(o.teacher)||'';
+  return o; }
+var OTI=[];
+function otiDup(o){ return (S.ots||[]).some(function(x){ return x.teacher===o.teacher&&x.date===o.date&&(x.subject||'')===(o.subject||'')&&(x.section||'')===(o.section||''); }); }
+function otiStats(o){ var c=otCalc({counts:o.counts,took:o.took,items:o.items,present:o.present}); return c; }
+function otiRender(){
+  var box=$('#oti-out'); if(!OTI.length){ box.innerHTML=''; $('#oti-go').hidden=true; return; }
+  var L=function(k,v){ return '<label class="fline"><span class="lk">'+k+'</span><span class="lv">'+v+'</span></label>'; };
+  box.innerHTML='<datalist id="oti-people">'+PEOPLE.map(function(p){return '<option value="'+esc(p.n)+'">'+esc(p.p)+'</option>'}).join('')+'</datalist>'+OTI.map(function(o,i){ var w=[], c=otiStats(o), dup=otiDup(o);
+    if(!impPerson(o.teacher)) w.push('teacher not found in the list of personnel; choose the name');
+    if(!o.date) w.push('no date found; type the date');
+    if(!c.N) w.push('no score counts found; open it in the form and type them');
+    if(dup) w.push('a test of this teacher on this date is already saved');
+    return '<div class="prow"><div class="ph"><label class="row" style="gap:8px;font-weight:600"><input type="checkbox" data-oti="'+i+'"'+(o.on?' checked':'')+'> '+esc(o.file)+'</label><span class="mini">'+(c.N?c.N+' learners · MPS '+Math.round(c.mps)+'% · '+c.passed+' passed':'no scores read')+'</span></div>'+
+      (w.length?'<div class="mini" style="color:var(--stamp);margin-top:6px">'+esc(w.join(' · '))+'</div>':'')+
+      '<div class="lines" style="max-width:none">'+
+      L('Teacher','<input type="text" list="oti-people" data-otx="'+i+'" data-f="teacher" value="'+esc(o.teacher)+'">')+
+      L('Date','<input type="text" data-otx="'+i+'" data-f="date" value="'+esc(o.date?longDate(o.date):'')+'" placeholder="October 14, 2026">')+
+      L('Learning area and grade','<input type="text" data-otx="'+i+'" data-f="subject" value="'+esc(o.subject)+'" placeholder="English 8">')+
+      L('Section','<input type="text" data-otx="'+i+'" data-f="section" value="'+esc(o.section)+'">')+
+      '</div><div class="row" style="margin-top:8px"><button class="btn ghost small" type="button" data-oti-open="'+i+'">Open in the form to check or edit</button></div></div>'; }).join('');
+  var n=OTI.filter(function(x){return x.on}).length; $('#oti-go').hidden=false; $('#oti-go').disabled=!n||!S.canWrite; $('#oti-go').textContent='Save '+n+' on-the-spot test'+(n===1?'':'s');
+}
+/* put an imported test into the form, as a new test */
+function otiFill(o){
+  newOts(); ots={id:'',coachId:''};
+  setPerson('ot-teacher',o.teacher,o.teacherPos); $('#ot-dept').value=o.dept||deptOf(o.teacher)||''; otSetSubj(o.subject||''); $('#ot-section').value=o.section||''; $('#ot-topic').value=o.topic||''; $('#ot-comp').value=o.competency||''; $('#ot-time').value=o.time||'';
+  var tr=$('input[name=ot-term][value="'+(o.term||1)+'"]'); if(tr) tr.checked=true; setDate('ot-date',o.date||'');
+  if(o.mon) setPerson('ot-mon',o.mon,o.monPos);
+  $('#ot-present').value=o.present||''; $('#ot-took').value=o.took||''; [0,1,2,3,4,5].forEach(function(s){ $('#ot-c'+s).value=o.counts[s]||''; });
+  for(var i=0;i<OT_ITEMS;i++){ var it=o.items[i]||{}; $('#ot-ic'+i).value=it.comp||''; $('#ot-ir'+i).value=it.correct||''; }
+  otClearEdits(); ['a1','a2','a3','r3','r4'].forEach(function(k){ if(o[k]){ var el=$('#ot-'+k); el.value=o[k]; el.dataset.edited='1'; } });
+  otRefresh(true); ['a1','a2','a3','r3','r4'].forEach(function(k){ if(!o[k]){ var a=otAuto(otRead(),otCalc(otRead())); $('#ot-'+k).value=a[k]; } });
+  otLeafSoon();
+}
+$('#oti-file').addEventListener('change',async function(){
+  var files=[].slice.call(this.files||[]); if(!files.length) return; this.disabled=true; OTI=[]; var bad=[];
+  for(var i=0;i<files.length;i++){ try{ var o=await pxOtsParse(files[i]); o.on=!!o.date&&!!o.teacher&&otiStats(o).N>0&&!otiDup(o); OTI.push(o); }catch(err){ bad.push(pxErr(files[i],err)); } }
+  this.disabled=false; this.value='';
+  pxMsg('oti-msg',OTI.length?'Read '+OTI.length+' file'+(OTI.length===1?'':'s')+'. Check each test, then save. Each saved test is also added to the teacher’s PMCF and the Monthly Supervisory Report.'+(bad.length?' Could not read: '+bad.join(', ')+'.':''):'Could not read: '+bad.join(', ')+'.');
+  otiRender(); });
+$('#oti-out').addEventListener('change',function(e){ var t=e.target;
+  if(t.dataset.oti!=null){ OTI[+t.dataset.oti].on=t.checked; otiRender(); return; }
+  if(t.dataset.otx==null) return; var o=OTI[+t.dataset.otx], f=t.dataset.f, v=t.value.trim();
+  if(f==='teacher'){ var p=impPerson(v); o.teacher=p?p.n:v.toUpperCase(); o.teacherPos=p?p.p:''; o.dept=deptOf(o.teacher)||o.dept; }
+  else if(f==='date'){ o.date=parseDate(v)||impDate(v,'')||''; }
+  else o[f]=v;
+  if(o.date&&o.teacher&&otiStats(o).N&&!otiDup(o)&&f!=='section'&&f!=='subject') o.on=true;
+  otiRender(); });
+$('#oti-out').addEventListener('click',function(e){ var b=e.target.closest('[data-oti-open]'); if(!b) return; var o=OTI[+b.dataset.otiOpen];
+  otiFill(o); $('#ot-state').textContent='Read from '+o.file+'. Check each step, then save.'; wizGo($('#p-ots'),1); $('#p-ots').scrollIntoView({behavior:'smooth',block:'start'}); });
+$('#oti-go').addEventListener('click',async function(){
+  var todo=OTI.filter(function(o){return o.on}), bad=todo.filter(function(o){ return !o.teacher||!o.date||!otiStats(o).N; });
+  if(bad.length){ toast('Check '+bad[0].file+': it needs the teacher, the date and the score counts.'); return; }
+  this.disabled=true; var ok=0;
+  for(var i=0;i<todo.length;i++){ otiFill(todo[i]); if(await otSaveNow(true)){ todo[i].on=false; ok++; } else break; }
+  newOts(); otiRender(); if(ok) toast(ok+' on-the-spot test'+(ok===1?'':'s')+' saved. They are under Saved On-the-Spot Tests.'); });
+
 /* ================================================================== PMES: e-IPCRF (Beginning, Final Rating) and Mid-Year Review Form
    The forms are drawn from the layouts of DepEd's e-IPCRF and MRF workbooks (SY 2025-2026): the same column widths, row heights, merged cells,
    fonts, fills and borders. The PPST indicators change per school year as set in DepEd Memorandum No. 089, s. 2025 (Tables 3-5 and 11). */
