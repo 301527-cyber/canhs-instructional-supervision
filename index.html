@@ -321,7 +321,7 @@ table.plan textarea{min-height:70px;border-color:var(--rule)}
 .split{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
 .listrow{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--rule-soft);flex-wrap:wrap}
 .listrow:last-child{border-bottom:0}
-.listrow .what{min-width:0}
+.listrow .what{min-width:0;flex:1 1 240px}
 .listrow .what b{font-weight:600}
 .listrow .what div{font-size:12.5px;color:var(--ink-3)}
 .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 14px;margin-top:12px}
@@ -695,6 +695,16 @@ table.rate .finds li{margin:2px 0}
       <span class="mini" id="pm-state"></span>
     </div>
   </div>
+  <div class="card" id="pm-all">
+    <h2 style="margin-top:0">Whole school: the eIPCRF of every teacher</h2>
+    <p class="hint" style="margin:4px 0 10px">One zip file with the IPCRF-Beginning (Part 1, Part 4 and Part 5) of each teacher, in a folder for each department, ready to print for the teachers to sign as their commitment. A teacher&rsquo;s saved form is used when there is one; otherwise a new form for the teacher&rsquo;s career stage.</p>
+    <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center">
+      <label class="gpf">Department <select id="pm-all-dp"></select></label>
+      <button class="btn" id="pm-all-pdf" type="button">Download all &ndash; PDF (zip)</button>
+      <button class="btn ghost" id="pm-all-xls" type="button">Download all &ndash; Excel (zip)</button>
+      <span class="mini" id="pm-all-state"></span>
+    </div>
+  </div>
   <div id="pm-forms"></div>
   <div class="card"><h2>Saved forms</h2><div id="pm-list"></div></div>
 </section>
@@ -754,7 +764,7 @@ table.rate .finds li{margin:2px 0}
     <div class="leafwrap" id="ip-viewwrap" hidden><div class="leaf folio" id="ip-leaf"></div></div>
   </div>
   <div class="card" data-pv="create" id="pli-card">
-    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">OPTIONAL</span> Import past supervisory plans</h2><label class="btn ghost" style="cursor:pointer">Choose files (Word, PDF or picture)<input type="file" id="pli-file" accept=".docx,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden></label><span class="mini" id="pli-msg"></span></div>
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">OPTIONAL</span> Import past supervisory plans</h2><label class="btn ghost" style="cursor:pointer">Choose files (Word, Excel, PDF or picture)<input type="file" id="pli-file" accept=".docx,.xlsx,.xlsm,.xls,.ods,.csv,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden></label><span class="mini" id="pli-msg"></span></div>
     <div id="pli-out"></div>
     <div class="row" style="margin-top:12px"><button class="btn gold" id="pli-go" type="button" hidden>Save</button></div>
   </div>
@@ -768,7 +778,7 @@ table.rate .finds li{margin:2px 0}
     <div class="row" style="margin-top:12px"><button class="btn ghost small" id="pl-new" type="button" hidden>Start a new plan</button></div>
   </div>
   <div class="card" id="ip-card" data-pv="create">
-    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0">Teachers&rsquo; IDPs</h2><label class="btn ghost" style="cursor:pointer">Upload IDPs (Word, Excel or PDF)<input type="file" id="ip-file" accept=".docx,.xlsx,.xlsm,.pdf,application/pdf" multiple hidden></label><span class="mini" id="ip-msg"></span></div>
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0">Teachers&rsquo; IDPs</h2><label class="btn ghost" style="cursor:pointer">Upload IDPs (Word, Excel or PDF)<input type="file" id="ip-file" accept=".docx,.xlsx,.xlsm,.xls,.xlsb,.ods,.csv,.pdf,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple hidden></label><span class="mini" id="ip-msg"></span></div>
         <div id="ip-review"></div>
     <div class="row" style="margin-top:10px"><button class="btn gold" id="ip-save" type="button" hidden>Save the teachers&rsquo; supervisory plans</button></div>
     <div id="ip-list" style="margin-top:12px"></div>
@@ -888,7 +898,7 @@ table.rate .finds li{margin:2px 0}
   <div class="card" data-ov="cot" data-step="4">
     <h2><span class="step">STEP 4</span> Other comments and summary</h2>
     <div class="lines" style="max-width:none">
-      <label class="fline top"><span class="lk">Other comments</span><span class="lv"><textarea id="o-comments" rows="5"></textarea></span></label>
+      <label class="fline top"><span class="lk">Other comments</span><span class="lv"><textarea id="o-comments" rows="5"></textarea><span class="row" style="gap:10px;margin-top:6px;align-items:center"><button class="btn ghost small" id="o-cnum" type="button">Number the comments, one thought each</button><span class="mini">Comments written as sentences are numbered this way on the Rating Sheet.</span></span></span></label>
     </div>
     <div class="tiles" id="o-tiles"></div>
   </div>
@@ -967,7 +977,7 @@ table.rate .finds li{margin:2px 0}
 <!-- ============ ON-THE-SPOT TEST ============ -->
 <section class="panel wiz" id="p-ots">
   <div class="card" id="oti-card">
-    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">OPTIONAL</span> Import past on-the-spot test results</h2><label class="btn ghost" style="cursor:pointer">Choose files (Word, PDF or picture)<input type="file" id="oti-file" accept=".docx,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden></label><span class="mini" id="oti-msg"></span></div>
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:wrap"><h2 style="margin:0"><span class="step">OPTIONAL</span> Import past on-the-spot test results</h2><label class="btn ghost" style="cursor:pointer">Choose files (Word, Excel, PDF or picture)<input type="file" id="oti-file" accept=".docx,.xlsx,.xlsm,.xls,.ods,.csv,.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden></label><span class="mini" id="oti-msg"></span></div>
     <div id="oti-out"></div>
     <div class="row" style="margin-top:12px"><button class="btn gold" id="oti-go" type="button" hidden>Save</button></div>
   </div>
@@ -1411,7 +1421,7 @@ function fillCOT(xml,d,DOMP,SER){
       var cells=kids(tr,'tc'), tx=textOf(tr).trim();
       if(/^OTHER COMMENTS/.test(tx)){
         var p=all(cells[0],'p').filter(function(pp){return /OTHER COMMENTS/.test(textOf(pp))})[0]||all(cells[0],'p')[0];
-        var lines=String(d.comments||'').split(/\r?\n/).filter(function(x){return x.trim()});
+        var lines=cotItems(d.comments).map(function(x){ return (x.n?x.n+' ':'')+x.t; });
         if(lines.length) addParas(doc,p,lines,{sz:18});
         return;
       }
@@ -2391,6 +2401,12 @@ var STRAND_N={'1.1':1,'1.3':2,'1.4':3,'1.5':4,'1.6':5,'1.7':6,'2.1':7,'2.2':8,'2
 var SUP_ACT={'1.2':'Coaching on research-based and evidence-informed strategies; sharing of action research findings in the LAC session','4.2':'Review of DLL objectives against the learning competencies; coaching on writing SMART learning outcomes','4.3':'Coaching on contextualized and responsive learning programs; review of the learning program plan','4.4':'Monitoring of LAC participation; peer observation and feedback sessions','5.2':'Review of class records and learner progress monitoring tools; coaching on tracking learner progress','5.4':'Monitoring of parent-teacher conferences and release of report cards; review of communication logs','5.5':'Review of item analysis and assessment results; coaching on using data for remediation and enrichment',
   '6.1':'Coaching on community-based contextualization; walk-through on use of local contexts','6.2':'Monitoring of parent-teacher conferences and home-school partnership activities','6.3':'Reflection and coaching session on professional ethics (RA 4670, Code of Ethics for Professional Teachers)','6.4':'Orientation and monitoring of compliance with school policies (child protection, classroom policies)','7.1':'Mentoring session on the teacher’s philosophy of teaching and its application in class','7.2':'Mentoring and LAC session on professionalism and the dignity of teaching','7.3':'Monitoring of participation in LAC, subject-area organizations and professional networks','7.4':'Reflection sessions and review of the personal professional improvement plan','7.5':'Mid-year and end-of-year review of the IDP and professional development goals with the teacher'};
 var MOV_D={1:'COT Rating Sheet and Observation Notes; DLL/lesson plan; PMCF',2:'COT Rating Sheet and Observation Notes; walk-through notes; PMCF',3:'COT Rating Sheet and Observation Notes; learner profiles; differentiated materials; PMCF',4:'DLL/lesson plan; Lesson Plan Monitoring Tool; LAC attendance and output; PMCF',5:'Assessment tools and results (On-the-Spot Test, item analysis); class records; PMCF',6:'Parent-teacher conference records; communication logs; PMCF',7:'Updated IDP; reflection journal; certificates of training/LAC; PMCF'};
+/* any Excel file (.xlsx, .xlsm, the older .xls, .ods or .csv): sheet name -> rows of cell text */
+async function anyXls(file){ var n=file.name.toLowerCase(), buf=await file.arrayBuffer();
+  if(/\.(xlsx|xlsm)$/.test(n)){ try{ return await ipXlsx(await JSZip.loadAsync(buf)); }catch(e){} }
+  await loadLib(LIB.xls); var wb=XLSX.read(new Uint8Array(buf),{type:'array'});
+  return wb.SheetNames.map(function(nm){ return {name:nm,rows:XLSX.utils.sheet_to_json(wb.Sheets[nm],{header:1,raw:false,defval:''}).map(function(r){ return r.map(function(c){ return String(c==null?'':c); }); })}; }); }
+function isXls(file){ return /\.(xlsx|xlsm|xls|xlsb|ods|csv)$/i.test(file.name)||/spreadsheet|ms-excel|csv/i.test(file.type||''); }
 function ipXlsx(z){ // a small reader: sheet name -> rows of cell text
   return (async function(){
     var ss=[], sx=z.file('xl/sharedStrings.xml'); if(sx){ var d=new DOMParser().parseFromString(await sx.async('string'),'application/xml'); ss=[].map.call(d.getElementsByTagName('si'),function(si){ return [].map.call(si.getElementsByTagName('t'),function(t){return t.textContent}).join(''); }); }
@@ -2531,6 +2547,7 @@ function ruledGrid(pages){
 async function ipParse(file){
   var n=file.name.toLowerCase(), grids=[], texts=[];
   if(/\.pdf$/.test(n)||file.type==='application/pdf'){ var pg=await ipPdfGrid(file); grids=pg.grids; texts=pg.texts; }
+  else if(isXls(file)){ (await anyXls(file)).forEach(function(sh){ if(/idp|\d{4}\s*-\s*\d{4}|sheet/i.test(sh.name)||sh.rows.some(function(r){return r.some(function(c){return /development needs?/i.test(c||'')})})) grids.push({sheet:/\d{4}\s*-\s*\d{4}/.test(sh.name)?sh.name:'',rows:sh.rows}); sh.rows.forEach(function(r){ texts.push(r.filter(Boolean).join('   ')); }); }); }
   else { var z=await JSZip.loadAsync(await file.arrayBuffer());
   if(/\.docx$/.test(n)){ var f=z.file('word/document.xml'); if(!f) throw new Error('docx'); var doc=new DOMParser().parseFromString(await f.async('string'),'application/xml'), WN='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
     texts=[].map.call(doc.getElementsByTagNameNS(WN,'p'),function(p){ return [].map.call(p.getElementsByTagNameNS(WN,'t'),function(t){return t.textContent}).join(''); });
@@ -3125,6 +3142,40 @@ function notesSheetHTML(d){
     '<p class="sec" style="margin-bottom:0">DIRECTIONS FOR THE OBSERVERS:</p><p>Write your observations on the teacher&rsquo;s classroom performance on the space provided. Use additional sheets whenever necessary.</p><div class="notes grow" style="white-space:normal">'+notesTable(d.notes)+'</div>'+
     '<div class="sigs bottom" style="justify-content:center"><div class="sig fit" style="max-width:220pt"><div class="nm">'+esc((d.observers[0]||{}).n||'\u00a0')+'</div><div class="lb">Signature over Printed Name of the Observer</div></div></div></div>';
 }
+/* Other comments, one thought per entry: a paragraph is cut into sentences, then each sentence into its separate points
+   (a series of actions of the teacher, a "while …ing" clause, a list of things the teacher could do) */
+var TH_IRR={giving:'gave',making:'made',taking:'took',setting:'set',getting:'got',leading:'led',keeping:'kept',holding:'held',teaching:'taught',writing:'wrote',building:'built',bringing:'brought',showing:'showed',having:'had',being:'was',doing:'did',saying:'said',telling:'told',thinking:'thought',finding:'found',seeing:'saw',letting:'let',putting:'put',running:'ran',choosing:'chose',drawing:'drew',speaking:'spoke',reading:'read',meeting:'met',beginning:'began',sitting:'sat',standing:'stood',winning:'won',understanding:'understood',going:'went',coming:'came',knowing:'knew',growing:'grew',feeling:'felt',spending:'spent',sending:'sent',lending:'lent',paying:'paid',selling:'sold',catching:'caught',seeking:'sought',hearing:'heard',losing:'lost',shining:'shone'};
+var TH_PAST='gave|kept|made|led|set|held|taught|wrote|built|brought|showed|shown|used|took|got|began|drew|chose|spoke|read|met|let|put|ran|went|came|felt|found|told|said|did|had|sent|spent|paid|won|stood|understood|sought|caught|heard';
+function thIngToPast(w){ var lw=w.toLowerCase(); if(TH_IRR[lw]) return TH_IRR[lw]; var b=lw.replace(/ing$/,''); if(/[^aeiou]y$/.test(b)) return b.slice(0,-1)+'ied'; if(/e$/.test(b)) return b+'d'; return b+'ed'; }
+function thCap(t){ t=String(t||'').trim(); return t.charAt(0).toUpperCase()+t.slice(1); }
+function thEnd(t){ t=String(t||'').trim().replace(/[,;:\s]+$/,''); return /[.!?]$/.test(t)?t:t+'.'; }
+function thSentences(p){ var out=[], cur='';
+  String(p||'').replace(/\s+/g,' ').trim().split(/(?<=[.!?])\s+(?=[A-Z“"'(])/).forEach(function(s){ cur=cur?cur+' '+s:s;
+    if(/\b(Mr|Ms|Mrs|Dr|Sr|Jr|St|Sir|Ma'?am|No|vs|e\.g|i\.e|[A-Z])\.$/.test(cur)) return; out.push(cur); cur=''; });
+  if(cur) out.push(cur); return out; }
+var TH_SUBJ=/^((?:However|Moreover|Also|Furthermore|In addition|Overall|Likewise|Additionally),\s*)?([Hh]e|[Ss]he|[Tt]hey|[Tt]he teacher|(?:Sir|Ma'?am|Mr\.|Ms\.|Mrs\.|Teacher|Tr\.)\s+[A-Z][\w.'-]*(?:\s+[A-Z][\w.'-]*)?)\s+/;
+function thSentence(s){
+  var out=[], m=TH_SUBJ.exec(s); if(!m) return [s];
+  var subj=m[2], pron=/^(he|she|they)$/i.test(subj)?thCap(subj):/^the teacher$/i.test(subj)?'The teacher':/^(Sir|Mr\.)/.test(subj)?'He':/^(Ma'?am|Ms\.|Mrs\.)/.test(subj)?'She':subj, rest=s.slice(m[0].length);
+  // a "while …ing" or "…, …ing" clause: its own points, each in the past tense
+  var extra=[], wm=/,?\s+while\s+(.*)$/i.exec(rest);
+  if(wm){ rest=rest.slice(0,wm.index); wm[1].replace(/[.!?]$/,'').split(/,?\s+and\s+(?=\w+ing\b)|,\s+(?=\w+ing\b)/).forEach(function(g){ var gm=/^(\w+ing)\b(.*)$/.exec(g.trim()); if(gm) extra.push(pron+' '+thIngToPast(gm[1])+gm[2]); else extra.push(pron+' '+g.trim()); }); }
+  // could have / should / may …: each thing the teacher could do
+  var mm=/^(could|should|may|might|can|needs? to|is encouraged to|must)(\s+(?:also\s+)?have)?\s+(.*)$/i.exec(rest);
+  if(mm){ var parts=mm[3].replace(/[.!?]$/,'').split(/,\s+(?:and\s+)?(?=[a-z])/).reduce(function(acc,seg){ var w=seg.trim().split(/\s+/);
+      if(acc.length&&(w.length<3||/^(a|an|the|and|or|more|less|his|her|their|its|students?|learners?|other|both|which|that|who|as|in|on|with|of|for|to|by|from|at|than|such)$/i.test(w[0]))) acc[acc.length-1]+=', '+seg; else acc.push(seg); return acc; },[]);
+    parts.forEach(function(seg,i){ out.push(i?pron+' '+mm[1].toLowerCase()+' '+seg:(m[1]||'')+(m[1]?subj.charAt(0).toLowerCase()+subj.slice(1):subj)+' '+mm[1]+(mm[2]||'')+' '+seg); });
+  } else {
+    // a series of actions: "established …, reviewed …, presented …, and gave …"
+    var vx=new RegExp(',\\s+(?:and\\s+)?(?=(?:[a-z]+ed|'+TH_PAST+')\\b(?!-))','g');
+    var first=/^([a-z]+ed|is|was|were|are|has|have|had|kept|gave|made|led|set|held|taught|used|showed)\b/i.test(rest);
+    var segs=first?rest.replace(/[.!?]$/,'').split(vx):[rest.replace(/[.!?]$/,'')];
+    segs=segs.reduce(function(acc,seg){ if(acc.length&&seg.trim().split(/\s+/).length<2) acc[acc.length-1]+=', '+seg; else acc.push(seg); return acc; },[]);
+    segs.forEach(function(seg,i){ out.push(i?pron+' '+seg.trim():(m[1]||'')+(m[1]?subj.charAt(0).toLowerCase()+subj.slice(1):subj)+' '+seg.trim()); });
+  }
+  return out.concat(extra).map(function(t){ return thEnd(thCap(t)); });
+}
+function thoughts(txt){ var out=[]; String(txt||'').replace(/\r/g,'').split(/\n+/).forEach(function(p){ if(!p.trim()) return; thSentences(p).forEach(function(s){ out=out.concat(thSentence(s)); }); }); return out; }
 /* OTHER COMMENTS: numbered comments ("1. …") with a hanging indent; split into page-sized pieces when the sheet runs past one A4 page */
 function cotItems(txt){
   var out=[], cur=null;
@@ -3133,13 +3184,15 @@ function cotItems(txt){
     else if(!l.trim()){ cur=null; }
     else if(cur){ cur.t+=' '+l.trim(); }
     else { cur={n:'',t:l.trim()}; out.push(cur); } });
+  // written as plain sentences: numbered here, one thought to an entry
+  if(out.length&&!out.some(function(x){return x.n})) return thoughts(txt).map(function(t,i){ return {n:(i+1)+'.',t:t}; });
   return out;
 }
 function cotCommentsHTML(items){
   if(!items.length) return '';
   var cs='border:none;padding:0;vertical-align:top';
   return '<table class="lay" style="width:100%;border-collapse:collapse;table-layout:fixed;margin:0"><colgroup><col style="width:'+(items.some(function(x){return /^\d{2}/.test(x.n)})?16:12)+'pt"><col></colgroup>'+
-    items.map(function(x,i){ var pad=i&&!x.cont?';padding-top:9pt':''; return '<tr>'+(x.n||x.cont?'<td class="lay" style="'+cs+pad+'">'+esc(x.cont?'':x.n)+'</td><td class="lay" style="'+cs+pad+'">':'<td class="lay" colspan="2" style="'+cs+pad+'">')+esc(x.t)+'</td></tr>'; }).join('')+'</table>';
+    items.map(function(x,i){ var pad=i&&!x.cont?';padding-top:'+(items.length>4?3:9)+'pt':''; return '<tr>'+(x.n||x.cont?'<td class="lay" style="'+cs+pad+'">'+esc(x.cont?'':x.n)+'</td><td class="lay" style="'+cs+pad+'">':'<td class="lay" colspan="2" style="'+cs+pad+'">')+esc(x.t)+'</td></tr>'; }).join('')+'</table>';
 }
 function sheetFits(html,slack){
   var box=document.createElement('div'); box.style.cssText='position:fixed;left:-30000px;top:0;visibility:hidden'; box.innerHTML=html; document.body.appendChild(box);
@@ -3310,6 +3363,7 @@ $('#o-dl').addEventListener('click',async function(){
   var miss=d.ratings.filter(function(r){return r===''}).length; if(miss) toast(miss+' indicator'+(miss===1?' is':'s are')+' not rated; '+(miss===1?'its row stays':'their rows stay')+' blank on the form.');
   try{ await offerFile((d.observers.length>1?'COT IOA Form ':'COT Rating Sheet ')+obsFileBase(d)+'.docx',await cotFile(d)); }catch(e){ toast('The official template file was not found on the site; downloading the Word copy made from the preview instead.'); EXP.word(cotSheetHTML(d),(d.observers.length>1?'COT IOA Form ':'COT Rating Sheet ')+obsFileBase(d)); }
 });
+$('#o-cnum').addEventListener('click',function(e){ e.preventDefault(); var t=$('#o-comments'); if(!t.value.trim()) return; t.value=cotItems(t.value).map(function(x,i){ return (x.n||((i+1)+'.'))+' '+x.t; }).join('\n'); t.dispatchEvent(new Event('input',{bubbles:true})); });
 $('#o-del').addEventListener('click',function(){ armDelete(this,async function(){ try{ if(obs.coachId) await Store.del('coach',obs.coachId); await Store.del('obs',obs.id); toast('Observation deleted'); newObs(); }catch(e){ saveErr(e); } }); });
 $('#o-new').addEventListener('click',newObs);
 $('#o-notes-save').addEventListener('click',function(){ saveObsNow(this); });
@@ -3641,7 +3695,7 @@ function impMech(a){
 /* ---------- reading uploaded PMCFs and supervisory reports: Word, PDF and pictures ---------- */
 var LIB={pdf:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',pdfWorker:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
   ocr:'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',ocrWorker:'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
-  ocrCore:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',ocrLang:'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int'};
+  ocrCore:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',xls:'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',ocrLang:'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int'};
 var _libs={};
 function loadLib(src){ return _libs[src]||(_libs[src]=new Promise(function(ok,no){ var s=document.createElement('script'); s.src=src; s.onload=ok; s.onerror=function(){ delete _libs[src]; no(new Error('lib')); }; document.head.appendChild(s); })); }
 function impMsg(t){ $('#imp-msg').textContent=t; }
@@ -5545,6 +5599,7 @@ async function pxRead(file,msg){
     var doc=new DOMParser().parseFromString(await f.async('string'),'application/xml'), WN='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
     out.lines=[].map.call(doc.getElementsByTagNameNS(WN,'p'),function(p){ return [].map.call(p.getElementsByTagNameNS(WN,'t'),function(t){return t.textContent}).join(''); }).filter(function(t){return t.trim()});
     out.grids=ipDocxTables(doc); return out; }
+  if(isXls(file)){ (await anyXls(file)).forEach(function(sh){ out.grids.push(sh.rows); sh.rows.forEach(function(r){ var t=r.filter(function(c){return String(c).trim()}).join('   '); if(t) out.lines.push(t); }); }); return out; }
   if(/\.doc$/.test(n)) throw new Error('doc');
   var pdf=/\.pdf$/.test(n)||file.type==='application/pdf', img=/\.(png|jpe?g|webp|bmp)$/.test(n)||/^image\//.test(file.type);
   if(!pdf&&!img) throw new Error('type');
@@ -5565,7 +5620,7 @@ async function pxRead(file,msg){
   var rg=ruled.length?ruledGrid(ruled):null; if(rg) out.grids=[rg];
   return out; }
 function pxMsg(id,t){ $('#'+id).textContent=t; }
-function pxErr(file,err){ return file.name+(err&&err.message==='doc'?' (old .doc format: save it as .docx or PDF first)':err&&err.message==='type'?' (use Word .docx, PDF or a picture)':err&&err.message==='lib'?' (the reader did not load; check the internet connection)':''); }
+function pxErr(file,err){ return file.name+(err&&err.message==='doc'?' (old .doc format: save it as .docx or PDF first)':err&&err.message==='type'?' (use Word .docx, Excel, PDF or a picture)':err&&err.message==='lib'?' (the reader did not load; check the internet connection)':''); }
 var PX_MON=MONTHS.map(function(m){return m.toUpperCase()});
 function pxMonth(text){ var U=String(text||'').toUpperCase().replace(/\s+/g,' '), best=null;
   var rx=new RegExp('\\b('+PX_MON.join('|')+'|'+PX_MON.map(function(m){return m.slice(0,3)}).join('|')+')\\.?\\s*,?\\s*(20\\d\\d)\\b','g'), m;
@@ -6184,27 +6239,28 @@ function pmPages(inst,box){
   return pages.map(function(list){ var tt=pmTable(inst,list,false), img=list.indexOf(rs[0])>=0?pmImgs(inst):'';
     return {land:land,html:'<div class="pmpage" style="width:'+pw+'pt;height:'+ph+'pt;background:#fff;position:relative;overflow:hidden"><div style="position:absolute;left:'+m+'pt;top:'+m+'pt;transform:scale('+scale+');transform-origin:0 0"><div class="pms" style="position:relative;width:'+tt.w+'px">'+tt.html+img+'</div></div></div>'}; });
 }
-async function pmPdf(insts,name,foot){
+async function pmPdf(insts,name,foot,asBlob){
   var J=window.jspdf&&window.jspdf.jsPDF; if(!J||!window.html2canvas){ toast('The PDF maker did not load. Check the internet connection and reload the page.'); return; }
-  toast('Preparing the PDF\u2026');
+  if(!asBlob) toast('Preparing the PDF\u2026');
   var box=document.createElement('div'); box.style.cssText='position:fixed;left:-20000px;top:0;z-index:-1'; document.body.appendChild(box);
   try{ var pages=[]; insts.forEach(function(inst){ pages=pages.concat(pmPages(inst,box)); });
     var doc=null;
     for(var i=0;i<pages.length;i++){ var p=pages[i], w=p.land?842:595, h=p.land?595:842; box.innerHTML=p.html; var el=box.firstChild;
       if(foot) el.insertAdjacentHTML('beforeend','<div style="position:absolute;right:36pt;bottom:14pt;font:9pt Arial,\'Liberation Sans\',sans-serif;color:#000">'+esc(foot)+' - Page '+(i+1)+' of '+pages.length+'</div>');
       await Promise.all(Array.prototype.map.call(el.querySelectorAll('img'),function(im){ return im.complete?0:new Promise(function(r){ im.onload=im.onerror=r; }); }));
-      var cv=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',logging:false});
+      var cv=await html2canvas(el,{scale:asBlob?1.6:2,backgroundColor:'#ffffff',logging:false});
       if(!doc) doc=new J({unit:'pt',format:[w,h],orientation:p.land?'landscape':'portrait'}); else doc.addPage([w,h],p.land?'landscape':'portrait');
-      doc.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,w,h); }
+      doc.addImage(cv.toDataURL('image/jpeg',asBlob?0.8:0.92),'JPEG',0,0,w,h); }
+    if(asBlob) return doc.output('blob');
     await offerFile(safeName(name)+'.pdf',doc.output('blob'));
-  }catch(e){ console.error(e); toast('Could not build the PDF. Reload the page and try again.'); }
+  }catch(e){ console.error(e); if(asBlob) throw e; toast('Could not build the PDF. Reload the page and try again.'); }
   finally{ box.remove(); }
 }
 
 /* ---------- the Excel workbook: the same layout, values in place of the formulas ---------- */
 function pmXmlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,''); }
 function pmColL(c){ var s=''; c++; while(c>0){ var m=(c-1)%26; s=String.fromCharCode(65+m)+s; c=Math.floor((c-1)/26); } return s; }
-async function pmXlsx(insts,name,foot){
+async function pmXlsx(insts,name,foot,asBlob){
   var fonts=[], fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>'], borders=['<border><left/><right/><top/><bottom/><diagonal/></border>'], xfs=[], numFmts=[], fmap={}, fim={}, bmap={}, xmap={}, nmap={};
   var font=function(s){ var k=[s.fn||'Calibri',s.sz||11,s.b?1:0,s.i?1:0,s.u?1:0,s.fc||''].join('|'); if(fmap[k]==null){ fmap[k]=fonts.length; fonts.push('<font>'+(s.b?'<b/>':'')+(s.i?'<i/>':'')+(s.u?'<u/>':'')+'<sz val="'+(s.sz||11)+'"/>'+(s.fc?'<color rgb="FF'+s.fc+'"/>':'<color theme="1"/>')+'<name val="'+pmXmlEsc(s.fn||'Calibri')+'"/></font>'); } return fmap[k]; };
   var fill=function(s){ if(!s.bg) return 0; if(fim[s.bg]==null){ fim[s.bg]=fills.length; fills.push('<fill><patternFill patternType="solid"><fgColor rgb="FF'+s.bg+'"/><bgColor indexed="64"/></patternFill></fill>'); } return fim[s.bg]; };
@@ -6256,6 +6312,7 @@ async function pmXlsx(insts,name,foot){
   var hasImg=insts.some(function(i){return i.imgs&&i.imgs.length});
   zip.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'+(hasImg?'<Default Extension="png" ContentType="image/png"/>':'')+'<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map(function(n,i){ return '<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'; }).join('')+insts.map(function(inst,i){ return (inst.imgs&&inst.imgs.length)||(inst.tbs&&inst.tbs.length)?'<Override PartName="/xl/drawings/drawing'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>':''; }).join('')+'</Types>');
   var blob=await zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  if(asBlob) return blob;
   await offerFile(safeName(name)+'.xlsx',blob);
 }
 
@@ -6281,7 +6338,7 @@ async function renderPmes(){
   if(!$('#pm-t').options.length){ $('#pm-t').innerHTML='<option value="">Choose a teacher…</option>'+PEOPLE.filter(function(p){return ['t','mt','ht'].indexOf(p.g)>=0&&(!S.myDept||myDeptOk(deptOf(p.n)))}).sort(function(a,b){return a.s<b.s?-1:1}).map(function(p){return '<option value="'+esc(p.n)+'">'+esc(properName(p.s))+' ('+esc(p.p)+')</option>'}).join(''); }
   var list=(S.pmes||[]).filter(function(x){ return x.phase===ph&&x.sy===S.sy; }).sort(function(a,b){ return lastFirst(a.teacher).localeCompare(lastFirst(b.teacher)); });
   $('#pm-list').innerHTML=list.length?list.map(function(x){ return '<div class="listrow"><div class="what"><b>'+esc(properName(lastFirst(x.teacher)))+'</b> &middot; '+esc(PM_STAGE[x.stage]||'')+'<div>Saved '+esc(longDate(x.savedDay||String(x.savedAt||'').slice(0,10)))+(x.by?' by '+esc(x.by):'')+'</div></div><button class="btn ghost small" type="button" data-pmopen="'+esc(x.teacher)+'">Open</button></div>'; }).join(''):'<div class="empty">No saved '+esc(PM_PH[ph][0])+' forms for SY '+esc(S.sy)+' yet.</div>';
-  $('#pm-sy').textContent='SY '+S.sy;
+  $('#pm-sy').textContent='SY '+S.sy; $('#pm-all').hidden=ph!=='begin';
   var t=$('#pm-t').value; $('#pm-forms').innerHTML=''; $('#pm-acts').hidden=!t;
   if(!t){ PMR=null; return; }
   await pmLoad();
@@ -6305,7 +6362,32 @@ function pmRefresh(){
   ins.forEach(function(inst,i){ var card=cards[i]; if(!card) return;
     $$('td[data-rc]',card).forEach(function(td){ var cell=inst.cells[td.dataset.rc]; if(!cell||cell.inp) return; var t=pmFmt(cell.v,(cell.s||{}).nf); if(td.textContent!==t) td.textContent=t; }); });
 }
+/* the whole school's IPCRF-Beginning in one zip: a folder for each department, one file for each teacher */
+function pmAllTeachers(dp){ return PEOPLE.filter(function(p){ return ['t','mt','ht'].indexOf(p.g)>=0&&(!S.myDept||myDeptOk(deptOf(p.n)))&&(!dp||deptOf(p.n)===dp); }).sort(function(a,b){ return (deptOf(a.n)||'~').localeCompare(deptOf(b.n)||'~')||(a.s<b.s?-1:1); }); }
+function pmRecFor(phase,t){ var sv=pmSaved(phase,S.sy,t.n); if(sv){ var r=JSON.parse(JSON.stringify(sv)); r.v=r.v||{}; return r; }
+  var r2={kind:'pmes',phase:phase,sy:S.sy,teacher:t.n,teacherPos:t.p||'',dept:deptOf(t.n),stage:pmStageOf(t.p),v:{}}; pmPrefill(r2); return r2; }
+async function pmAllZip(fmt){
+  var dp=$('#pm-all-dp').value, list=pmAllTeachers(dp), st=$('#pm-all-state'); if(!list.length){ toast('No teachers found.'); return; }
+  if(typeof JSZip==='undefined'){ toast('The zip maker did not load. Check the internet connection and reload the page.'); return; }
+  $$('#pm-all button').forEach(function(b){ b.disabled=true; }); await pmLoad();
+  var zip=new JSZip(), done=0, bad=[];
+  try{ for(var i=0;i<list.length;i++){ var t=list[i], rec=pmRecFor('begin',t), name='IPCRF-Beginning '+properName(lastFirst(t.n))+' SY '+S.sy, foot='eIPCRF SY '+S.sy;
+      st.textContent='Making '+(i+1)+' of '+list.length+': '+properName(lastFirst(t.n))+'\u2026';
+      try{ var blob=fmt==='pdf'?await pmPdf(pmForms(rec),name,foot,true):await pmXlsx(pmForms(rec),name,foot,true);
+        zip.file((deptOf(t.n)||'No department')+'/'+safeName(name)+'.'+(fmt==='pdf'?'pdf':'xlsx'),blob); done++; }
+      catch(e){ console.error(e); bad.push(properName(lastFirst(t.n))); }
+      await new Promise(function(r){ setTimeout(r,0); }); }
+    st.textContent='Packing the zip file\u2026';
+    var z=await zip.generateAsync({type:'blob'});
+    await offerFile(safeName('eIPCRF IPCRF-Beginning '+(dp||'All Teachers')+' SY '+S.sy)+'.zip',z);
+    st.textContent=done+' teacher'+(done===1?'':'s')+' in the zip'+(bad.length?'; could not make: '+bad.join(', '):'')+'.'; }
+  catch(e){ console.error(e); st.textContent='Could not make the zip file. Reload the page and try again.'; }
+  finally{ $$('#pm-all button').forEach(function(b){ b.disabled=false; }); }
+}
 function pmInit(){
+  $('#pm-all-dp').innerHTML=(S.myDept?'':'<option value="">All departments</option>')+(S.myDept?S.myDepts:DEPTS).map(function(d){ return '<option>'+esc(d)+'</option>'; }).join('');
+  $('#pm-all-pdf').addEventListener('click',function(){ pmAllZip('pdf'); });
+  $('#pm-all-xls').addEventListener('click',function(){ pmAllZip('xlsx'); });
   $('#pm-t').addEventListener('change',function(){ PMR=null; renderPmes(); });
   $('#pm-stage').addEventListener('change',function(){ if(PMR){ PMR.stage=this.value; PMR.dirty=true; pmDraw(); } });
   $('#pm-forms').addEventListener('input',function(e){ var t=e.target; if(!t.classList.contains('pmi')||!PMR) return; PMR.v[t.dataset.k]=t.value; PMR.dirty=true; $('#pm-state').textContent='Changes not yet saved.';
