@@ -93,7 +93,7 @@ a{color:var(--seal)}
 .nav button span{width:19px;height:19px;flex:none;border-radius:2px;display:grid;place-items:center;font-family:var(--mono);
   font-size:10.5px;background:rgba(255,255,255,.08);color:var(--side-dim)}
 .nav button.navgrp,.nav button.navsolo{font-weight:600}
-.nav button.navgrp.subpar{color:#F4CF63}
+.nav button.navgrp.subpar{color:#E8B93B}
 .nav button.subnav{padding:6px 20px 6px 38px;font-size:12.8px}
 .nav button.subpar[aria-selected="true"]{background:none;font-weight:600;border-left-color:transparent}
 .nav button.subpar[aria-selected="true"] span{background:rgba(255,255,255,.08);color:var(--side-dim)}
@@ -135,9 +135,12 @@ main.wrap>.inner{max-width:1180px;margin:0 auto;padding:22px 26px 0}
   main.wrap>.inner{padding:16px 16px 0}
 }
 .nav button:not(.subnav){color:var(--gold-mark)}
-.nav button:not(.subnav):hover,.nav button:not(.subnav)[aria-selected="true"],.nav button.subpar[aria-selected="true"]{color:#F4CF63}
-.nav button.subnav,.nav button.subnav:hover{color:#fff!important;font-weight:500}
-.nav button.subnav[aria-selected="true"]{color:#fff;font-weight:700}
+.nav button:not(.subnav):hover,.nav button:not(.subnav)[aria-selected="true"],.nav button.subpar[aria-selected="true"]{color:#E8B93B}
+.nav button.subnav{color:#D5E0EE!important;font-weight:500}
+.nav button.subnav:hover{color:#fff!important}
+/* pure white sub-menu text: grey (not coloured ClearType) smoothing, so thin white letters show no yellow/blue fringes on the dark sidebar */
+.nav button.subnav{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;will-change:transform;backface-visibility:hidden}
+.nav button.subnav[aria-selected="true"]{color:#fff!important;font-weight:700}
 .nav button:focus-visible{outline:2px solid var(--gold-mark);outline-offset:-2px}
 .btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
 
@@ -580,8 +583,7 @@ table.rate .finds li{margin:2px 0}
   <nav class="nav" role="tablist" aria-label="Sections">
     <button role="tab" aria-selected="true" data-panel="home">Dashboard</button>
     <div class="navhead navsep" aria-hidden="true"></div>
-    <button role="tab" aria-selected="false" class="navgrp" data-panel="sched" data-sub="all" data-grp="plan">Supervisory Plan</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="all" data-grp="plan">Supervisory Schedule</button>
+    <button role="tab" aria-selected="false" class="navgrp" data-panel="plan" data-sub="monthly" data-grp="plan">Supervisory Plan</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="monthly" data-grp="plan">Saved Monthly Supervisory Plans</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="annual" data-grp="plan">Saved Annual Supervisory Plans</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="create" data-grp="plan">New Supervisory Plan</button>
@@ -867,7 +869,7 @@ table.rate .finds li{margin:2px 0}
   <div class="card" data-step="2">
     <h2><span class="step">STEP 2</span> Plan rows</h2>
         <div id="pl-rows"></div>
-    <div class="row" style="margin-top:10px"><button class="btn ghost small" id="pl-add" type="button">Add a row</button><button class="btn ghost small" id="pl-sched" type="button">Update the activities from the Supervisory Schedule</button></div>
+    <div class="row" style="margin-top:10px"><button class="btn ghost small" id="pl-add" type="button">Add a row</button><button class="btn ghost small" id="pl-sched" type="button">Update the activities from the COT, Walk-through, DLL and On-the-Spot Test schedules</button></div>
   </div>
   <div class="card" data-step="3">
     <h2><span class="step">STEP 3</span> Save and download</h2>
@@ -1660,9 +1662,9 @@ var LH_BOT='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB54AAAC7CAMAAACKAcJPAA
 var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 /* a short message at the bottom; a save (or a failed save) shows as a large card in the middle of the screen */
-function toast(m){var t=$('#toast'), bad=/^not saved|could not (save|be saved)/i.test(m), ok=!bad&&/\b(saved|deleted|added to the)\b/i.test(m)&&!/^(still )?saving/i.test(m), big=ok||bad;
-  t.className='toast'+(big?' big '+(ok?'ok':'bad'):''); t.innerHTML=big?'<span class="tic" aria-hidden="true">'+(ok?'&#10003;':'!')+'</span><span>'+esc(m)+'</span>':esc(m);
-  t.setAttribute('role',bad?'alert':'status'); void t.offsetWidth; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('on')},big?(bad?9000:4500):3000)}
+function toast(m){var t=$('#toast'), bad=/^not saved|could not (save|be saved)/i.test(m), ok=!bad&&(/\b(saved|deleted|added to the)\b/i.test(m)||/^(wait patiently|nothing (new )?to save|all saved)/i.test(m)), wait=ok&&/^wait patiently/i.test(m), big=ok||bad;
+  t.className='toast'+(big?' big '+(ok?'ok':'bad'):''); t.innerHTML=big?'<span class="tic" aria-hidden="true">'+(wait?'&#8987;':ok?'&#10003;':'!')+'</span><span>'+esc(m)+'</span>':esc(m);
+  t.setAttribute('role',bad?'alert':'status'); void t.offsetWidth; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('on')},big?(bad?9000:wait?20000:4500):3000)}
 document.getElementById('toast').addEventListener('click',function(){ this.classList.remove('on'); });
 function ls(k,v){try{if(v===undefined){return JSON.parse(localStorage.getItem('canhs-is-'+k)||'null')}localStorage.setItem('canhs-is-'+k,JSON.stringify(v))}catch(e){return null}}
 function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
@@ -1828,9 +1830,12 @@ var Store={
   },
   /* a save is tried up to 4 times: when the connection drops, when the reply is not readable, or when someone else is saving at the same moment */
   post:async function(body){
-    body.code=API.code; var last=null;
+    body.code=API.code; var last=null, verb=body.action==='del'?'deleting':'saving';
+    /* a save that takes more than a moment: say so in the big green notice */
+    var slow=setTimeout(function(){ toast('Wait patiently. Still '+verb+'\u2026'); },1500);
+    try{
     for(var t=0;t<4;t++){
-      if(t){ toast('Still saving\u2026 trying again ('+(t+1)+' of 4)'); await this.wait([0,2000,4000,8000][t]); }
+      if(t){ clearTimeout(slow); toast('Wait patiently. Still '+verb+'\u2026 (try '+(t+1)+' of 4)'); await this.wait([0,2000,4000,8000][t]); }
       var ac=window.AbortController?new AbortController():null, tm=ac?setTimeout(function(){ ac.abort(); },60000):0, j=null;
       try{ var r=await fetch(API.url,{method:'POST',redirect:'follow',body:JSON.stringify(body),signal:ac?ac.signal:undefined}); j=await r.json(); }
       catch(e){ last={code:'network'}; continue; }
@@ -1839,6 +1844,7 @@ var Store={
       last={code:(j&&j.error)||'error',detail:j&&j.detail};
       if(last.code!=='busy'&&last.code!=='server') break;
     }
+    } finally { clearTimeout(slow); var tt=document.getElementById('toast'); if(tt&&/Wait patiently/.test(tt.textContent)) tt.classList.remove('on'); }
     throw last||{code:'network'};
   },
   refresh:async function(){
@@ -1996,7 +2002,7 @@ var LEDES={
 };
 var SUBS={lac:{sched:'LAC Schedule',slna:'LAC SLNA',plan:'LAC Annual Plan',slsm:'School LAC Session Matrix (SLSM)'},pd:{lac:'Suggested LAC Plan',fgd:'Suggested FGD Plan',fgdsaved:'Saved FGD Plans'},pmes:{begin:'IPCRF-Beginning',mid:'Mid-Year Review',final:'IPCRF-Final Rating'},sched:{all:'Supervisory Schedule',cot:'COT Schedule',walk:'Walk-through Schedule',dll:'DLL Checking Schedule',ots:'On-the-Spot Test Schedule'},srep:{saved:'Saved Supervisory Reports',add:'New Supervisory Report Entry'},plan:{form:'Monthly Supervisory Plan',create:'New Supervisory Plan',monthly:'Saved Monthly Supervisory Plans',annual:'Saved Annual Supervisory Plans'},obs:{notes:'New Classroom Observation Notes',cot:'New COT Rating',walk:'Walk-through Observation'},
   reports:{plans:'Supervisory Plans',notes:'Saved Classroom Observation Notes Forms',cot:'Saved COT Rating Sheets',walk:'Saved Walk-through Observations',lp:'Saved DLL Monitoring',ots:'Saved On-the-Spot Tests',pmcf:'Saved PMCFs',monthly:'Monthly Supervisory Report'}};
-var curSub={lac:['sched','slna','plan','slsm'].indexOf(ls('sub-lac'))>=0?ls('sub-lac'):'sched',pd:['fgd','fgdsaved'].indexOf(ls('sub-pd'))>=0?ls('sub-pd'):'lac',pmes:['begin','mid','final'].indexOf(ls('sub-pmes'))>=0?ls('sub-pmes'):'begin',srep:ls('sub-srep')==='add'?'add':'saved',sched:'all',plan:['form','create','monthly','annual'].indexOf(ls('sub-plan'))>=0?ls('sub-plan'):'create',obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
+var curSub={lac:['sched','slna','plan','slsm'].indexOf(ls('sub-lac'))>=0?ls('sub-lac'):'sched',pd:['fgd','fgdsaved'].indexOf(ls('sub-pd'))>=0?ls('sub-pd'):'lac',pmes:['begin','mid','final'].indexOf(ls('sub-pmes'))>=0?ls('sub-pmes'):'begin',srep:ls('sub-srep')==='add'?'add':'saved',sched:['cot','walk','dll','ots'].indexOf(ls('sub-sched'))>=0?ls('sub-sched'):'cot',plan:['form','create','monthly','annual'].indexOf(ls('sub-plan'))>=0?ls('sub-plan'):'create',obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
 /* the banner title shows the period of what is on the page: "Month Year" or "School Year …" */
 function bannerWhen(){
   var el=$('#secname'), base=el.dataset.base||el.textContent, on=$('.panel.on'), p=on?on.id.slice(2):'', v=function(id){ var e=$('#'+id); return e?e.value:''; };
@@ -2024,6 +2030,7 @@ function go(p,sub){
   if(String(p).indexOf(':')>0){ sub=p.split(':')[1]; p=p.split(':')[0]; }
   if(!LEDES[p]) p='home';
   if(p==='plan'&&(sub==='idp'||sub==='saved')) sub=sub==='idp'?'create':'monthly';
+  if(p==='sched'&&sub==='all'){ p='plan'; sub='monthly'; } // the combined Supervisory Schedule is no longer in the menu
   var prevSub=curSub[p];
   if(SUBS[p]){ if(sub&&SUBS[p][sub]) curSub[p]=sub; ls('sub-'+p,curSub[p]); }
   obsSub=curSub.obs;
@@ -4631,7 +4638,7 @@ function scInit(){
     try{ for(var i=0;i<todo.length;i++){ var st=todo[i], d=JSON.parse(JSON.stringify(st.rec));
         d.kind='sched'; d.month=mk; d.sy=syOfMonth(mk); d.dept=scDeptName(st.dp); d.savedAt=new Date().toISOString(); d.savedDay=TODAY; d.by=(S.myName||'');
         await Store.put('plans',scId(st.dp,mk),d); st.dirty=false; st.suggested=false; n++; }
-      toast(SC.all?(n?'Schedules saved for '+n+' department'+(n>1?'s':'')+', '+monthLabel(mk):'Nothing new to save.'):'Schedule saved for '+scDeptName(dp)+', '+monthLabel(mk)); }
+      toast(SC.all?(n?'All saved. Schedules saved for '+n+' department'+(n>1?'s':'')+', '+monthLabel(mk):'Nothing new to save.'):'Schedule saved for '+scDeptName(dp)+', '+monthLabel(mk)); }
     catch(e){ saveErr(e); }
     this.disabled=false; renderSched();
   });
@@ -6691,10 +6698,13 @@ function pmCore(rec,which){ // which: 'I' (e-IPCRF) or 'M' (MRF)
   var lay=pmL(which==='I'?'I:Part 2-A':'M:Part II-A',rec.stage), inst=pmWhole(lay,which+'2a',which==='I'?'Part 2-A':'Part II-A'), g=pmGrid(lay), pre=which==='I'?'ca':'cm', sum=[], ed=rec.phase!=='begin';
   var mt=rec.stage==='HP'||rec.stage==='D', H=pmHead(rec);
   for(var r=0;r<lay.rows.length;r++){ var f=String(g[r+',19']||''); if(f.indexOf('=IF(COUNTBLANK(S')===0){
-      var vals=[]; for(var q=0;q<5;q++){ var rr=inst.rmap[r+q]; if(rr==null) continue; var k=pre+'_'+(r+q), v=rec.v[k]||''; pmSet(inst,rr,18,v===''?'':+v); if(ed) pmInp(inst,rr,18,k,'sel',['','5','4','3','2','1']); vals.push(v); }
-      var full=vals.every(function(x){return x!==''}), av=full?pmAvg(vals):null; pmSet(inst,inst.rmap[r],19,av==null?'':av); pmSet(inst,inst.rmap[r],20,av==null?'':pmAdj(av)); sum.push(av); } }
+      var vals=[], rr0=null, rr1=null; for(var q=0;q<5;q++){ var rr=inst.rmap[r+q]; if(rr==null) continue; if(rr0==null) rr0=rr; rr1=rr; var k=pre+'_'+(r+q), v=rec.v[k]||''; pmSet(inst,rr,18,v===''?'':+v); if(ed) pmInp(inst,rr,18,k,'sel',['','5','4','3','2','1']);
+        pmCell(inst,rr,18).dvl=['1','2','3','4','5']; /* Excel: the rating can only be 1, 2, 3, 4 or 5 (drop-down list) */ vals.push(v); }
+      var full=vals.every(function(x){return x!==''}), av=full?pmRound(pmAvg(vals),3):null, RT=inst.rmap[r]; pmSet(inst,RT,19,av==null?'':av); pmSet(inst,RT,20,av==null?'':pmAdj(av));
+      /* Excel: the average (3 decimal places) and its description are formulas, so they update as the ratings are entered */
+      pmCell(inst,RT,19).fx={k:'cavg',col:18,a:rr0,b:rr1,n:vals.length}; pmCell(inst,RT,20).fx={k:'adj',col:19,t:RT}; (inst.avgCells=inst.avgCells||[]).push(RT); sum.push(av); } }
   var tot=sum.length&&sum.every(function(x){return x!=null})?pmRound(sum.reduce(function(a,b){return a+b},0)/sum.length,3):'';
-  for(var r2=0;r2<lay.rows.length;r2++){ var a=String(g[r2+',2']||''); if(/^PART II - A/.test(a)){ var R=inst.rmap[r2]; pmSet(inst,R,13,tot); pmSet(inst,R,17,tot===''?'':pmAdj(tot)); } }
+  for(var r2=0;r2<lay.rows.length;r2++){ var a=String(g[r2+',2']||''); if(/^PART II - A/.test(a)){ var R=inst.rmap[r2]; pmSet(inst,R,13,tot); pmSet(inst,R,17,tot===''?'':pmAdj(tot)); pmCell(inst,R,13).fx={k:'ctot',col:19}; pmCell(inst,R,17).fx={k:'adj',col:13,t:R}; inst.totRC=[R,13]; } }
   // titles and signatures
   if(which==='I'){ pmSet(inst,inst.rmap[0],0,'OFFICIAL ELECTRONIC IPCRF TOOL\n SY '+rec.sy); pmSet(inst,inst.rmap[1],0,PM_STAGE[rec.stage]+' Teacher'); pmSet(inst,inst.rmap[3],9,mt?'(2.5%)':'(5%)');
     var sr=null; for(var r3=0;r3<lay.rows.length;r3++) if(String(g[r3+',1']||'').indexOf("Encoding Part 1'!C7")>=0) sr=inst.rmap[r3];
@@ -6705,10 +6715,14 @@ function pmCore(rec,which){ // which: 'I' (e-IPCRF) or 'M' (MRF)
 function pmLead(rec,which){
   var lay=pmL(which==='I'?'I:Part 2-B':'M:Part II-B',rec.stage), inst=pmWhole(lay,which+'2b',which==='I'?'Part 2-B':'Part II-B'), g=pmGrid(lay), pre=which==='I'?'la':'lm', ed=rec.phase!=='begin', H=pmHead(rec);
   var cR=which==='I'?4:3, sum=[];
-  [7,12,17].forEach(function(r){ var vals=[]; for(var q=0;q<5;q++){ var rr=inst.rmap[r+q], k=pre+'_'+(r+q), v=rec.v[k]||''; pmSet(inst,rr,cR,v===''?'':+v); if(ed) pmInp(inst,rr,cR,k,'sel',['','5','4','3','2','1']); vals.push(v); }
-    var full=vals.every(function(x){return x!==''}), av=full?pmRound(pmAvg(vals),3):null; pmSet(inst,inst.rmap[r],cR+1,av==null?'':av); pmSet(inst,inst.rmap[r],cR+2,av==null?'':pmAdj(av)); sum.push(av); });
+  [7,12,17].forEach(function(r){ var vals=[]; for(var q=0;q<5;q++){ var rr=inst.rmap[r+q], k=pre+'_'+(r+q), v=rec.v[k]||''; pmSet(inst,rr,cR,v===''?'':+v); if(ed) pmInp(inst,rr,cR,k,'sel',['','5','4','3','2','1']);
+      pmCell(inst,rr,cR).dvl=['1','2','3','4','5']; /* Excel: the rating can only be 1, 2, 3, 4 or 5 (drop-down list) */ vals.push(v); }
+    var full=vals.every(function(x){return x!==''}), av=full?pmRound(pmAvg(vals),3):null, RT=inst.rmap[r]; pmSet(inst,RT,cR+1,av==null?'':av); pmSet(inst,RT,cR+2,av==null?'':pmAdj(av));
+    /* Excel: the average (3 decimal places) and its description are formulas */
+    pmCell(inst,RT,cR+1).fx={k:'cavg',col:cR,a:inst.rmap[r],b:inst.rmap[r+4],n:5}; pmCell(inst,RT,cR+2).fx={k:'adj',col:cR+1,t:RT}; (inst.avgCells=inst.avgCells||[]).push(RT); sum.push(av); });
   var tot=sum.every(function(x){return x!=null})?pmRound(sum.reduce(function(a,b){return a+b},0)/3,3):'';
-  pmSet(inst,inst.rmap[24],cR,tot); pmSet(inst,inst.rmap[24],cR+1,tot===''?'':pmAdj(tot));
+  var RL=inst.rmap[24]; pmSet(inst,RL,cR,tot); pmSet(inst,RL,cR+1,tot===''?'':pmAdj(tot));
+  pmCell(inst,RL,cR).fx={k:'ctot',col:cR+1}; pmCell(inst,RL,cR+1).fx={k:'adj',col:cR,t:RL}; inst.totRC=[RL,cR];
   pmSet(inst,inst.rmap[0],1,which==='I'?'OFFICIAL ELECTRONIC IPCRF TOOL\n SY '+rec.sy:'MID-YEAR REVIEW FORM (MRF)\nSY '+rec.sy); pmSet(inst,inst.rmap[1],1,PM_STAGE[rec.stage]+(which==='I'?' Teacher':' Teachers'));
   if(which==='I'&&inst.rmap[27]!=null){ pmSet(inst,inst.rmap[27],1,H.ratee); pmSet(inst,inst.rmap[27],3,H.rater); pmSet(inst,inst.rmap[27],4,H.appr); }
   if(which==='M'){
@@ -6730,29 +6744,57 @@ function pmSummary(rec,which,p1,core,lead){
   inst.merges=inst.merges.filter(function(m){ return !(m[1]===1&&m[0]>=R(13)&&m[2]<=R(26)); });
   var kst=(inst.cells[R(13)+',1']||{}).s, kbot=(inst.cells[R(26)+',1']||{}).s;
   var i=0; while(i<C.length){ var j=i; while(j+1<C.length&&C[j+1].dom===C[i].dom) j++; for(var q0=i;q0<=j;q0++){ var kc=pmCell(inst,R(13+q0),1); kc.s=Object.assign({},kst||{}, q0===13&&kbot&&kbot.bd?{bd:Object.assign({},(kst||{}).bd||{},{b:kbot.bd.b})}:{}); } pmSet(inst,R(13+i),1,'KRA '+C[i].dom); for(var q=i+1;q<=j;q++) pmSet(inst,R(13+q),1,''); if(j>i) inst.merges.push([R(13+i),1,R(13+j),1]); i=j+1; }
-  var tot=0, any=false, aves=[];
+  var tot=0, any=false, aves=[], scRows=[], LK={};
   C.forEach(function(o,k){ var r=R(13+k), rt=which==='I'?pmRatings(rec,o,'p'):pmMidR(rec,o);
     pmSet(inst,r,2,'Indicator '+(k+1)+' - '+o.code); pmSet(inst,r,3,PM_W);
-    var cols=which==='I'?(mt?[4,5,6,7,8,9,10]:[4,5,6,7,8,9]):(mt?[4,5,6,7,8,9,10]:[4,5,6,7,8,9]);
+    var has=function(re){ return o.rows.some(function(x){ return re.test(x.lab)&&x.r.some(function(t){return String(t).trim()}); }); };
+    if(which==='M'){
+      /* the MRF summary has three rating columns (Q, E, T) as in the form; a Master Teacher's two Quality ratings are averaged into Q */
+      var dual=mt&&o.k==='D', qv=dual?(rt.q!==''&&rt.q2!==''?pmRound(pmAvg([rt.q,rt.q2]),4):''):rt.q;
+      var apM=[true,has(/^Efficiency/),has(/^Timeliness/)], vM=[qv,apM[1]?rt.e:'',apM[2]?rt.t:''];
+      vM.forEach(function(x,q){ var cell=pmCell(inst,r,4+q), s2=Object.assign({},cell.s); if(apM[q]) delete s2.bg; else s2.bg='000000'; cell.s=s2; pmSet(inst,r,4+q,x===''?'':+x); });
+      var avM=pmAvg(vM); avM=avM==null?'':pmFloor(avM,3); var scM=avM===''?'':pmRound(avM*PM_W,4);
+      pmSet(inst,r,7,avM); pmSet(inst,r,8,scM); pmSet(inst,r,9,avM===''?'':pmAdj(avM)); pmSet(inst,r,10,'');
+      /* Excel: linked to the ratings on the MRF sheet, so Part III updates when they change */
+      var mr=(p1&&p1.objRows||{})[o.n]||{}, ref=function(row){ return function(X){ var a=row==null?null:X.ext(p1,row,8); return a?'IF('+a+'="","",'+a+')':''; }; };
+      if(dual) pmCell(inst,r,4).fx={k:'fn',f:function(X){ var a=mr.q==null?null:X.ext(p1,mr.q,8), b=mr.q2==null?null:X.ext(p1,mr.q2,8); return a&&b?'IF(COUNT('+a+','+b+')<2,"",ROUND(AVERAGE('+a+','+b+'),4))':''; }};
+      else pmCell(inst,r,4).fx={k:'fn',f:ref(mr.q)};
+      if(apM[1]) pmCell(inst,r,5).fx={k:'fn',f:ref(mr.e)}; if(apM[2]) pmCell(inst,r,6).fx={k:'fn',f:ref(mr.t)};
+      pmCell(inst,r,7).fx={k:'fn',f:function(X){ var a=X.a(r,4), b=X.a(r,6); return a&&b?'IF(COUNT('+a+':'+b+')=0,"",ROUNDDOWN(AVERAGE('+a+':'+b+'),3))':''; }};
+      pmCell(inst,r,8).fx={k:'fn',f:function(X){ var h=X.a(r,7), d=X.a(r,3); return h&&d?'IF('+h+'="","",ROUND('+h+'*'+d+',4))':''; }};
+      pmCell(inst,r,9).fx={k:'adj',col:7,t:r}; scRows.push(r);
+      if(scM!==''){ tot+=scM; any=true; aves.push(avM); } return; }
+    var cols=mt?[4,5,6,7,8,9,10]:[4,5,6,7,8,9];
     var vals=mt?[rt.q,rt.q2,rt.e,rt.t]:[rt.q,rt.e,rt.t]; vals.forEach(function(x,q){ pmSet(inst,r,cols[q],x===''?'':+x); });
     // black out the measures that do not apply to this indicator
-    var has=function(re){ return o.rows.some(function(x){ return re.test(x.lab)&&x.r.some(function(t){return String(t).trim()}); }); };
     var ap=mt?[true,o.k==='D',has(/^Efficiency/),has(/^Timeliness/)]:[true,has(/^Efficiency/),has(/^Timeliness/)];
     ap.forEach(function(ok,q){ var cell=pmCell(inst,r,cols[q]), s2=Object.assign({},cell.s); if(ok) delete s2.bg; else s2.bg='000000'; cell.s=s2; });
     var av=pmObjAve(rt), sc=av===''?'':(which==='I'?pmFloor(av*PM_W,3):pmRound(av*PM_W,4)); pmSet(inst,r,cols[vals.length],av); pmSet(inst,r,cols[vals.length]+1,sc); pmSet(inst,r,cols[vals.length]+2,av===''?'':pmAdj(av));
     if(sc!==''){ tot+=sc; any=true; aves.push(av); } });
   var g=pmGrid(lay);
   for(var r=27;r<lay.rows.length;r++){ var b=String(g[r+',1']||''), RR=R(r); if(RR==null) continue;
-    if(/^PART I\. PROF/.test(b)){ for(var c=4;c<inst.cols.length;c++){ var f=String(g[r+','+c]||''); if(/AVERAGE/.test(f)) pmSet(inst,RR,c,aves.length?pmRound(pmAvg(aves),3):''); if(/SUM|ROUNDDOWN\(SUM/.test(f)) pmSet(inst,RR,c,any?(which==='I'?pmRound(tot,4):pmFloor(tot,3)):''); } }
-    if(/^PART II - A/.test(b)){ for(var c2=4;c2<inst.cols.length;c2++){ var f2=String(g[r+','+c2]||''); if(/Part 2-A|Part II-A/.test(f2)) pmSet(inst,RR,c2,core.total); if(/^=G29\*|^=H29\*/.test(f2)) pmSet(inst,RR,c2,core.total===''?'':pmRound(core.total*(mt?0.025:0.05),4)); if(/^='Part II-A'!N/.test(f2)) pmSet(inst,RR,c2,core.total); } }
-    if(/^PART II - B/.test(b)&&lead){ for(var c3=4;c3<inst.cols.length;c3++){ var f3=String(g[r+','+c3]||''); if(/Part 2-B|Part II-B/.test(f3)) pmSet(inst,RR,c3,lead.total); if(/^=H30\*/.test(f3)) pmSet(inst,RR,c3,lead.total===''?'':pmRound(lead.total*0.025,4)); } }
+    if(/^PART I\. PROF/.test(b)){ for(var c=4;c<inst.cols.length;c++){ var f=String(g[r+','+c]||''); if(/AVERAGE/.test(f)) pmSet(inst,RR,c,aves.length?pmRound(pmAvg(aves),3):''); if(/SUM|ROUNDDOWN\(SUM/.test(f)){ pmSet(inst,RR,c,any?(which==='I'?pmRound(tot,4):pmFloor(tot,3)):''); LK.p1=[RR,c]; } } }
+    if(/^PART II - A/.test(b)){ for(var c2=4;c2<inst.cols.length;c2++){ var f2=String(g[r+','+c2]||''); if(/Part 2-A|Part II-A/.test(f2)) pmSet(inst,RR,c2,core.total); if(/^=G29\*|^=H29\*/.test(f2)) pmSet(inst,RR,c2,core.total===''?'':pmRound(core.total*(mt?0.025:0.05),4)); if(/^='Part II-A'!N/.test(f2)){ pmSet(inst,RR,c2,core.total); LK.ca=[RR,c2]; LK.caW=+g[r+',4']||0; } } }
+    if(/^PART II - B/.test(b)&&lead){ for(var c3=4;c3<inst.cols.length;c3++){ var f3=String(g[r+','+c3]||''); if(/Part 2-B|Part II-B/.test(f3)) pmSet(inst,RR,c3,lead.total); if(/^=H30\*/.test(f3)) pmSet(inst,RR,c3,lead.total===''?'':pmRound(lead.total*0.025,4)); if(/^='Part II-B'!/.test(f3)){ pmSet(inst,RR,c3,lead.total); LK.lb=[RR,c3]; LK.lbW=+g[r+',4']||0; } } }
   }
   // final rating
   var part1=any?(which==='I'?pmRound(tot,4):pmFloor(tot,3)):'', fin='';
-  if(part1!==''&&core.total!==''){ fin=which==='I'?pmRound(part1+core.total*(mt?0.025:0.05)+(mt&&lead&&lead.total!==''?lead.total*0.025:0),4):pmRound(part1+core.total*0.05,4); }
+  if(part1!==''&&core.total!==''){ fin=which==='I'?pmRound(part1+core.total*(mt?0.025:0.05)+(mt&&lead&&lead.total!==''?lead.total*0.025:0),4)
+    /* MRF: Part I + Part II-A x its weight (+ Part II-B x its weight for Master Teachers), the weights as printed on Part III */
+    :(LK.lb&&lead?(lead.total===''?'':pmRound(part1+core.total*LK.caW+lead.total*LK.lbW,4)):pmRound(part1+core.total*(LK.caW||0.05),4)); }
   for(var r4=27;r4<lay.rows.length;r4++){ var RR4=R(r4); if(RR4==null) continue; for(var c4=0;c4<inst.cols.length;c4++){ var t=String(g[r4+','+c4]||'');
-      if(/^(Final Rating|Mid-Year Rating)$/.test(t)) pmSet(inst,RR4,c4+(which==='I'?(mt?3:3):2),fin);
-      if(/Adjectival Rating$/.test(t)&&r4>28) pmSet(inst,RR4,c4+(which==='I'?3:2),fin===''?'':pmAdj(fin)); } }
+      if(/^(Final Rating|Mid-Year Rating)$/.test(t)){ pmSet(inst,RR4,c4+(which==='I'?(mt?3:3):2),fin); if(which==='M') LK.fin=[RR4,c4+2]; }
+      if(/Adjectival Rating$/.test(t)&&r4>28){ pmSet(inst,RR4,c4+(which==='I'?3:2),fin===''?'':pmAdj(fin)); if(which==='M') LK.adj=[RR4,c4+2]; } } }
+  if(which==='M'){
+    /* Excel: Part I = sum of the scores; Part II-A / II-B linked to their sheets; the Mid-Year Rating and its description follow */
+    var A=function(X,rc){ return rc?X.a(rc[0],rc[1]):null; }, lnk=function(src){ return function(X){ var a=src&&src.totRC?X.ext(src,src.totRC[0],src.totRC[1]):null; return a?'IF('+a+'="","",'+a+')':''; }; };
+    if(LK.p1) pmCell(inst,LK.p1[0],LK.p1[1]).fx={k:'fn',f:function(X){ var l=scRows.map(function(r){return X.a(r,8);}).filter(Boolean).join(','); return l?'IF(COUNT('+l+')=0,"",ROUNDDOWN(SUM('+l+'),3))':''; }};
+    if(LK.ca) pmCell(inst,LK.ca[0],LK.ca[1]).fx={k:'fn',f:lnk(core)};
+    if(LK.lb&&lead) pmCell(inst,LK.lb[0],LK.lb[1]).fx={k:'fn',f:lnk(lead)};
+    if(LK.fin) pmCell(inst,LK.fin[0],LK.fin[1]).fx={k:'fn',f:function(X){ var p=A(X,LK.p1), c=A(X,LK.ca), cw=LK.ca?X.a(LK.ca[0],4):null, b=LK.lb&&lead?A(X,LK.lb):null, bw=LK.lb&&lead?X.a(LK.lb[0],4):null; if(!p||!c||!cw) return '';
+      var parts=[p,c].concat(b?[b]:[]); return 'IF(OR('+parts.map(function(x){return x+'=""';}).join(',')+'),"",ROUND('+p+'+'+c+'*'+cw+(b?'+'+b+'*'+bw:'')+',4))'; }};
+    if(LK.adj&&LK.fin) pmCell(inst,LK.adj[0],LK.adj[1]).fx={k:'adj',col:LK.fin[1],t:LK.fin[0]};
+  }
   // header and signatures
   var h={C4:H.ratee,C5:H.pos,C6:H.div,C7:'SY '+rec.sy,H4:H.rater,H5:H.rpos,H6:H.date};
   Object.keys(h).forEach(function(a){ var r=+a.slice(1)-1, c=a.charCodeAt(0)-65; if(R(r)!=null) pmSet(inst,R(r),c,h[a]); });
@@ -6813,14 +6855,18 @@ function pmMRF(rec){
       if(o.gen&&o.k==='N'){ pmUnblack(inst,r+j,8); pmUnblack(inst,r+j,9); pmUnblack(inst,r+j,6); pmUnblack(inst,r+j,7); }
       var k='r'+o.n+'_'+j, v=rec.v[k]||''; pmSet(inst,r+j,8,v===''?'':+v); pmInp(inst,r+j,8,k,'sel',['','5','4','3','2','1']);
       pmSet(inst,r+j,9,rec.v[k+'m']||''); pmInp(inst,r+j,9,k+'m','text');
-      pmSet(inst,r+j,6,rec.v[k+'t']||''); pmSet(inst,r+j,7,''); });
+      pmSet(inst,r+j,6,rec.v[k+'t']||''); pmSet(inst,r+j,7,'');
+      var om=(inst.objRows=inst.objRows||{})[o.n]||(inst.objRows[o.n]={}); om[/Non-Classroom/.test(x.lab)?'q2':/^Quality/.test(x.lab)?'q':/^Efficiency/.test(x.lab)?'e':'t']=r+j; });
     if(o.gen) o.rows.forEach(function(x,j){ inst.rows[r+j].h=Math.max(18,j===0?pmEstH([o.text,o.mov[0]],[220,340],10)/Math.max(1,o.rows.length-(o.mov.length>1?2:0)):18); });
     var vals=o.rows.map(function(x,j){ return rec.v['r'+o.n+'_'+j]||''; }), av=pmAvg(vals);
-    if(av!=null){ var sc=pmRound(av*PM_W,4); pmSet(inst,r,10,sc); tot+=sc; any=true; } });
+    /* Mid-year Review Result = Rating x Weight, to 3 decimal places (a formula in the Excel file) */
+    pmCell(inst,r,10).fx={k:'res',a:r,b:r+o.rows.length-1,w:r}; (inst.resCells=inst.resCells||[]).push(r);
+    if(av!=null){ var sc=pmRound(av*PM_W,3); pmSet(inst,r,10,sc); tot+=sc; any=true; } });
   var fo=B.end-foot;
   for(var r2=foot;r2<lay.rows.length;r2++) pmCopyRows(inst,lay,r2,r2+1,r2+fo,{skipMerge:function(){return true}});
   lay.merges.forEach(function(m){ if(m[0]>=foot) inst.merges.push([m[0]+fo,m[1],m[2]+fo,m[3]]); });
   var T=any?pmFloor(tot,3):''; pmSet(inst,foot+fo,10,T); pmSet(inst,foot+fo,9,T===''?'':pmAdj(T));
+  pmCell(inst,foot+fo,10).fx={k:'tot'}; pmCell(inst,foot+fo,9).fx={k:'adj',t:foot+fo};
   // signatures: names above "(Signature Over Printed Name ...)"
   for(var r3=foot;r3<lay.rows.length;r3++){ var a=String(g[r3+',0']||''); if(/^\(Signature/.test(a)){ var R=r3-1+fo; pmSet(inst,R,0,H.ratee); pmSet(inst,R,4,H.rater); pmSet(inst,R,7,H.appr);
       pmSet(inst,r3+1+fo,0,'Position: '+H.pos); pmSet(inst,r3+1+fo,4,'Position: '+H.rpos); pmSet(inst,r3+1+fo,7,'Position: '+H.apos);
@@ -6929,18 +6975,63 @@ async function pmXlsx(insts,name,foot,asBlob){
     k=[f,fl,b,n,al].join('|'); if(xmap[k]==null){ xmap[k]=xfs.length; xfs.push('<xf numFmtId="'+n+'" fontId="'+f+'" fillId="'+fl+'" borderId="'+b+'" xfId="0"'+(n?' applyNumberFormat="1"':'')+' applyFont="1"'+(fl?' applyFill="1"':'')+(b?' applyBorder="1"':'')+(al?' applyAlignment="1">'+al+'</xf>':'/>')); } return xmap[k]; };
   xf({fn:'Calibri',sz:11});
   var zip=new JSZip(), sheets=[], names={}, defNames=[];
+  var META=insts.map(function(inst){ var rs0=pmRowsVisible(inst), nr={}; rs0.forEach(function(r,i){ nr[r]=i; });
+    var nm0=String(inst.title).replace(/[\\\/\?\*\[\]:]/g,'-').slice(0,31), base0=nm0, q0=2; while(names[nm0]) nm0=base0.slice(0,28)+' '+(q0++); names[nm0]=1; return {rs:rs0,newRow:nr,nm:nm0}; });
+  var X0={ext:function(src,r,c){ var k=insts.indexOf(src); if(k<0) return null; var M=META[k], n=M.newRow[r]; if(n==null||(src.hc&&src.hc[c])) return null; return "'"+M.nm.replace(/'/g,"''")+"'!"+pmColL(c)+(n+1); }};
   insts.forEach(function(inst,si){
-    var rs=pmRowsVisible(inst), rowXml=[];
-    var nm=String(inst.title).replace(/[\\\/\?\*\[\]:]/g,'-').slice(0,31), base=nm, q=2; while(names[nm]) nm=base.slice(0,28)+' '+(q++); names[nm]=1;
-    var newRow={}; rs.forEach(function(r,i){ newRow[r]=i; });
+    var rs=META[si].rs, rowXml=[];
+    var nm=META[si].nm;
+    var newRow=META[si].newRow;
+    var xr=function(r){ return newRow[r]!=null?newRow[r]+1:null; };
+    var X={ext:X0.ext, a:function(r,c){ var n=xr(r); return n==null?null:pmColL(c)+n; }};
+    var fxOf=function(fx){
+      if(fx.k==='fn') return fx.f(X)||'';
+      if(fx.k==='res'){ var a=null,b=null; for(var q=fx.a;q<=fx.b;q++){ var n=xr(q); if(n!=null){ if(a==null) a=n; b=n; } } if(a==null||xr(fx.w)==null) return '';
+        var rg='I'+a+':I'+b; return 'IF(COUNT('+rg+')=0,"",ROUND(AVERAGE('+rg+')*D'+xr(fx.w)+',3))'; }
+      if(fx.k==='tot'){ var ks=(inst.resCells||[]).map(xr).filter(function(n){return n!=null;}).map(function(n){return 'K'+n;}); if(!ks.length) return ''; var l=ks.join(','); return 'IF(COUNT('+l+')=0,"",ROUNDDOWN(SUM('+l+'),3))'; }
+      if(fx.k==='cavg'){ var a2=null,b2=null; for(var q2=fx.a;q2<=fx.b;q2++){ var n2=xr(q2); if(n2!=null){ if(a2==null) a2=n2; b2=n2; } } if(a2==null) return ''; var L2=pmColL(fx.col), rg2=L2+a2+':'+L2+b2;
+        return 'IF(COUNT('+rg2+')<'+fx.n+',"",ROUND(AVERAGE('+rg2+'),3))'; }
+      if(fx.k==='ctot'){ var ts=(inst.avgCells||[]).map(xr).filter(function(n){return n!=null;}).map(function(n){return pmColL(fx.col)+n;}); if(!ts.length) return ''; var l2=ts.join(',');
+        return 'IF(COUNT('+l2+')<'+ts.length+',"",ROUND(AVERAGE('+l2+'),3))'; }
+      if(fx.k==='adj'){ var t=(fx.col!=null?pmColL(fx.col):'K')+xr(fx.t); return 'IF('+t+'="","",IF('+t+'>=4.5,"Outstanding",IF('+t+'>=3.5,"Very Satisfactory",IF('+t+'>=2.5,"Satisfactory",IF('+t+'>=1.5,"Unsatisfactory","Poor")))))'; }
+      return ''; };
+    /* drop-down lists in the Excel file: a rating can only be one of the listed values */
+    var dv=[]; rs.forEach(function(r,i){ for(var c=0;c<inst.cols.length;c++){ var cell=inst.cells[r+','+c];
+      if(cell&&cell.dvl){ dv.push('<dataValidation type="list" allowBlank="1" showDropDown="0" showErrorMessage="1" errorTitle="Rating" error="Choose a rating from the list: '+cell.dvl.join(', ')+'." sqref="'+pmColL(c)+(i+1)+'"><formula1>"'+cell.dvl.join(',')+'"</formula1></dataValidation>'); continue; }
+      if(!cell||!cell.inp||cell.inp.t!=='sel'||!cell.inp.o) continue; var o=cell.inp.o.filter(function(x){return x!=='';});
+      if(o.length&&o.every(function(x){ return /^\d+$/.test(x); })) dv.push('<dataValidation type="whole" allowBlank="1" showErrorMessage="1" errorTitle="Rating" error="Enter a whole number from '+Math.min.apply(null,o.map(Number))+' to '+Math.max.apply(null,o.map(Number))+'." sqref="'+pmColL(c)+(i+1)+'"><formula1>'+Math.min.apply(null,o.map(Number))+'</formula1><formula2>'+Math.max.apply(null,o.map(Number))+'</formula2></dataValidation>'); } });
     var spanW={}, vMerged={};
     inst.merges.forEach(function(m){ var w=0; for(var c=m[1];c<=m[3];c++) w+=inst.hc[c]?0:pmPx(inst.cols[c]); spanW[m[0]+','+m[1]]=w; if(m[2]>m[0]) for(var c2=m[1];c2<=m[3];c2++) vMerged[m[0]+','+c2]=1; });
     var need=function(r){ var h=0; for(var c=0;c<inst.cols.length;c++){ var cell=inst.cells[r+','+c]; if(!cell||cell.v===''||cell.v==null||typeof cell.v==='number'||vMerged[r+','+c]) continue; var st=cell.s||{}; if(!st.w&&String(cell.v).indexOf('\n')<0) continue;
         var w=spanW[r+','+c]||(inst.hc[c]?0:pmPx(inst.cols[c])); if(!w) continue; var sz=st.sz||11, cw=sz*0.5*4/3, lines=String(cell.v).split('\n').reduce(function(n,line){ return n+Math.max(1,Math.ceil(line.length*cw/Math.max(10,w-6))); },0);
         h=Math.max(h,Math.min(409,lines*sz*1.22+4)); } return h; };
-    rs.forEach(function(r,i){ var R=inst.rows[r], cells=''; R={h:Math.max(R.h||15,need(r)),hid:R.hid};
-      for(var c=0;c<inst.cols.length;c++){ var cell=inst.cells[r+','+c]; if(!cell) continue; var s=cell.s||{}, id=xf(s), v=cell.v, ref=pmColL(c)+(i+1);
-        if(v===''||v==null) cells+='<c r="'+ref+'" s="'+id+'"/>';
+    /* row heights; a merged block (e.g. an objective over its Quality/Efficiency/Timeliness rows) is made tall enough for its text */
+    var RH={}; rs.forEach(function(r){ RH[r]=Math.max(inst.rows[r].h||15,need(r)); });
+    inst.merges.forEach(function(m){ if(m[2]<=m[0]) return; var rr=rs.filter(function(r){return r>=m[0]&&r<=m[2];}); if(rr.length<2) return;
+      var cell=inst.cells[m[0]+','+m[1]]; if(!cell||cell.v===''||cell.v==null||typeof cell.v==='number') return; var st=cell.s||{}, w=spanW[m[0]+','+m[1]]; if(!w) return;
+      var sz=st.sz||11, cw=sz*(st.b?0.58:0.54)*4/3, lines=String(cell.v).split('\n').reduce(function(n,line){ return n+Math.max(1,Math.ceil(line.length*cw/Math.max(10,w-8))); },0);
+      var needH=lines*sz*1.25+8, have=rr.reduce(function(a,r){return a+RH[r];},0); if(have<needH){ var add=(needH-have)/rr.length; rr.forEach(function(r){ RH[r]=Math.min(409,Math.round((RH[r]+add)*10)/10); }); } });
+    /* borders: a merged block gets one clean outline (no stray lines inside it), and an edge shared by two cells is set on both,
+       so every line prints the same in Excel whatever the zoom or print scale */
+    var BD={}, getBd=function(r,c){ var k=r+','+c; if(BD[k]) return BD[k]; var cl=inst.cells[k]; return BD[k]=Object.assign({},(cl&&cl.s&&cl.s.bd)||{}); };
+    var mIn={};
+    inst.merges.forEach(function(m){ if(m[2]===m[0]&&m[3]===m[1]) return; var rr=rs.filter(function(r){return r>=m[0]&&r<=m[2];}); if(!rr.length) return; var top=rr[0], bot=rr[rr.length-1];
+      var cs=[]; for(var c=m[1];c<=m[3];c++) if(!inst.hc[c]) cs.push(c); if(!cs.length) return; var lc=cs[0], rc=cs[cs.length-1], tl=getBd(m[0],m[1]);
+      var pick=function(list,side,fb){ for(var q=0;q<list.length;q++){ var b=getBd(list[q][0],list[q][1])[side]; if(b) return b; } return fb||null; };
+      var T=tl.t||pick(cs.map(function(c){return [top,c];}),'t'), B=pick([[bot,lc]].concat(cs.map(function(c){return [bot,c];})),'b',tl.b),
+          L=tl.l||pick(rr.map(function(r){return [r,lc];}),'l'), Rt=pick(rr.map(function(r){return [r,rc];}).filter(function(x){return !(x[0]===m[0]&&rc===m[1]&&cs.length>1);}),'r',cs.length===1?tl.r:null);
+      var tcell=inst.cells[m[0]+','+m[1]], ts=(tcell&&tcell.s)||{};
+      rr.forEach(function(r){ cs.forEach(function(c){ var k=r+','+c, b={}; if(r===top&&T) b.t=T; if(r===bot&&B) b.b=B; if(c===lc&&L) b.l=L; if(c===rc&&Rt) b.r=Rt; BD[k]=b; mIn[k]=1;
+        if(!inst.cells[k]) inst.cells[k]={s:Object.assign({},ts),v:''}; }); }); });
+    var visC=[]; for(var vc=0;vc<inst.cols.length;vc++) if(!inst.hc[vc]) visC.push(vc);
+    rs.forEach(function(r,i){ var rn=rs[i+1]; visC.forEach(function(c,j){ var cn=visC[j+1], a=getBd(r,c);
+      if(rn!=null){ var below=getBd(rn,c); if(a.b&&!below.t&&inst.cells[rn+','+c]) below.t=a.b; if(below.t&&!a.b&&inst.cells[r+','+c]) a.b=below.t; }
+      if(cn!=null){ var right=getBd(r,cn); if(a.r&&!right.l&&inst.cells[r+','+cn]) right.l=a.r; if(right.l&&!a.r&&inst.cells[r+','+c]) a.r=right.l; } }); });
+    rs.forEach(function(r,i){ var R=inst.rows[r], cells=''; R={h:RH[r],hid:R.hid};
+      for(var c=0;c<inst.cols.length;c++){ var cell=inst.cells[r+','+c]; if(!cell) continue; var s=cell.s||{}; if(BD[r+','+c]) s=Object.assign({},s,{bd:BD[r+','+c]}); var id=xf(s), v=cell.v, ref=pmColL(c)+(i+1);
+        var F=cell.fx?fxOf(cell.fx):'';
+        if(F) cells+='<c r="'+ref+'" s="'+id+'"'+(typeof v==='number'||v===''||v==null?'':' t="str"')+'><f>'+pmXmlEsc(F)+'</f>'+(v===''||v==null?'':'<v>'+pmXmlEsc(String(v))+'</v>')+'</c>';
+        else if(v===''||v==null) cells+='<c r="'+ref+'" s="'+id+'"/>';
         else if(typeof v==='number') cells+='<c r="'+ref+'" s="'+id+'"><v>'+v+'</v></c>';
         else cells+='<c r="'+ref+'" s="'+id+'" t="inlineStr"><is><t xml:space="preserve">'+pmXmlEsc(v)+'</t></is></c>'; }
       rowXml.push('<row r="'+(i+1)+'" ht="'+(R.h||15)+'" customHeight="1">'+cells+'</row>'); });
@@ -6960,11 +7051,11 @@ async function pmXlsx(insts,name,foot,asBlob){
       inst.imgs.forEach(function(im){ zip.file('xl/media/'+im.src+'.png',PM.img[im.src].split(',')[1],{base64:true}); });
     }
     var lay=inst.lay||{}, mg=lay.mg||[0.25,0.25,0.75,0.75];
-    zip.file('xl/worksheets/sheet'+(si+1)+'.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>'+colsX+'<sheetData>'+rowXml.join('')+'</sheetData>'+(merges.length?'<mergeCells count="'+merges.length+'">'+merges.join('')+'</mergeCells>':'')+'<pageMargins left="'+mg[0]+'" right="'+mg[1]+'" top="'+mg[2]+'" bottom="'+mg[3]+'" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="'+(inst.land?'landscape':'portrait')+'" fitToWidth="1" fitToHeight="0"/>'+(foot?'<headerFooter><oddFooter>&amp;R&amp;"Arial,Regular"&amp;9'+pmXmlEsc(foot)+' - Page &amp;P of &amp;N</oddFooter></headerFooter>':'')+drawing+'</worksheet>');
+    zip.file('xl/worksheets/sheet'+(si+1)+'.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>'+colsX+'<sheetData>'+rowXml.join('')+'</sheetData>'+(merges.length?'<mergeCells count="'+merges.length+'">'+merges.join('')+'</mergeCells>':'')+(dv.length?'<dataValidations count="'+dv.length+'">'+dv.join('')+'</dataValidations>':'')+'<pageMargins left="'+mg[0]+'" right="'+mg[1]+'" top="'+mg[2]+'" bottom="'+mg[3]+'" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="'+(inst.land?'landscape':'portrait')+'" fitToWidth="1" fitToHeight="0"/>'+(foot?'<headerFooter><oddFooter>&amp;R&amp;"Arial,Regular"&amp;9'+pmXmlEsc(foot)+' - Page &amp;P of &amp;N</oddFooter></headerFooter>':'')+drawing+'</worksheet>');
     if(inst.titleRows){ var a=newRow[inst.titleRows[0]], b=newRow[inst.titleRows[1]]; if(a!=null&&b!=null) defNames.push('<definedName name="_xlnm.Print_Titles" localSheetId="'+si+'">\''+nm.replace(/'/g,"''")+'\'!$'+(a+1)+':$'+(b+1)+'</definedName>'); }
     sheets.push(nm); });
   zip.file('xl/styles.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+(numFmts.length?'<numFmts count="'+numFmts.length+'">'+numFmts.join('')+'</numFmts>':'')+'<fonts count="'+fonts.length+'">'+fonts.join('')+'</fonts><fills count="'+fills.length+'">'+fills.join('')+'</fills><borders count="'+borders.length+'">'+borders.join('')+'</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="'+xfs.length+'">'+xfs.join('')+'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>');
-  zip.file('xl/workbook.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map(function(n,i){ return '<sheet name="'+pmXmlEsc(n)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>'; }).join('')+'</sheets>'+(defNames.length?'<definedNames>'+defNames.join('')+'</definedNames>':'')+'</workbook>');
+  zip.file('xl/workbook.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map(function(n,i){ return '<sheet name="'+pmXmlEsc(n)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>'; }).join('')+'</sheets>'+(defNames.length?'<definedNames>'+defNames.join('')+'</definedNames>':'')+'<calcPr fullCalcOnLoad="1"/></workbook>');
   zip.file('xl/_rels/workbook.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map(function(n,i){ return '<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>'; }).join('')+'<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>');
   zip.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');
   var hasImg=insts.some(function(i){return i.imgs&&i.imgs.length});
