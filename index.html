@@ -382,6 +382,9 @@ table.plan textarea{min-height:70px;border-color:var(--rule)}
 .leaf table.pmcftbl{table-layout:fixed;width:770pt}
 .leaf table.pmcftbl th,.leaf table.pmcftbl td{overflow-wrap:anywhere}
 .leaf table.plantbl{table-layout:fixed;width:792pt}
+.lcgrid td{vertical-align:top;padding:6px}.lcgrid th{vertical-align:bottom;line-height:1.3}
+.lcgrid input,.lcgrid textarea,.lcgrid select{width:100%;min-width:0;box-sizing:border-box}.lcgrid input,.lcgrid select{min-height:44px}
+.lcgrid textarea.grow{resize:none;overflow:hidden;min-height:44px;line-height:1.4;padding-top:10px;padding-bottom:8px}
 .leaf table.plantbl th,.leaf table.plantbl td{overflow-wrap:anywhere}
 .leaf .psig{display:grid;grid-template-columns:1fr 1fr;gap:0 36pt;margin-top:20pt}
 .leaf .psig>div>div:first-child{margin-bottom:30pt}
@@ -582,13 +585,6 @@ table.rate .finds li{margin:2px 0}
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="monthly" data-grp="plan">Saved Monthly Supervisory Plans</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="annual" data-grp="plan">Saved Annual Supervisory Plans</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="create" data-grp="plan">New Supervisory Plan</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="pd" data-sub="lac" data-grp="plan">Suggested LAC Plan</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="pd" data-sub="fgd" data-grp="plan">Suggested FGD Guide</button>
-    <button role="tab" aria-selected="false" class="navgrp" data-panel="lac" data-sub="sched" data-grp="lac">Learning Action Cell (LAC)</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="sched" data-grp="lac">LAC Schedule</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="slna" data-grp="lac">LAC SLNA</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="plan" data-grp="lac">LAC Annual Plan</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="slsm" data-grp="lac">SLSM</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="srep" data-sub="saved" data-grp="srep">Supervisory Report</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="srep" data-sub="saved" data-grp="srep">Saved Supervisory Reports</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="srep" data-sub="add" data-grp="srep">New Supervisory Report Entry</button>
@@ -614,6 +610,15 @@ table.rate .finds li{margin:2px 0}
     <button role="tab" aria-selected="false" class="navgrp" data-panel="coach" data-grp="coach">Performance Monitoring and Coaching</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="pmcf" data-grp="coach">Saved PMCFs</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="coach" data-grp="coach">New PMCF Entry</button>
+    <button role="tab" aria-selected="false" class="navgrp" data-panel="pd" data-sub="lac" data-grp="lac">Learning Action Cell (LAC)</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="pd" data-sub="lac" data-grp="lac">Suggested LAC Plan</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="sched" data-grp="lac">LAC Schedule</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="slna" data-grp="lac">LAC SLNA</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="plan" data-grp="lac">LAC Annual Plan</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="slsm" data-grp="lac">SLSM</button>
+    <button role="tab" aria-selected="false" class="navgrp" data-panel="pd" data-sub="fgd" data-grp="fgd">Focus Group Discussion (FGD)</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="pd" data-sub="fgd" data-grp="fgd">Suggested FGD Plan</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="pd" data-sub="fgdsaved" data-grp="fgd">Saved FGD Plans</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="pmes" data-sub="begin" data-grp="pmes">PMES</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="pmes" data-sub="begin" data-grp="pmes">IPCRF-Beginning</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="pmes" data-sub="mid" data-grp="pmes">Mid-Year Review</button>
@@ -718,10 +723,12 @@ table.rate .finds li{margin:2px 0}
   <div class="dbar">
     <label>School Year <select id="pd-sy"></select></label>
     <label>Learning Area <select id="pd-dp"></select></label>
+    <label id="pd-mol" hidden>Month <select id="pd-mo"></select></label>
   </div>
   <div class="card">
     <p class="mini" id="pd-basis" style="margin:0 0 10px"></p>
-    <div class="row" style="gap:10px"><button class="btn" id="pd-pdf" type="button">Download PDF</button><button class="btn ghost" id="pd-doc" type="button">Download Word (.docx)</button></div>
+    <div id="pd-list" hidden></div>
+    <div class="row" style="gap:10px" id="pd-acts"><button class="btn gold" id="pd-save" type="button" hidden>Save this FGD Plan</button><button class="btn" id="pd-pdf" type="button">Download PDF</button><button class="btn ghost" id="pd-doc" type="button">Download Word (.docx)</button></div>
     <div class="leafwrap" id="pd-leaf" style="margin-top:12px"></div>
   </div>
 </section>
@@ -1987,9 +1994,9 @@ var LEDES={
   help:['How It Works','How the shared record works and how the forms are filled.'],
   settings:['Connection','The shared Google Sheet record, your sign-in, and backups.']
 };
-var SUBS={lac:{sched:'LAC Schedule',slna:'LAC SLNA',plan:'LAC Annual Plan',slsm:'School LAC Session Matrix (SLSM)'},pd:{lac:'Suggested LAC Plan',fgd:'Suggested FGD Guide'},pmes:{begin:'IPCRF-Beginning',mid:'Mid-Year Review',final:'IPCRF-Final Rating'},sched:{all:'Supervisory Schedule',cot:'COT Schedule',walk:'Walk-through Schedule',dll:'DLL Checking Schedule',ots:'On-the-Spot Test Schedule'},srep:{saved:'Saved Supervisory Reports',add:'New Supervisory Report Entry'},plan:{form:'Monthly Supervisory Plan',create:'New Supervisory Plan',monthly:'Saved Monthly Supervisory Plans',annual:'Saved Annual Supervisory Plans'},obs:{notes:'New Classroom Observation Notes',cot:'New COT Rating',walk:'Walk-through Observation'},
+var SUBS={lac:{sched:'LAC Schedule',slna:'LAC SLNA',plan:'LAC Annual Plan',slsm:'School LAC Session Matrix (SLSM)'},pd:{lac:'Suggested LAC Plan',fgd:'Suggested FGD Plan',fgdsaved:'Saved FGD Plans'},pmes:{begin:'IPCRF-Beginning',mid:'Mid-Year Review',final:'IPCRF-Final Rating'},sched:{all:'Supervisory Schedule',cot:'COT Schedule',walk:'Walk-through Schedule',dll:'DLL Checking Schedule',ots:'On-the-Spot Test Schedule'},srep:{saved:'Saved Supervisory Reports',add:'New Supervisory Report Entry'},plan:{form:'Monthly Supervisory Plan',create:'New Supervisory Plan',monthly:'Saved Monthly Supervisory Plans',annual:'Saved Annual Supervisory Plans'},obs:{notes:'New Classroom Observation Notes',cot:'New COT Rating',walk:'Walk-through Observation'},
   reports:{plans:'Supervisory Plans',notes:'Saved Classroom Observation Notes Forms',cot:'Saved COT Rating Sheets',walk:'Saved Walk-through Observations',lp:'Saved DLL Monitoring',ots:'Saved On-the-Spot Tests',pmcf:'Saved PMCFs',monthly:'Monthly Supervisory Report'}};
-var curSub={lac:['sched','slna','plan','slsm'].indexOf(ls('sub-lac'))>=0?ls('sub-lac'):'sched',pd:ls('sub-pd')==='fgd'?'fgd':'lac',pmes:['begin','mid','final'].indexOf(ls('sub-pmes'))>=0?ls('sub-pmes'):'begin',srep:ls('sub-srep')==='add'?'add':'saved',sched:'all',plan:['form','create','monthly','annual'].indexOf(ls('sub-plan'))>=0?ls('sub-plan'):'create',obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
+var curSub={lac:['sched','slna','plan','slsm'].indexOf(ls('sub-lac'))>=0?ls('sub-lac'):'sched',pd:['fgd','fgdsaved'].indexOf(ls('sub-pd'))>=0?ls('sub-pd'):'lac',pmes:['begin','mid','final'].indexOf(ls('sub-pmes'))>=0?ls('sub-pmes'):'begin',srep:ls('sub-srep')==='add'?'add':'saved',sched:'all',plan:['form','create','monthly','annual'].indexOf(ls('sub-plan'))>=0?ls('sub-plan'):'create',obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
 /* the banner title shows the period of what is on the page: "Month Year" or "School Year …" */
 function bannerWhen(){
   var el=$('#secname'), base=el.dataset.base||el.textContent, on=$('.panel.on'), p=on?on.id.slice(2):'', v=function(id){ var e=$('#'+id); return e?e.value:''; };
@@ -6168,6 +6175,12 @@ function pdFgd(D){
       data:['“'+gk+'” not yet met: '+w3.map(function(n){ return srShort(n)+' ('+D.lpGap[gk][n]+' DLL'+(D.lpGap[gk][n]>1?'s':'')+')'; }).join('; ')]}); }
   // year-end
   out.push({month:pdSyMonths(D.sy)[8],q:'What helped and what got in the way of our IDP goals this year?',trig:'Year-end review',part:D.teachers.map(function(p){return p.n}),fac:L.ht,outp:'Inputs to next year’s IDPs and annual plan',data:['Each teacher’s IDP needs and whether they were met (IDP review).','The year’s COT ratings, on-the-spot test results and PMCF entries.']});
+  // one FGD a month: an FGD whose month is taken (or not set) goes to the next free month of the school year
+  var ms=pdSyMonths(D.sy), taken={}, last=out.pop(); taken[last.month]=1;
+  out.sort(function(a,b){ return (a.month||'9999').localeCompare(b.month||'9999'); }).forEach(function(f){
+    var i=f.month?ms.indexOf(f.month):-1; if(i<0) i=f.month&&f.month>ms[ms.length-1]?ms.length:f.month&&f.month<ms[0]?0:Math.max(0,ms.indexOf(TODAY.slice(0,7)));
+    while(i<ms.length&&taken[ms[i]]) i++; if(i>=ms.length){ f.month=''; return; } f.month=ms[i]; taken[f.month]=1; });
+  out=out.filter(function(f){ return f.month; }).concat([last]).sort(function(a,b){ return a.month.localeCompare(b.month); });
   return out; }
 function pdTitle(D){ return D.dp?'<p style="margin:0">&nbsp;</p><h4>'+esc(D.dp.toUpperCase())+' DEPARTMENT</h4>':''; }
 function pdSig(D){ var role=D.dp?'ht':'sh', sg=plSigs(role,D.dp,null); return plSigHTML(sg); }
@@ -6179,32 +6192,51 @@ function pdLacHTML(D){
     '<p style="margin:6pt 0 2pt"><b>Running each session</b> (DO 35, s. 2016: LAC leader, facilitator, documenter, members, resource persons)</p>'+
     '<div style="font-size:9pt">'+['Before: take the focus from the grouped IDP needs and the latest walk-through findings; tell teachers which DLL or learner output to bring.','Check-in: each teacher reports how last session’s commitment went in class.','Input or demonstration of the strategy, read against the COT rubric’s level descriptions.','Work time: apply it to the teachers’ own DLLs or learner outputs.','Commitment: each teacher names one change to try before the next walk-through.','After: the documenter files attendance and outputs; supervisors look for the change in the next walk-through, log it in the PMCF, and report the session in the monthly report. Attendance also serves as evidence for PPST 7.3.2.'].map(function(t,i){ return '<div style="padding-left:11pt;text-indent:-11pt">'+(i+1)+'. '+esc(t)+'</div>'; }).join('')+'</div>'+
     pdSig(D)+'</div>'; }
-function pdFgdHTML(D){
-  var list=pdFgd(D), L=pdLeaders(D.dp), cell='border:.75pt solid #808080;padding:3pt 4pt;vertical-align:top';
+function pdFgdHTML(D,mk,saved){
+  var all=saved?null:pdFgd(D), list=saved?[saved.f]:all.filter(function(f){ return !mk||f.month===mk; }), L=pdLeaders(D.dp), cell='border:.75pt solid #808080;padding:3pt 4pt;vertical-align:top';
   var guide=function(f,i){ var part=f.part.length>6?'All '+f.part.length+' teachers':pdNames(f.part);
-    return '<div style="page-break-inside:avoid;margin-top:'+(i?14:8)+'pt"><p style="margin:0 0 3pt;font-weight:700">FGD '+(i+1)+(f.month?' · '+esc(pdMon(f.month)):'')+'</p>'+
+    return '<div style="page-break-inside:avoid;margin-top:'+(i?14:8)+'pt"><p style="margin:0 0 3pt;font-weight:700">FGD '+(saved?saved.n+' of '+saved.total:(all.indexOf(f)+1)+' of '+all.length)+(f.month?' · '+esc(pdMon(f.month)):'')+'</p>'+
       '<table class="plantbl" style="width:100%"><colgroup><col style="width:110pt"><col></colgroup>'+
       [['Question to answer',esc(f.q)],['Trigger',esc(f.trig)],['Participants',esc(part)],['Facilitator',esc(f.fac)],['Documenter','One of the participants (rotating)'],['Output',esc(f.outp)]].map(function(r){ return '<tr><th style="text-align:left;background:#f2f2f2">'+r[0]+'</th><td>'+r[1]+'</td></tr>'; }).join('')+
       '<tr><th style="text-align:left;background:#f2f2f2">Data to send ahead</th><td>'+f.data.map(function(t){ return '<div style="padding-left:9pt;text-indent:-9pt">• '+esc(pdDot(t))+'</div>'; }).join('')+'</td></tr>'+
       '<tr><th style="text-align:left;background:#f2f2f2">Discussion</th><td>'+['Ground rules: talk about practice, not persons; what is shared stays in the group.','What do we see in the data?','Why might it happen?','What have we tried?','What will each of us try, by when?'].map(function(t,k){ return '<div style="padding-left:11pt;text-indent:-11pt">'+(k+1)+'. '+esc(t)+'</div>'; }).join('')+'</td></tr></table>'+
       '<table class="plantbl" style="width:100%;margin-top:4pt"><tr><th style="width:150pt">Teacher</th><th>Agreed action</th><th style="width:80pt">By when</th><th style="width:120pt">How we will check</th></tr>'+
       (f.part.length>6?[0,1,2,3]:f.part).map(function(n){ return '<tr style="height:20pt"><td>'+(typeof n==='string'?esc(srShort(n)):'&nbsp;')+'</td><td></td><td></td><td></td></tr>'; }).join('')+'</table></div>'; };
-  return '<div class="leaf folio">'+LH_HTML()+'<img class="lh-bot" src="'+LH_BOT+'" alt=""><h4>SUGGESTED FOCUS GROUP DISCUSSION (FGD) GUIDE</h4><h4 style="font-weight:400">School Year '+esc(D.sy)+'</h4>'+pdTitle(D)+
+  return '<div class="leaf folio">'+LH_HTML()+'<img class="lh-bot" src="'+LH_BOT+'" alt=""><h4>'+(saved?'':'SUGGESTED ')+'FOCUS GROUP DISCUSSION (FGD) PLAN</h4><h4 style="font-weight:400">'+(mk?'for the Month of '+esc(pdMon(mk))+' · ':'')+'School Year '+esc(D.sy)+'</h4>'+pdTitle(D)+
     '<p style="margin:6pt 0 0;font-size:9pt">Use an FGD when two to four teachers share a need, or a result must be explained before it can be fixed. Every FGD ends with agreed actions; the FGD notes are the MOV, and one PMCF entry is added for each participant with the mechanism “Focus Group Discussion (FGD)”. Follow up in the next walk-throughs and report the result in the monthly report.</p>'+
     list.map(guide).join('')+pdSig(D)+'</div>'; }
 function pdRender(){
   var sub=curSub.pd||'lac', sy=$('#pd-sy').value||S.sy, dp=$('#pd-dp').value;
   var D=pdData(dp,sy), n=Object.keys(D.strands).filter(function(s){ return pdScore(D.strands[s])>0; }).length;
   $('#pd-basis').textContent='On record for SY '+sy+(dp?' in '+dp:'')+': '+D.teachers.length+' teachers; IDP needs on '+Object.keys(D.strands).filter(function(s){ return Object.keys(D.strands[s].idp).length; }).length+' PPST strands; '+D.cotN+' teachers with COT ratings ('+D.cotLow.length+' ratings below 4); '+D.otsLow.length+' test items below 35%; '+Object.keys(D.lpGap).length+' DLL criteria not yet met; '+Object.keys(D.mech).reduce(function(a,k){return a+D.mech[k]},0)+' PMCF coaching entries.';
-  $('#pd-leaf').innerHTML=sub==='fgd'?pdFgdHTML(D):pdLacHTML(D);
+  $('#pd-mol').hidden=sub!=='fgd'; $('#pd-save').hidden=sub!=='fgd'; $('#pd-list').hidden=sub!=='fgdsaved'; $('#pd-basis').hidden=sub==='fgdsaved';
+  if(sub==='fgdsaved'){ var sv=(S.fgds||[]).filter(function(x){ return x.sy===sy&&(!dp||x.dept===dp); }).sort(function(a,b){ return (a.dept||'').localeCompare(b.dept||'')||String(a.month).localeCompare(b.month); });
+    if(PD_VIEW&&!sv.some(function(x){return x.id===PD_VIEW;})) PD_VIEW=null;
+    $('#pd-list').innerHTML=sv.length?'<div class="scroll"><table class="ind"><thead><tr><th>Month</th><th>Learning Area</th><th>Question to answer</th><th>Saved</th><th></th></tr></thead><tbody>'+sv.map(function(x){ return '<tr'+(x.id===PD_VIEW?' style="background:#fff8e1"':'')+'><td>'+esc(pdMon(x.month))+'</td><td>'+esc(x.dept||'Whole School')+'</td><td>'+esc(x.f.q)+'</td><td>'+esc(x.savedDay?longDate(x.savedDay):'')+'</td><td style="white-space:nowrap"><button class="btn ghost small" type="button" data-fgdview="'+x.id+'">View</button> <button class="btn danger small" type="button" data-fgddel="'+x.id+'">Delete</button></td></tr>'; }).join('')+'</tbody></table></div>':'<p class="mini">No saved FGD plans for SY '+esc(sy)+(dp?' in '+esc(dp):'')+' yet. Open Suggested FGD Plan, choose the month, and click “Save this FGD Plan”.</p>';
+    var cur=sv.filter(function(x){return x.id===PD_VIEW;})[0]; $('#pd-acts').hidden=!cur;
+    $('#pd-leaf').innerHTML=cur?pdFgdHTML({dp:cur.dept||'',sy:cur.sy},cur.month,cur):''; if(typeof fitSoon==='function') fitSoon(); return; }
+  $('#pd-acts').hidden=false;
+  if(sub==='fgd'){ var fl=pdFgd(D), sel=$('#pd-mo'), was=sel.value, ks=fl.map(function(f){ return f.month; });
+    sel.innerHTML=fl.map(function(f,i){ return '<option value="'+f.month+'">'+esc(pdMon(f.month))+' – FGD '+(i+1)+': '+esc(f.trig)+'</option>'; }).join('');
+    sel.value=ks.indexOf(was)>=0?was:(ks.filter(function(k){ return k>=TODAY.slice(0,7); })[0]||ks[0]||''); }
+  $('#pd-leaf').innerHTML=sub==='fgd'?pdFgdHTML(D,$('#pd-mo').value):pdLacHTML(D);
   if(typeof fitSoon==='function') fitSoon();
 }
+var PD_VIEW=null;
+function pdFileBase(){ var sub=curSub.pd; if(sub==='fgdsaved'){ var c=(S.fgds||[]).filter(function(x){return x.id===PD_VIEW;})[0]; return c?'FGD Plan '+pdMon(c.month)+' '+(c.dept||'Whole School')+' SY '+c.sy:'FGD Plan'; }
+  return (sub==='fgd'?'FGD Plan '+pdMon($('#pd-mo').value)+' ':'Suggested LAC Plan ')+($('#pd-dp').value||'Whole School')+' SY '+$('#pd-sy').value; }
 function pdInit(){
   $('#pd-sy').innerHTML=SYS.map(function(x){ return '<option value="'+x+'">SY '+x+'</option>'; }).join(''); $('#pd-sy').value=S.sy;
   $('#pd-dp').innerHTML=(S.myDept?'':'<option value="">All Learning Areas</option>')+(S.myDept?S.myDepts:DEPTS).map(function(d){ return '<option>'+esc(d)+'</option>'; }).join('');
-  ['pd-sy','pd-dp'].forEach(function(id){ $('#'+id).addEventListener('change',pdRender); });
-  $('#pd-pdf').addEventListener('click',function(){ pdRender(); EXP.pdf($('#pd-leaf').innerHTML,(curSub.pd==='fgd'?'Suggested FGD Guide ':'Suggested LAC Plan ')+($('#pd-dp').value||'Whole School')+' SY '+$('#pd-sy').value); });
-  $('#pd-doc').addEventListener('click',function(){ pdRender(); EXP.word($('#pd-leaf').innerHTML,(curSub.pd==='fgd'?'Suggested FGD Guide ':'Suggested LAC Plan ')+($('#pd-dp').value||'Whole School')+' SY '+$('#pd-sy').value); });
+  $('#pd-save').addEventListener('click',async function(){ var sy=$('#pd-sy').value||S.sy, dp=$('#pd-dp').value, mk=$('#pd-mo').value, all=pdFgd(pdData(dp,sy)), f=all.filter(function(x){ return x.month===mk; })[0]; if(!f) return;
+    var id='fgd_'+sy+'_'+(dp||'all').replace(/\W+/g,'')+'_'+mk, b=this; b.disabled=true;
+    try{ await Store.put('plans',id,{kind:'fgd',sy:sy,dept:dp,month:mk,f:f,n:all.indexOf(f)+1,total:all.length,savedAt:new Date().toISOString(),savedDay:TODAY,by:S.myName||''}); toast('FGD Plan for '+pdMon(mk)+' saved. It is under Saved FGD Plans.'); }catch(e){ saveErr(e); } b.disabled=false; });
+  $('#pd-list').addEventListener('click',function(e){ var v=e.target.closest('[data-fgdview]'), d=e.target.closest('[data-fgddel]');
+    if(v){ PD_VIEW=v.dataset.fgdview; pdRender(); }
+    if(d){ armDelete(d,async function(){ try{ await Store.del('plans',d.dataset.fgddel); if(PD_VIEW===d.dataset.fgddel) PD_VIEW=null; toast('FGD Plan deleted'); pdRender(); }catch(err){ saveErr(err); } }); } });
+  ['pd-sy','pd-dp','pd-mo'].forEach(function(id){ $('#'+id).addEventListener('change',pdRender); });
+  $('#pd-pdf').addEventListener('click',function(){ pdRender(); EXP.pdf($('#pd-leaf').innerHTML,pdFileBase()); });
+  $('#pd-doc').addEventListener('click',function(){ pdRender(); EXP.word($('#pd-leaf').innerHTML,pdFileBase()); });
 }
 
 /* ================================================================== LAC: LAC Schedule, School Learning Needs Assessment (HRDS-SLNA Form),
@@ -6325,6 +6357,7 @@ function lcGet(o,path){ return String(path).split('.').reduce(function(a,k){ ret
 function lcSet(o,path,val){ var ks=String(path).split('.'), last=ks.pop(); var t=ks.reduce(function(a,k){ if(a[k]==null) a[k]=/^\d+$/.test(k)?{}:{}; return a[k]; },o); t[last]=val; }
 function lcInput(path,v,t,rows,opts){
   if(t==='area') return '<textarea data-lk="'+path+'" rows="'+(rows||2)+'">'+esc(v||'')+'</textarea>';
+  if(t==='grow') return '<textarea class="grow" data-lk="'+path+'" rows="1">'+esc(v||'')+'</textarea>';
   if(t==='date') return '<input type="date" data-lk="'+path+'" value="'+esc(v||'')+'">';
   if(t==='pri') return '<select data-lk="'+path+'">'+['','High','Medium','Low'].map(function(o){ return '<option'+(o===v?' selected':'')+'>'+o+'</option>'; }).join('')+'</select>';
   if(t==='checks'||t==='radio') return '<span class="row" style="flex-wrap:wrap;gap:4px 14px">'+opts.map(function(o){ var on=t==='radio'?v===o:(v||[]).indexOf(o)>=0; return '<label style="display:flex;gap:6px;align-items:center;font-size:13.5px"><input type="'+(t==='radio'?'radio':'checkbox')+'" name="'+path+'" data-lk="'+path+'" data-lt="'+t+'" value="'+esc(o)+'"'+(on?' checked':'')+'>'+esc(o)+'</label>'; }).join('')+'</span>';
@@ -6334,10 +6367,17 @@ function lcDraw(){ var v=LC.v||{}, h='';
     if(sec.h) h+='<h3 style="margin:16px 0 6px;font-size:15px">'+esc(sec.h)+'</h3>'; if(sec.note) h+='<p class="mini" style="margin:0">'+esc(sec.note)+'</p>';
     if(sec.f) h+='<div class="lines" style="max-width:none">'+sec.f.map(function(f){ return '<label class="fline'+(f[2]==='area'||f[2]==='checks'?' top':'')+'"><span class="lk">'+esc(f[1])+'</span><span class="lv">'+lcInput(f[0],v[f[0]],f[2],f[3],f[3])+'</span></label>'; }).join('')+'</div>';
     if(sec.grid){ var rows=v[sec.grid]||[]; if(sec.fixed){ while(rows.length<sec.fixed.length) rows.push({}); v[sec.grid]=rows; }
-      h+='<div class="scroll"><table class="ind lcgrid"><thead><tr>'+(sec.fixed?'<th>Activities</th>':'')+sec.cols.map(function(c){ return '<th>'+esc(c[1])+'</th>'; }).join('')+(sec.fixed?'':'<th></th>')+'</tr></thead><tbody>'+
-        rows.map(function(r,i){ return '<tr>'+(sec.fixed?'<td><b>'+esc(sec.fixed[i]||'')+'</b></td>':'')+sec.cols.map(function(c){ return '<td'+(c[2]===3?' style="width:44px"':'')+'>'+lcInput(sec.grid+'.'+i+'.'+c[0],r[c[0]],c[2]===3?'text':c[2],2)+'</td>'; }).join('')+(sec.fixed?'':'<td><button class="btn danger small" type="button" data-lcrm="'+sec.grid+'.'+i+'">Remove</button></td>')+'</tr>'; }).join('')+'</tbody></table></div>'+
+      /* each column as wide as its longest entry needs (within limits); text boxes grow to show all their text */
+      var cw=sec.cols.map(function(c){ if(c[2]===3) return 64; if(c[2]==='date') return 160; if(c[2]==='pri') return 120;
+        var L=Math.max(String(c[1]).length*0.8,0); rows.forEach(function(r){ String(r[c[0]]||'').split('\n').forEach(function(t){ L=Math.max(L,t.length); }); });
+        return Math.round(Math.min(c[2]==='area'?360:260,Math.max(c[2]==='area'?170:120,L*7.2+30))); });
+      var lead=sec.fixed?190:0, rm=sec.fixed?0:96, tot=cw.reduce(function(a,b){return a+b;},0)+lead+rm;
+      h+='<div class="scroll"><table class="ind lcgrid" style="table-layout:fixed;width:100%;min-width:'+tot+'px"><colgroup>'+(lead?'<col style="width:'+lead+'px">':'')+cw.map(function(w){ return '<col style="width:'+w+'px">'; }).join('')+(rm?'<col style="width:'+rm+'px">':'')+'</colgroup><thead><tr>'+(sec.fixed?'<th>Activities</th>':'')+sec.cols.map(function(c){ return '<th>'+esc(c[1])+'</th>'; }).join('')+(sec.fixed?'':'<th></th>')+'</tr></thead><tbody>'+
+        rows.map(function(r,i){ return '<tr>'+(sec.fixed?'<td><b>'+esc(sec.fixed[i]||'')+'</b></td>':'')+sec.cols.map(function(c){ var t=c[2]===3?'text':c[2]; return '<td>'+lcInput(sec.grid+'.'+i+'.'+c[0],r[c[0]],!t||t==='area'?'grow':t,1)+'</td>'; }).join('')+(sec.fixed?'':'<td><button class="btn danger small" type="button" data-lcrm="'+sec.grid+'.'+i+'">Remove</button></td>')+'</tr>'; }).join('')+'</tbody></table></div>'+
         (sec.fixed?'':'<button class="btn ghost small" type="button" data-lcadd="'+sec.grid+'" style="margin-top:6px">Add a row</button>'); } });
-  $('#lc-form').innerHTML=h; lcLeaf(); }
+  $('#lc-form').innerHTML=h; lcGrow(); lcLeaf(); }
+function lcGrow(el){ [].forEach.call(el?[el]:document.querySelectorAll('#lc-form textarea.grow'),function(t){ if(!t.offsetParent) return; t.style.height='auto'; t.style.height=(t.scrollHeight+2)+'px'; }); }
+window.addEventListener('resize',function(){ clearTimeout(lcGrow.t); lcGrow.t=setTimeout(function(){ lcGrow(); },150); });
 
 /* ---------- the printed form ---------- */
 function lcSigHTML(P,withHead){ var B=function(lab,n,p){ return '<div><div>'+lab+'</div><b'+(/EdD|CESO/.test(n||'')?' class="nocap"':'')+'>'+esc(n||'')+'</b><div>'+esc(p||'')+'</div></div>'; };
@@ -6446,7 +6486,7 @@ function lcInit(){
   $('#lc-dp').innerHTML='<option value="">Whole school</option>'+DEPTS.map(function(d){ return '<option>'+esc(d)+'</option>'; }).join('');
   ['lc-sy','lc-dp'].forEach(function(id){ $('#'+id).addEventListener('change',renderLac); });
   $('#lc-sess').addEventListener('change',function(){ LC.sess=+this.value||1; lcOpen(); });
-  $('#lc-form').addEventListener('input',function(e){ var t=e.target, k=t.dataset.lk; if(!k||!LC.v) return;
+  $('#lc-form').addEventListener('input',function(e){ var t=e.target, k=t.dataset.lk; if(t.classList&&t.classList.contains('grow')) lcGrow(t); if(!k||!LC.v) return;
     if(t.dataset.lt==='checks'){ var cur=lcGet(LC.v,k)||[]; cur=cur.filter(function(x){ return x!==t.value; }); if(t.checked) cur.push(t.value); lcSet(LC.v,k,cur); }
     else lcSet(LC.v,k,t.value); LC.dirty=true; $('#lc-state').textContent='Changes not yet saved.'; lcLeaf(); });
   $('#lc-form').addEventListener('change',function(e){ if(e.target.type==='radio'||e.target.type==='checkbox'||e.target.tagName==='SELECT') $('#lc-form').dispatchEvent(new Event('input')); });
@@ -7041,7 +7081,7 @@ var startTab=ls('tab'); if(/^#(home|plan|obs|coach|reports|records|people|librar
 Store.init().then(function(){
   Store.watch('obs',function(l){ S.obs=l.filter(function(x){return x.kind!=='ots'&&x.kind!=='lp'}); S.ots=l.filter(function(x){return x.kind==='ots'}); S.lp=l.filter(function(x){return x.kind==='lp'}); renderAll(); });
   Store.watch('coach',function(l){ l.forEach(function(c){ if(c.mech) c.mech=c.mech.map(mechNorm).filter(function(m,i,a){return a.indexOf(m)===i}); }); S.coach=l; renderAll(); });
-  Store.watch('plans',function(l){ S.plans=l.filter(function(x){return x.kind!=='tplan'&&x.kind!=='sched'&&x.kind!=='srep'&&x.kind!=='gplan'&&x.kind!=='pmes'&&x.kind!=='lac'}); S.pmes=l.filter(function(x){return x.kind==='pmes'}); S.gplans=l.filter(function(x){return x.kind==='gplan'}); S.lacs=l.filter(function(x){return x.kind==='lac'}); S.sreps=l.filter(function(x){return x.kind==='srep'}); S.tplans=l.filter(function(x){return x.kind==='tplan'}); S.scheds=l.filter(function(x){return x.kind==='sched'}); renderAll(); });
+  Store.watch('plans',function(l){ S.plans=l.filter(function(x){return x.kind!=='tplan'&&x.kind!=='sched'&&x.kind!=='srep'&&x.kind!=='gplan'&&x.kind!=='pmes'&&x.kind!=='lac'&&x.kind!=='fgd'}); S.fgds=l.filter(function(x){return x.kind==='fgd'}); S.pmes=l.filter(function(x){return x.kind==='pmes'}); S.gplans=l.filter(function(x){return x.kind==='gplan'}); S.lacs=l.filter(function(x){return x.kind==='lac'}); S.sreps=l.filter(function(x){return x.kind==='srep'}); S.tplans=l.filter(function(x){return x.kind==='tplan'}); S.scheds=l.filter(function(x){return x.kind==='sched'}); renderAll(); if(curSub.pd==='fgdsaved'&&$('#p-pd').classList.contains('on')&&typeof pdRender==='function') pdRender(); });
   Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{},mts:(d&&d.mts)||[],roster:(d&&d.roster)||{},sup2:(d&&d.sup2)||{},split:(d&&d.split)||{}}; applyRoster(); refreshPeopleSelects(); if(S.mode==='shared'&&S.role==='admin'){ var mtl=PEOPLE.filter(function(p){return p.g==='mt'}).map(function(p){return p.n}).sort(); if(JSON.stringify(mtl)!==JSON.stringify((S.cfg.mts||[]).slice().sort())){ S.cfg.mts=mtl; saveCfgSoon(); } } $$('select[data-people="teach"]').forEach(function(x){ delete x.dataset.forDept; }); renderPeople(); renderAll(); });
 });
 })();
