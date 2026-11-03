@@ -5191,7 +5191,7 @@ var HDOCX=(function(){
     leaves.slice(1).forEach(function(l){ var x=l.querySelector('img[data-wfoot]'); if(x) x.remove(); });
     if(first){ fwrap1=document.createElement('div'); fwrap1.className=L0.className; fwrap1.style.cssText='width:'+L0.getBoundingClientRect().width+'px;min-height:0;height:auto;padding:0;position:static'; L0.parentNode.appendChild(fwrap1); fwrap1.appendChild(first); if(fimg) fwrap1.appendChild(fimg.cloneNode()); }
     if(fimg){ fwrap=document.createElement('div'); L0.parentNode.appendChild(fwrap); fwrap.appendChild(fimg); }
-    var pnum=L0.classList.contains('folio')&&!!L0.querySelector('table.plantbl');
+    var pnum=(L0.classList.contains('folio')&&!!L0.querySelector('table.plantbl'))||L0.hasAttribute('data-pnum'); leaves.forEach(function(l){ [].forEach.call(l.querySelectorAll('.pgno'),function(x){ x.remove(); }); });
     var c=new Ctx(pg,L0.classList.contains('wx')), body=leaves.map(function(l,i){ var b=c.block(l); return i?'<w:p><w:r><w:br w:type="page"/></w:r></w:p>'+b:b; }).join(''), ftr=fwrap?c.block(fwrap):'', ftr1=fwrap1?c.block(fwrap1):'';
     if(fwrap) fwrap.remove(); if(fwrap1) fwrap1.remove();
     if(pnum){ var R=function(t){ return '<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="18"/></w:rPr>'+t+'</w:r>'; }, F=function(code){ return R('<w:fldChar w:fldCharType="begin"/>')+R('<w:instrText xml:space="preserve"> '+code+' </w:instrText>')+R('<w:fldChar w:fldCharType="separate"/>')+R('<w:t>1</w:t>')+R('<w:fldChar w:fldCharType="end"/>'); };
@@ -5709,10 +5709,30 @@ function lpRefresh(fromText){
   lpLeafSoon();
 }
 var lpT; function lpLeafSoon(){ clearTimeout(lpT); lpT=setTimeout(function(){ $('#lp-leafwrap').innerHTML=lpSheetHTML(lpRead()); },250); }
+/* the sheet, laid out as pages: everything with the signatories stays on page 1; recommendations that do not fit
+   go to page 2 under "Recommendations (continuation)"; every page has "Page n of N" at the bottom right */
+function lpRecList(d){ return String(d.rec||'').split(/\r?\n/).filter(function(x){return x.trim()}); }
+function lpPgNo(i,n){ return '<div class="pgno" style="position:absolute;right:36pt;bottom:58pt;font:9pt Arial,\'Liberation Sans\',sans-serif;color:#000">Page '+i+' of '+n+'</div>'; }
 function lpSheetHTML(d){
+  var all=lpRecList(d), k=all.length;
+  var page1=function(k,n){ return lpPage1HTML(d,all.slice(0,k),k<all.length,n); };
+  var box=document.createElement('div'); box.style.cssText='position:fixed;left:-30000px;top:0;visibility:hidden'; document.body.appendChild(box);
+  try{
+    var over=function(k){ box.innerHTML=page1(k,2); var leaf=box.firstElementChild, t=leaf.getBoundingClientRect().top, sig=leaf.querySelector('.lpsig');
+      return sig&&sig.getBoundingClientRect().bottom-t>(842-70)*4/3; };
+    while(k>0&&over(k)) k--;
+  }catch(e){ k=all.length; }
+  finally{ box.remove(); }
+  if(k>=all.length) return page1(all.length,1);
+  var rest=all.slice(k);
+  return page1(k,2)+'<div class="leaf page" data-pnum style="padding-bottom:70pt;position:relative">'+LH_HTML(1)+'<div style="height:6pt"></div>'+
+    '<div style="background:#E2EFD9;border:.75pt solid #808080;text-align:center;font-weight:700;padding:1pt;margin-top:8pt">Recommendations (continuation)</div>'+
+    '<div style="border:.75pt solid #808080;border-top:none;padding:4pt 8pt;min-height:56pt">'+rest.map(function(r){ return '<div>'+esc(r)+'</div>'; }).join('')+'</div>'+
+    lpPgNo(2,2)+'<img class="lh-bot" src="'+LH_BOT+'" alt=""></div>';
+}
+function lpPage1HTML(d,recs,more,npages){
   var c=lpCalc(d), box=function(on){ return on?'&#9745;':'&#9744;'; }, TD='border:.75pt solid #808080;padding:3pt 4pt;vertical-align:top', TH='border:.75pt solid #808080;padding:3pt;background:#E2EFD9;font-weight:700;text-align:center;vertical-align:middle';
-  var recs=String(d.rec||'').split(/\r?\n/).filter(function(x){return x.trim()});
-  return '<div class="leaf page" style="padding-bottom:70pt">'+LH_HTML(1)+'<div style="height:6pt"></div><h4>LESSON PLAN MONITORING AND EVALUATION TOOL<br>SY '+esc(d.sy)+'</h4>'+
+  return '<div class="leaf page" data-pnum style="padding-bottom:70pt;position:relative">'+LH_HTML(1)+'<div style="height:6pt"></div><h4>LESSON PLAN MONITORING AND EVALUATION TOOL<br>SY '+esc(d.sy)+'</h4>'+
     '<table class="lay" style="width:100%;border-collapse:collapse;margin:6pt 0 0"><tr>'+
       '<td class="lay" style="width:62%;border:none;padding:0">'+fcol([['Name of Teacher:',d.teacher],['Learning Area:',d.subject]])+'</td>'+
       '<td class="lay" style="border:none;padding:0 0 0 14pt;vertical-align:top">Term: '+box(d.term===1)+' 1 &nbsp; '+box(d.term===2)+' 2 &nbsp; '+box(d.term===3)+' 3<div style="margin-top:7pt">'+fcol([['Date:',longDate(d.date)]])+'</div></td></tr></table>'+
@@ -5722,11 +5742,11 @@ function lpSheetHTML(d){
     LPC.map(function(cr,i){ var r=d.ratings[i]; return '<tr><td style="'+TD+'"><b>'+esc(cr.b)+'</b>'+esc(cr.t)+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='Y'?'&#10003;':'')+'</td><td style="'+TD+';text-align:center;vertical-align:middle;font-weight:700">'+(r==='N'?'&#10003;':'')+'</td><td style="'+TD+';white-space:pre-wrap;vertical-align:middle">'+esc(d.findings[i]||'')+'</td></tr>'; }).join('')+
     '<tr><td style="'+TD+';text-align:right;font-weight:700">Total</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.yes:'')+'</td><td style="'+TD+';text-align:center;font-weight:700">'+(c.rated?c.no:'')+'</td><td style="'+TD+';vertical-align:middle">'+(c.rated?c.yes+' of '+c.n+' criteria met ('+Math.round(c.pct)+'%)':'')+'</td></tr></table>'+
     '<div style="background:#E2EFD9;border:.75pt solid #808080;text-align:center;font-weight:700;padding:1pt;margin-top:8pt">Recommendations</div>'+
-    '<div style="border:.75pt solid #808080;border-top:none;padding:4pt 8pt;min-height:56pt">'+recs.map(function(r){ return '<div>'+esc(r)+'</div>'; }).join('')+'</div>'+
-    '<table class="lay" style="width:100%;border-collapse:collapse;margin-top:16pt"><tr>'+
+    '<div style="border:.75pt solid #808080;border-top:none;padding:4pt 8pt;'+(more?'':'min-height:56pt')+'">'+recs.map(function(r){ return '<div>'+esc(r)+'</div>'; }).join('')+(more?'<div style="text-align:right;font-style:italic;margin-top:2pt">(continued on the next page)</div>':'')+'</div>'+
+    '<table class="lay lpsig" style="width:100%;border-collapse:collapse;margin-top:16pt"><tr>'+
       '<td class="lay" style="width:50%;border:none;padding:0 20pt 0 0;vertical-align:top"><b>Monitored by:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left;border-bottom:none">'+esc(d.mon||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.monPos||'HT/MT/School Head')+'</div></div></td>'+
       '<td class="lay" style="border:none;padding:0;vertical-align:top"><b>Conforme:</b><div class="sig" style="text-align:left;margin-top:20pt"><div class="nm" style="text-align:left;border-bottom:none">'+esc(d.teacher||' ')+'</div><div class="lb" style="text-align:left">'+esc(d.teacherPos||'Teacher/Master Teacher')+'</div></div></td></tr></table>'+
-    '<img class="lh-bot" src="'+LH_BOT+'" alt=""></div>';
+    lpPgNo(1,npages)+'<img class="lh-bot" src="'+LH_BOT+'" alt=""></div>';
 }
 function newLp(){
   lp={id:'',coachId:''}; setPerson('lp-teacher',''); $('#lp-dept').value=''; lpSetSubj(''); $('#lp-topic').value=''; $('input[name=lp-term][value="1"]').checked=true; setDate('lp-date',TODAY);
