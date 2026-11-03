@@ -6768,7 +6768,7 @@ function pmHeadInp(inst,r,c,key,H,editable){ pmSet(inst,r,c,H[key]); if(editable
 /* ratings of one objective: Q (Q1, Q2 for Master Teachers' COIs shown both ways), E, T */
 function pmRatings(rec,o,pre){ var v=rec.v, p=pre+o.n+'_';
   return {q:v[p+'q']||'',q2:v[p+'q2']||'',e:v[p+'e']||'',t:v[p+'t']||''}; }
-function pmObjAve(rt){ var a=pmAvg([rt.q,rt.q2,rt.e,rt.t]); return a==null?'':pmFloor(a,3); }
+function pmObjAve(rt){ var a=pmAvg([rt.q,rt.q2,rt.e,rt.t]); return a==null?'':pmRound(a,3); }
 
 /* ---------- PART 1 (e-IPCRF) ---------- */
 function pmPart1(rec,phase){
@@ -6789,9 +6789,16 @@ function pmPart1(rec,phase){
       // actual results: the indicator description of the rating given, per row
       o.rows.forEach(function(x,j){ var lab=x.lab, rv=/Non-Classroom/.test(lab)?rt.q2:/^Quality/.test(lab)?rt.q:/^Efficiency/.test(lab)?rt.e:rt.t; if(rv&&x.r[5-rv]) pmSet(inst,r+j,10,x.r[5-rv]); });
       pmSet(inst,r,cQ,rt.q===''?'':+rt.q); if(mt) pmSet(inst,r,cQ2,rt.q2===''?'':+rt.q2); pmSet(inst,r,cE,rt.e===''?'':+rt.e); pmSet(inst,r,cT,rt.t===''?'':+rt.t);
-      var av=pmObjAve(rt); pmSet(inst,r,cA,av); if(av!==''){ var sc=pmFloor(av*PM_W,3); pmSet(inst,r,cS,sc); total+=sc; any=true; }
+      var av=pmObjAve(rt); pmSet(inst,r,cA,av); if(av!==''){ var sc=pmRound(av*PM_W,3); pmSet(inst,r,cS,sc); total+=sc; any=true; }
       if(ed){ var R5=['','5','4','3','2','1']; pmInp(inst,r,cQ,'p'+o.n+'_q','sel',R5); if(mt&&o.k==='D') pmInp(inst,r,cQ2,'p'+o.n+'_q2','sel',R5); pmInp(inst,r,cE,'p'+o.n+'_e','sel',R5); pmInp(inst,r,cT,'p'+o.n+'_t','sel',R5); }
     }
+    /* Excel (every phase): Q, E and T take only 1 to 5 (a drop-down list); the average and the score are formulas, to 3 decimal places */
+    var useC=[cQ,cQ2,cE,cT].filter(function(c){ if(c<0) return false; var cl=pmCell(inst,r,c); if(/^0{6}$/.test((cl.s&&cl.s.bg)||'')) return false; cl.dvl=['1','2','3','4','5']; return true; });
+    /* the average counts only the ratings that apply to the objective (never a blacked-out cell) */
+    pmCell(inst,r,cA).fx={k:'fn',f:function(X){ var l=useC.map(function(c){ return X.a(r,c); }).filter(Boolean).join(','); return l?'IF(COUNT('+l+')=0,"",ROUND(AVERAGE('+l+'),3))':''; }};
+    if(phase!=='begin'){ var avU=pmAvg(useC.map(function(c){ return inst.cells[r+','+c].v; })); var av2=avU==null?'':pmRound(avU,3); if(av2!==(inst.cells[r+','+cA]||{}).v){ var sc0=(inst.cells[r+','+cS]||{}).v; if(sc0!==''&&sc0!=null) total-=sc0; pmSet(inst,r,cA,av2); var sc2=av2===''?'':pmRound(av2*PM_W,3); pmSet(inst,r,cS,sc2); if(sc2!==''){ total+=sc2; any=true; } } }
+    pmCell(inst,r,cS).fx={k:'fn',f:function(X){ var a=X.a(r,cA), d=X.a(r,3); return a&&d?'IF('+a+'="","",ROUND('+a+'*'+d+',3))':''; }};
+    (inst.scRows=inst.scRows||[]).push(r);
   });
   var fo=B.end-foot;
   for(var r=foot;r<lay.rows.length;r++){ if(lay.hr[r]) continue; pmCopyRows(inst,lay,r,r+1,r+fo,{skipMerge:function(){return true}}); }
@@ -6799,6 +6806,9 @@ function pmPart1(rec,phase){
   var g=pmGrid(lay), totR=-1, sigR=-1;
   for(var rr=foot;rr<lay.rows.length;rr++){ if(/RATING FOR PART I/.test(String(g[rr+','+(mt?8:8)]||''))) totR=rr+fo; if(String(g[rr+',0']||'').indexOf('=C2')===0) sigR=rr+fo; }
   if(totR>=0&&phase!=='begin'&&any){ var tt=pmRound(total,4); pmSet(inst,totR,cQ,pmAdj(tt)); pmSet(inst,totR,cS,tt); }
+  if(totR>=0){ /* Excel: the Part I rating (sum of the scores) and its adjectival rating follow the ratings */
+    pmCell(inst,totR,cS).fx={k:'fn',f:function(X){ var l=(inst.scRows||[]).map(function(r){ return X.a(r,cS); }).filter(Boolean).join(','); return l?'IF(COUNT('+l+')=0,"",ROUND(SUM('+l+'),3))':''; }};
+    pmCell(inst,totR,cQ).fx={k:'adj',col:cS,t:totR}; }
   if(sigR>=0){ pmSet(inst,sigR,0,H.ratee); pmSet(inst,sigR,5,H.rater); pmSet(inst,sigR,9,H.appr); }
   inst.total=any?pmRound(total,4):'';
   return inst;
@@ -6882,7 +6892,7 @@ function pmSummary(rec,which,p1,core,lead){
     // black out the measures that do not apply to this indicator
     var ap=mt?[true,o.k==='D',has(/^Efficiency/),has(/^Timeliness/)]:[true,has(/^Efficiency/),has(/^Timeliness/)];
     ap.forEach(function(ok,q){ var cell=pmCell(inst,r,cols[q]), s2=Object.assign({},cell.s); if(ok) delete s2.bg; else s2.bg='000000'; cell.s=s2; });
-    var av=pmObjAve(rt), sc=av===''?'':(which==='I'?pmFloor(av*PM_W,3):pmRound(av*PM_W,4)); pmSet(inst,r,cols[vals.length],av); pmSet(inst,r,cols[vals.length]+1,sc); pmSet(inst,r,cols[vals.length]+2,av===''?'':pmAdj(av));
+    var av=pmObjAve(rt), sc=av===''?'':(which==='I'?pmRound(av*PM_W,3):pmRound(av*PM_W,4)); pmSet(inst,r,cols[vals.length],av); pmSet(inst,r,cols[vals.length]+1,sc); pmSet(inst,r,cols[vals.length]+2,av===''?'':pmAdj(av));
     if(sc!==''){ tot+=sc; any=true; aves.push(av); } });
   var g=pmGrid(lay);
   for(var r=27;r<lay.rows.length;r++){ var b=String(g[r+',1']||''), RR=R(r); if(RR==null) continue;
@@ -6912,9 +6922,12 @@ function pmSummary(rec,which,p1,core,lead){
   var h={C4:H.ratee,C5:H.pos,C6:H.div,C7:'SY '+rec.sy,H4:H.rater,H5:H.rpos,H6:H.date};
   Object.keys(h).forEach(function(a){ var r=+a.slice(1)-1, c=a.charCodeAt(0)-65; if(R(r)!=null) pmSet(inst,R(r),c,h[a]); });
   pmSet(inst,R(0),0,which==='I'?'OFFICIAL ELECTRONIC IPCRF TOOL\n SY '+rec.sy:'MID-YEAR REVIEW FORM (MRF)\nSY '+rec.sy); pmSet(inst,R(1),0,PM_STAGE[st]+(which==='I'?' Teacher':' Teachers'));
-  for(var r5=30;r5<lay.rows.length;r5++){ if(R(r5)==null) continue; for(var c5=0;c5<inst.cols.length;c5++){ var f5=String(g[r5+','+c5]||'');
-      if(f5==='=C4'||/'MRF - \w+'!A57/.test(f5)) pmSet(inst,R(r5),c5,H.ratee); if(f5==='=C5'||/'MRF - \w+'!A58/.test(f5)) pmSet(inst,R(r5),c5,H.pos); if(f5==='=H4'||/'MRF - \w+'!E57/.test(f5)) pmSet(inst,R(r5),c5,H.rater); if(f5==='=H5'||/'MRF - \w+'!E58/.test(f5)) pmSet(inst,R(r5),c5,H.rpos);
-      if(f5==='=H6'||/'MRF - \w+'!.59/.test(f5)) pmSet(inst,R(r5),c5,H.date); if(/L33&/.test(f5)||/'MRF - \w+'!H57/.test(f5)) pmSet(inst,R(r5),c5,H.appr); if(/G34/.test(f5)||/'MRF - \w+'!H58/.test(f5)) pmSet(inst,R(r5),c5,H.apos); } }
+  /* the signatories: the template points to the MRF rows of the names (row n), positions (n+1) and dates (n+2); n differs by career stage */
+  var sgBase=null; for(var r6=30;r6<lay.rows.length;r6++) for(var c6=0;c6<inst.cols.length;c6++){ var m6=/'MRF - \w+'!([AEH])(\d+)/.exec(String(g[r6+','+c6]||'')); if(m6&&(sgBase==null||+m6[2]<sgBase)) sgBase=+m6[2]; }
+  for(var r5=30;r5<lay.rows.length;r5++){ if(R(r5)==null) continue; for(var c5=0;c5<inst.cols.length;c5++){ var f5=String(g[r5+','+c5]||''), m5=/'MRF - \w+'!([AEH])(\d+)/.exec(f5), k5=m5&&sgBase!=null?(+m5[2]-sgBase):-1, col5=m5?m5[1]:'';
+      var put=function(v,nameRow){ pmSet(inst,R(r5),c5,v); var cl=pmCell(inst,R(r5),c5); cl.s=Object.assign({},cl.s,{h:'left'},nameRow?{b:1,v:'bottom'}:{}); };
+      if(f5==='=C4'||(col5==='A'&&k5===0)) put(H.ratee,1); if(f5==='=C5'||(col5==='A'&&k5===1)) put(H.pos); if(f5==='=H4'||(col5==='E'&&k5===0)) put(H.rater,1); if(f5==='=H5'||(col5==='E'&&k5===1)) put(H.rpos);
+      if(f5==='=H6'||k5===2) put(H.date); if(/L33&/.test(f5)||(col5==='H'&&k5===0)) put(H.appr,1); if(/G34/.test(f5)||(col5==='H'&&k5===1)) put(H.apos); } }
   inst.final=fin; return inst;
 }
 
@@ -6966,7 +6979,7 @@ function pmMRF(rec){
     if(o.mov.length>1){ pmSet(inst,r,4,o.mov[0]); pmSet(inst,r+1,4,o.mov[1]); } else pmSet(inst,r,4,o.mov[0]||'');
     o.rows.forEach(function(x,j){ pmSet(inst,r+j,5,x.lab); if(o.mh[j]&&inst.rows[r+j]) inst.rows[r+j].h=o.mh[j];
       if(o.gen&&o.k==='N'){ pmUnblack(inst,r+j,8); pmUnblack(inst,r+j,9); pmUnblack(inst,r+j,6); pmUnblack(inst,r+j,7); }
-      var k='r'+o.n+'_'+j, v=rec.v[k]||''; pmSet(inst,r+j,8,v===''?'':+v); pmInp(inst,r+j,8,k,'sel',['','5','4','3','2','1']);
+      var k='r'+o.n+'_'+j, v=rec.v[k]||''; pmSet(inst,r+j,8,v===''?'':+v); pmInp(inst,r+j,8,k,'sel',['','5','4','3','2','1']); var rc8=pmCell(inst,r+j,8); if(!/^0{6}$/.test((rc8.s&&rc8.s.bg)||'')) rc8.dvl=['1','2','3','4','5'];
       pmSet(inst,r+j,9,rec.v[k+'m']||''); pmInp(inst,r+j,9,k+'m','text');
       pmSet(inst,r+j,6,rec.v[k+'t']||''); pmSet(inst,r+j,7,'');
       var om=(inst.objRows=inst.objRows||{})[o.n]||(inst.objRows[o.n]={}); om[/Non-Classroom/.test(x.lab)?'q2':/^Quality/.test(x.lab)?'q':/^Efficiency/.test(x.lab)?'e':'t']=r+j; });
@@ -6983,7 +6996,11 @@ function pmMRF(rec){
   // signatures: names above "(Signature Over Printed Name ...)"
   for(var r3=foot;r3<lay.rows.length;r3++){ var a=String(g[r3+',0']||''); if(/^\(Signature/.test(a)){ var R=r3-1+fo; pmSet(inst,R,0,H.ratee); pmSet(inst,R,4,H.rater); pmSet(inst,R,7,H.appr);
       pmSet(inst,r3+1+fo,0,'Position: '+H.pos); pmSet(inst,r3+1+fo,4,'Position: '+H.rpos); pmSet(inst,r3+1+fo,7,'Position: '+H.apos);
-      ['A','E','H'].forEach(function(L,q){ var cell=pmCell(inst,R,[0,4,7][q]); cell.s=Object.assign({},cell.s,{b:1,h:'center',v:'bottom'}); }); break; } }
+      /* each name sits directly on its label and Position line, left-aligned with them, across the same columns */
+      [0,4,7].forEach(function(c){ var cell=pmCell(inst,R,c), lab=pmCell(inst,r3+fo,c); cell.s=Object.assign({},cell.s,{b:1,h:'left',v:'bottom',w:0}); lab.s=Object.assign({},lab.s,{h:'left',v:'top'});
+        var span=inst.merges.filter(function(m){ return m[0]===r3+fo&&m[2]===r3+fo&&m[1]===c; })[0];
+        if(span&&!inst.merges.some(function(m){ return m[0]<=R&&m[2]>=R&&m[1]<=c&&m[3]>=c; })) inst.merges.push([R,c,R,span[3]]); });
+      if(inst.rows[R]) inst.rows[R].h=Math.max(inst.rows[R].h||15,30); if(inst.rows[r3+fo]) inst.rows[r3+fo].h=14.5; break; } }
   inst.total=T; return inst;
 }
 
@@ -7077,6 +7094,45 @@ async function pmPdf(insts,name,foot,asBlob){
 /* ---------- the Excel workbook: the same layout, values in place of the formulas ---------- */
 function pmXmlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,''); }
 function pmColL(c){ var s=''; c++; while(c>0){ var m=(c-1)%26; s=String.fromCharCode(65+m)+s; c=Math.floor((c-1)/26); } return s; }
+/* the borders of a sheet as drawn: a merged block has one outline; a shared edge is set on both cells; the thick lines stay
+   only on the outside of a table, every line inside a table is an ordinary thin line */
+function pmBorderMap(inst,rs){
+    var BD={}, getBd=function(r,c){ var k=r+','+c; if(BD[k]) return BD[k]; var cl=inst.cells[k]; return BD[k]=Object.assign({},(cl&&cl.s&&cl.s.bd)||{}); };
+    var mIn={};
+    inst.merges.forEach(function(m){ if(m[2]===m[0]&&m[3]===m[1]) return; var rr=rs.filter(function(r){return r>=m[0]&&r<=m[2];}); if(!rr.length) return; var top=rr[0], bot=rr[rr.length-1];
+      var cs=[]; for(var c=m[1];c<=m[3];c++) if(!inst.hc[c]) cs.push(c); if(!cs.length) return; var lc=cs[0], rc=cs[cs.length-1], tl=getBd(m[0],m[1]);
+      var pick=function(list,side,fb){ for(var q=0;q<list.length;q++){ var b=getBd(list[q][0],list[q][1])[side]; if(b) return b; } return fb||null; };
+      var T=tl.t||pick(cs.map(function(c){return [top,c];}),'t'), B=pick([[bot,lc]].concat(cs.map(function(c){return [bot,c];})),'b',tl.b),
+          L=tl.l||pick(rr.map(function(r){return [r,lc];}),'l'), Rt=pick(rr.map(function(r){return [r,rc];}).filter(function(x){return !(x[0]===m[0]&&rc===m[1]&&cs.length>1);}),'r',cs.length===1?tl.r:null);
+      var tcell=inst.cells[m[0]+','+m[1]], ts=(tcell&&tcell.s)||{};
+      rr.forEach(function(r){ cs.forEach(function(c){ var k=r+','+c, b={}; if(r===top&&T) b.t=T; if(r===bot&&B) b.b=B; if(c===lc&&L) b.l=L; if(c===rc&&Rt) b.r=Rt; BD[k]=b; mIn[k]=1;
+        if(!inst.cells[k]) inst.cells[k]={s:Object.assign({},ts),v:''}; }); }); });
+    var visC=[]; for(var vc=0;vc<inst.cols.length;vc++) if(!inst.hc[vc]) visC.push(vc);
+    rs.forEach(function(r,i){ var rn=rs[i+1]; visC.forEach(function(c,j){ var cn=visC[j+1], a=getBd(r,c);
+      if(rn!=null){ var below=getBd(rn,c); if(a.b&&!below.t&&inst.cells[rn+','+c]) below.t=a.b; if(below.t&&!a.b&&inst.cells[r+','+c]) a.b=below.t; }
+      if(cn!=null){ var right=getBd(r,cn); if(a.r&&!right.l&&inst.cells[r+','+cn]) right.l=a.r; if(right.l&&!a.r&&inst.cells[r+','+c]) a.r=right.l; } }); });
+  /* thick, medium and double lines between two bordered cells are inside a table: they become ordinary thin lines */
+  var heavy=function(x){ return x&&x[0]&&x[0]!=='thin'&&x[0]!=='hair'&&!/dash|dot/i.test(x[0]); }, thin=function(x){ return ['thin',x[1]||'000000']; };
+  /* a neighbour is inside the table when it has a line of its own on another side (or is part of a merged block) */
+  /* (a cell above or below is in the table when it has side lines; a cell left or right of it, when it has top or bottom lines) */
+  var inT=function(r,c,skip){ if(mIn[r+','+c]) return true; var b=getBd(r,c); return skip==='t'||skip==='b'?!!(b.l||b.r):!!(b.t||b.b); };
+  rs.forEach(function(r,i){ var rp=rs[i-1], rn=rs[i+1]; visC.forEach(function(c,j){ var cp=visC[j-1], cn=visC[j+1], a=getBd(r,c);
+    if(heavy(a.b)&&rn!=null&&inT(rn,c,'t')){ a.b=thin(a.b); var x=getBd(rn,c); if(x.t) x.t=thin(x.t); }
+    if(heavy(a.t)&&rp!=null&&inT(rp,c,'b')){ a.t=thin(a.t); var y=getBd(rp,c); if(y.b) y.b=thin(y.b); }
+    if(heavy(a.r)&&cn!=null&&inT(r,cn,'l')){ a.r=thin(a.r); var z=getBd(r,cn); if(z.l) z.l=thin(z.l); }
+    if(heavy(a.l)&&cp!=null&&inT(r,cp,'r')){ a.l=thin(a.l); var w=getBd(r,cp); if(w.r) w.r=thin(w.r); } }); });
+  /* the outside edge of a table: one medium line all around (a grid cell's side that faces outside the table) */
+  var grid=function(r,c){ var b=getBd(r,c); return !!((b.l||b.r)&&(b.t||b.b)); }, med=function(x){ return ['medium',(x&&x[1])||'000000']; };
+  var edgeOut=function(r,c,side){ var i0=rs.indexOf(r), j0=visC.indexOf(c), nr=side==='t'?rs[i0-1]:side==='b'?rs[i0+1]:r, nc=side==='l'?visC[j0-1]:side==='r'?visC[j0+1]:c;
+    if(nr==null||nc==null) return true; var o={t:'b',b:'t',l:'r',r:'l'}[side]; return !inT(nr,nc,o)&&!grid(nr,nc); };
+  rs.forEach(function(r){ visC.forEach(function(c){ if(!grid(r,c)&&!mIn[r+','+c]) return; var a=getBd(r,c);
+    ['t','b','l','r'].forEach(function(k){ if(a[k]&&a[k][0]==='thin'&&edgeOut(r,c,k)) a[k]=med(a[k]); }); }); });
+  /* a table that starts in the first column (or ends in the last) is closed on that side too */
+  rs.forEach(function(r){ var c0=visC[0], c1=visC[visC.length-1], a0=getBd(r,c0), a1=getBd(r,c1);
+    if(!a0.l&&(a0.r||mIn[r+','+c0])&&(a0.t||a0.b||mIn[r+','+c0])&&inst.cells[r+','+c0]) a0.l=med(a0.r);
+    if(!a1.r&&(a1.l||mIn[r+','+c1])&&(a1.t||a1.b||mIn[r+','+c1])&&inst.cells[r+','+c1]) a1.r=med(a1.l); });
+  return BD;
+}
 async function pmXlsx(insts,name,foot,asBlob){
   var fonts=[], fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>'], borders=['<border><left/><right/><top/><bottom/><diagonal/></border>'], xfs=[], numFmts=[], fmap={}, fim={}, bmap={}, xmap={}, nmap={};
   var font=function(s){ var k=[s.fn||'Calibri',s.sz||11,s.b?1:0,s.i?1:0,s.u?1:0,s.fc||''].join('|'); if(fmap[k]==null){ fmap[k]=fonts.length; fonts.push('<font>'+(s.b?'<b/>':'')+(s.i?'<i/>':'')+(s.u?'<u/>':'')+'<sz val="'+(s.sz||11)+'"/>'+(s.fc?'<color rgb="FF'+s.fc+'"/>':'<color theme="1"/>')+'<name val="'+pmXmlEsc(s.fn||'Calibri')+'"/></font>'); } return fmap[k]; };
@@ -7124,22 +7180,7 @@ async function pmXlsx(insts,name,foot,asBlob){
       var cell=inst.cells[m[0]+','+m[1]]; if(!cell||cell.v===''||cell.v==null||typeof cell.v==='number') return; var st=cell.s||{}, w=spanW[m[0]+','+m[1]]; if(!w) return;
       var sz=st.sz||11, cw=sz*(st.b?0.58:0.54)*4/3, lines=String(cell.v).split('\n').reduce(function(n,line){ return n+Math.max(1,Math.ceil(line.length*cw/Math.max(10,w-8))); },0);
       var needH=lines*sz*1.25+8, have=rr.reduce(function(a,r){return a+RH[r];},0); if(have<needH){ var add=(needH-have)/rr.length; rr.forEach(function(r){ RH[r]=Math.min(409,Math.round((RH[r]+add)*10)/10); }); } });
-    /* borders: a merged block gets one clean outline (no stray lines inside it), and an edge shared by two cells is set on both,
-       so every line prints the same in Excel whatever the zoom or print scale */
-    var BD={}, getBd=function(r,c){ var k=r+','+c; if(BD[k]) return BD[k]; var cl=inst.cells[k]; return BD[k]=Object.assign({},(cl&&cl.s&&cl.s.bd)||{}); };
-    var mIn={};
-    inst.merges.forEach(function(m){ if(m[2]===m[0]&&m[3]===m[1]) return; var rr=rs.filter(function(r){return r>=m[0]&&r<=m[2];}); if(!rr.length) return; var top=rr[0], bot=rr[rr.length-1];
-      var cs=[]; for(var c=m[1];c<=m[3];c++) if(!inst.hc[c]) cs.push(c); if(!cs.length) return; var lc=cs[0], rc=cs[cs.length-1], tl=getBd(m[0],m[1]);
-      var pick=function(list,side,fb){ for(var q=0;q<list.length;q++){ var b=getBd(list[q][0],list[q][1])[side]; if(b) return b; } return fb||null; };
-      var T=tl.t||pick(cs.map(function(c){return [top,c];}),'t'), B=pick([[bot,lc]].concat(cs.map(function(c){return [bot,c];})),'b',tl.b),
-          L=tl.l||pick(rr.map(function(r){return [r,lc];}),'l'), Rt=pick(rr.map(function(r){return [r,rc];}).filter(function(x){return !(x[0]===m[0]&&rc===m[1]&&cs.length>1);}),'r',cs.length===1?tl.r:null);
-      var tcell=inst.cells[m[0]+','+m[1]], ts=(tcell&&tcell.s)||{};
-      rr.forEach(function(r){ cs.forEach(function(c){ var k=r+','+c, b={}; if(r===top&&T) b.t=T; if(r===bot&&B) b.b=B; if(c===lc&&L) b.l=L; if(c===rc&&Rt) b.r=Rt; BD[k]=b; mIn[k]=1;
-        if(!inst.cells[k]) inst.cells[k]={s:Object.assign({},ts),v:''}; }); }); });
-    var visC=[]; for(var vc=0;vc<inst.cols.length;vc++) if(!inst.hc[vc]) visC.push(vc);
-    rs.forEach(function(r,i){ var rn=rs[i+1]; visC.forEach(function(c,j){ var cn=visC[j+1], a=getBd(r,c);
-      if(rn!=null){ var below=getBd(rn,c); if(a.b&&!below.t&&inst.cells[rn+','+c]) below.t=a.b; if(below.t&&!a.b&&inst.cells[r+','+c]) a.b=below.t; }
-      if(cn!=null){ var right=getBd(r,cn); if(a.r&&!right.l&&inst.cells[r+','+cn]) right.l=a.r; if(right.l&&!a.r&&inst.cells[r+','+c]) a.r=right.l; } }); });
+    var BD=pmBorderMap(inst,rs);
     rs.forEach(function(r,i){ var R=inst.rows[r], cells=''; R={h:RH[r],hid:R.hid};
       for(var c=0;c<inst.cols.length;c++){ var cell=inst.cells[r+','+c]; if(!cell) continue; var s=cell.s||{}; if(BD[r+','+c]) s=Object.assign({},s,{bd:BD[r+','+c]}); var id=xf(s), v=cell.v, ref=pmColL(c)+(i+1);
         var F=cell.fx?fxOf(cell.fx):'';
