@@ -1816,7 +1816,7 @@ var Store={
     if(!res.ok){ S.mode='locked'; self.lastErr=res.error||''; S.canWrite=false; S.canEdit=false;
       if(res.error==='code'){ try{ var pg=await self.get('ping'); self.diag=pg&&pg.version?(pg.hasHead?'ok':'nohead'):'old'; self.diagSheet=pg&&pg.sheet||''; }catch(e){ self.diag='old'; } }
       connUI(); return; }
-    S.mode='shared'; S.role=res.role; S.myDepts=res.role==='dept'?((res.depts&&res.depts.length)?res.depts.map(String):String(res.dept||'').split(/\s*[,;&\/]\s*/).filter(String)):[]; S.myDept=S.myDepts.join(' & '); S.myName=String(res.name||''); S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
+    S.mode='shared'; S.role=res.role; S.myDepts=res.role==='dept'?((res.depts&&res.depts.length)?res.depts.map(String):String(res.dept||'').split(/\s*[,;&\/]\s*/).filter(String)):[]; S.myDept=S.myDepts.join(' & '); S.srvDepts=!!(res.depts&&res.depts.length); S.srvVer=String(res.version||''); S.myName=String(res.name||''); S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
     self.apply(res.data); connUI();
     clearInterval(self.timer); self.timer=setInterval(function(){ self.refresh(); },30000);
     if(!self.visBound){ self.visBound=true; document.addEventListener('visibilitychange',function(){ if(!document.hidden) self.refresh(); }); }
@@ -1862,9 +1862,14 @@ var Store={
   put:async function(coll,id,data){
     await this.ready;
     if(S.mode==='offline'&&API.url&&API.code){ await this.connect(); }
-    if(S.mode==='shared'&&S.role==='dept'&&coll!=='config'&&data&&!data.dept&&S.myDepts.length===1){ var who=coll==='coach'?data.ratee:data.teacher; if(!who||!(S.cfg.assign||{})[who]) data.dept=S.myDepts[0]; }
+    if(S.mode==='shared'&&S.role==='dept'&&coll!=='config'&&data){
+      /* a department head (one or two departments): the record carries the teacher's department, or the head's own when the teacher has none */
+      var who=coll==='coach'?data.ratee:data.teacher, ad=who?(S.cfg.assign||{})[who]:'';
+      if(!data.dept) data.dept=ad&&myDeptOk(ad)?ad:(!ad&&S.myDepts.length?S.myDepts[0]:'');
+      if(!data.dept||!myDeptOk(data.dept)) throw {code:'dept',rec:data.dept||ad||'',who:who||'',local:true}; }
     if(S.mode==='shared'){
-      await this.post({action:'put',coll:coll,id:id,data:data});
+      try{ await this.post({action:'put',coll:coll,id:id,data:data}); }
+      catch(e){ if(e&&e.code==='dept'&&data){ e.rec=data.dept||''; e.who=(coll==='coach'?data.ratee:data.teacher)||''; } throw e; }
       var list=(this.cache[coll]||[]).filter(function(x){return x.id!==id}); var o=Object.assign({},data); o.id=id; list.push(o); this.cache[coll]=list; this._emit(coll);
       return;
     }
@@ -1904,6 +1909,7 @@ function connUI(){
   if(S.mode==='local') banner('<b>Not connected to a shared record.</b> Entries saved now stay in this browser only. To share one record with the department heads, set up the Google Sheet as described in the README, then open <button class="link" type="button" data-go="settings">Connection</button>.','ask');
   else if(S.mode==='locked') banner('<b>Sign in</b> with your email and 4-digit passcode to open the shared supervision record. '+(Store.lastErr==='locked_out'?'Too many wrong passcodes; wait 15 minutes. ':Store.lastErr==='code'?(Store.diag==='old'?'<br><b>The web app is still running the old Apps Script.</b> In Apps Script: Deploy &rsaquo; Manage deployments &rsaquo; pencil &rsaquo; Version: <b>New version</b> &rsaquo; Deploy. Then sign in again. ':Store.diag==='nohead'?'<br><b>The Google Sheet'+(Store.diagSheet?' &ldquo;'+esc(Store.diagSheet)+'&rdquo;':'')+' has no School Head sign-in yet.</b> In Apps Script, run <b>setMyLogin</b> with your email and passcode. ':'The email and passcode were not accepted; check them in the Access tab of the Google Sheet'+(Store.diagSheet?' &ldquo;'+esc(Store.diagSheet)+'&rdquo;':'')+'. '):'')+'<button class="btn small" type="button" data-go="settings">Sign in</button>','ask');
   else if(S.mode==='offline') banner('<b>The shared record could not be reached.</b> Check the internet connection, then reload the page.','warn');
+  else if(S.mode==='shared' && !S.srvVer && (S.role==='admin'||S.myDepts.length>1)) banner('<b>The shared record is running an old Apps Script.</b> '+(S.role==='admin'?'Department heads with two departments cannot save until it is updated. In the Google Sheet: Extensions &rsaquo; Apps Script &rsaquo; replace Code.gs with the newest one &rsaquo; Save &rsaquo; Deploy &rsaquo; Manage deployments &rsaquo; pencil &rsaquo; Version: <b>New version</b> &rsaquo; Deploy.':'Your saves for the '+esc(S.myDept)+' Departments will be refused until the School Head updates it (Deploy &rsaquo; Manage deployments &rsaquo; New version).'),'warn');
   else if(S.mode==='shared' && S.myDept) banner('<b>'+esc(S.myDept)+' Department'+(S.myDepts.length>1?'s':'')+'.</b> You see and save only the records of teachers in your department'+(S.myDepts.length>1?'s':'')+'.','info');
   else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for a department head sign-in.','ask');
   else banner('');
@@ -1913,12 +1919,20 @@ function connUI(){
   if(typeof loadCodes==='function'){ loadCodes(); restoreUI(); }
   renderPeople();
 }
+function esc2(x){ return String(x||''); }
 function saveErr(e){
   var c=e&&e.code;
   if(c==='readonly'||c==='admin'){ toast(c==='admin'?'Only the School Head can change departments.':'Not saved: this sign-in can only read the record.'); return; }
   if(c==='code'){ toast('Not saved: your sign-in was not accepted. Sign in again under Connection.'); return; }
   if(c==='mt'){ toast('Not saved: Master Teachers\u2019 plans and supervisory records are for the School Head only.'); return; }
-  if(c==='dept'){ toast('Not saved: this record belongs to another department. You are signed in for the '+(S.myDept||'other')+' Department'+(S.myDepts.length>1?'s':'')+' only.'); return; }
+  if(c==='dept'){ var mine='the '+(S.myDept||'other')+' Department'+(S.myDepts.length>1?'s':''), dt=e.detail&&typeof e.detail==='object'?e.detail:null;
+    if(dt){ var tn=dt.teacher||e.who||'This teacher';
+      if(dt.why==='teacher'){ toast('Not saved: '+tn+' is assigned to the '+dt.assigned+' Department in Personnel & Departments. You are signed in for '+mine+' only. Ask the School Head to correct the teacher\u2019s department if it is wrong.'); return; }
+      if(dt.why==='existing'){ toast('Not saved: this record was first saved under the '+(dt.rec||'unassigned')+' Department, which is not one of yours ('+mine+'). Ask the School Head to change or delete it.'); return; }
+      toast('Not saved: the record is for the '+(dt.rec||'(no)')+' Department, but this sign-in handles '+((dt.mine||[]).join(', ')||'no department')+'. Check the department chosen in step 1, or ask the School Head to check your row in the Access tab.'); return; }
+    if(e.rec&&myDeptOk(e.rec)&&!e.local){ // the record is in the head's own department, yet the shared record refused it
+      toast('Not saved: the shared record did not accept '+mine+' for this sign-in'+(S.myDepts.length>1?' (two departments)':'')+'. The School Head should update the Apps Script (Code.gs) to the newest version and deploy it: Deploy \u203a Manage deployments \u203a pencil \u203a Version: New version \u203a Deploy. Then sign in again.'); return; }
+    toast('Not saved: '+(e.who?esc2(e.who)+' is':'this record is')+(e.rec?' in the '+e.rec+' Department':' not assigned to any of your departments')+'. You are signed in for '+mine+' only. '+(e.rec?'Choose a teacher from your department'+(S.myDepts.length>1?'s':'')+', or ask the School Head to correct the teacher\u2019s department.':'Ask the School Head to assign the teacher to your department under Personnel & Departments.')); return; }
   if(c==='too_large'){ toast('Not saved: this entry is too long for the shared record. Update the Apps Script to the newest Code.gs (it saves long entries), or shorten the notes.'); return; }
   if(c==='locked'||c==='offline'){ toast('Not saved: the shared record is not connected.'); return; }
   if(c==='network'||c==='busy') { toast('Not saved: the shared record did not answer after 4 tries. Check the internet connection, then click Save again. Nothing you typed was lost.'); return; }

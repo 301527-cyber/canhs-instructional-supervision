@@ -18,7 +18,7 @@
  * Web app (Execute as: Me, Who has access: Anyone) ▸ copy the /exec address into the app's Connection page.
  * setup() writes a School Head code in the Access tab; change it to your own.
  */
-var VERSION = 'email-passcode-4';
+var VERSION = 'email-passcode-5';
 var SHEET_REC = 'Records', SHEET_ACC = 'Access';
 var COLLS = ['obs', 'coach', 'plans', 'config'];
 var CELL = 45000;            // characters per cell; a longer record continues in the next cells of its row (columns G, H, …)
@@ -157,7 +157,10 @@ function isMT_(coll, o, mts) {
   return /^\s*master\s+teacher/i.test(String(pos || '')) || !!(who && mts[who]);
 }
 /* is department d one of the departments this sign-in handles? */
-function inDept_(a, d) { return (a.depts || [a.dept]).indexOf(String(d || '')) >= 0; }
+function normDept_(d) { return String(d || '').replace(/\s+/g, ' ').trim().toLowerCase(); }
+function inDept_(a, d) { var n = normDept_(d); if (!n) return false; return (a.depts || [a.dept]).some(function (x) { return normDept_(x) === n; }); }
+/* the reason a save was refused, so the app can say exactly what is wrong */
+function deptErr_(a, why, rec, who, assigned) { return json_({ ok: false, error: 'dept', detail: { why: why, rec: rec || '', teacher: who || '', assigned: assigned || '', mine: a.depts || [a.dept] } }); }
 function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 
 function doGet(e) {
@@ -183,7 +186,7 @@ function doGet(e) {
       return inDept_(a, deptOf_(c, r.o, assign));
     }).map(function (r) { return r.o; });
   });
-  return json_({ ok: true, role: a.role, dept: a.role === 'dept' ? a.dept : '', depts: a.role === 'dept' ? a.depts : [], name: a.name, data: data });
+  return json_({ ok: true, version: VERSION, role: a.role, dept: a.role === 'dept' ? a.dept : '', depts: a.role === 'dept' ? a.depts : [], name: a.name, data: data });
 }
 
 function doPost(e) {
@@ -205,7 +208,7 @@ function doPost(e) {
     var assign = school.assign || {}, mts = {}; (school.mts || []).forEach(function (n) { mts[n] = 1; });
     var row0 = findRow_(sh, coll, id), curO = row0 ? rowObj_(sh, row0) : null;
     if (a.role !== 'admin' && ((curO && isMT_(coll, curO, mts)) || (body.action === 'put' && isMT_(coll, body.data || {}, mts)))) return json_({ ok: false, error: 'mt' });
-    if (a.role === 'dept' && curO && !inDept_(a, deptOf_(coll, curO, assign))) return json_({ ok: false, error: 'dept' });
+    if (a.role === 'dept' && curO && !inDept_(a, deptOf_(coll, curO, assign))) return deptErr_(a, 'existing', deptOf_(coll, curO, assign), coll === 'coach' ? curO.ratee : curO.teacher, '');
     if (body.action === 'del') {
       if (row0) sh.deleteRow(row0);
       return json_({ ok: true });
@@ -217,7 +220,8 @@ function doPost(e) {
       // a record with no department yet belongs to the department of the one who saves it
       if (!dept && coll !== 'config' && a.depts.length) { dept = a.depts[0]; data.dept = dept; }
       var who = coll === 'coach' ? data.ratee : data.teacher;
-      if (!inDept_(a, dept) || (who && assign[who] && !inDept_(a, assign[who]))) return json_({ ok: false, error: 'dept' });
+      if (!inDept_(a, dept)) return deptErr_(a, 'record', dept, who, who ? assign[who] : '');
+      if (who && assign[who] && !inDept_(a, assign[who])) return deptErr_(a, 'teacher', dept, who, assign[who]);
     }
     var copy = {}; Object.keys(data).forEach(function (k) { if (k !== 'id') copy[k] = data[k]; });
     var txt = JSON.stringify(copy), parts = [];
