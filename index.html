@@ -659,7 +659,7 @@ table.rate .finds li{margin:2px 0}
     <button role="tab" aria-selected="false" data-panel="help">How It Works</button>
     <button role="tab" aria-selected="false" data-panel="settings">Connection</button>
   </nav>
-  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527</div>
+  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.04-b</span></div>
 </aside>
 
 <main class="wrap">
@@ -7019,6 +7019,8 @@ function pmRowsVisible(inst){ var a=[]; for(var r=0;r<inst.rows.length;r++) if(i
 function pmTable(inst,rowsList,editable){
   var cols=inst.cols.map(function(w,i){ return inst.hc[i]?0:pmPx(w); }), W=cols.reduce(function(a,b){return a+b},0);
   var rs=rowsList||pmRowsVisible(inst), inRows={}; rs.forEach(function(r,i){ inRows[r]=i; });
+  /* the same lines as the Excel file: thick only around the outside of a table, ordinary lines inside */
+  var BDm=pmBorderMap(inst,pmRowsVisible(inst)), bdOf=function(r,c){ return BDm[r+','+c]||(((inst.cells[r+','+c]||{}).s||{}).bd)||{}; };
   var cover={}, span={};
   inst.merges.forEach(function(m){ var rr=rs.filter(function(r){return r>=m[0]&&r<=m[2]}); if(!rr.length) return; var top=rr[0];
     var cs=0; for(var c=m[1];c<=m[3];c++) if(!inst.hc[c]) cs++;
@@ -7029,8 +7031,9 @@ function pmTable(inst,rowsList,editable){
     for(var c=0;c<cols.length;c++){ if(inst.hc[c]||cover[r+','+c]) continue; var sp=span[r+','+c];
       // a merged range shows the value and style of its top-left cell; its border is the outer edge of the range
       var srcR=sp?sp.r0:r, cell=inst.cells[srcR+','+c]||inst.cells[r+','+c]||{s:{},v:''}, s=Object.assign({},cell.s);
-      if(sp){ var bd=Object.assign({},s.bd||{}), bl=inst.cells[sp.r2+','+c], tr=inst.cells[srcR+','+sp.c1];
-        if(bl&&bl.s&&bl.s.bd&&bl.s.bd.b) bd.b=bl.s.bd.b; if(tr&&tr.s&&tr.s.bd&&tr.s.bd.r) bd.r=tr.s.bd.r; s.bd=bd; }
+      if(sp){ var c1v=sp.c1; while(c1v>c&&inst.hc[c1v]) c1v--; var tl=bdOf(sp.r0,c), blb=bdOf(sp.rl,c), trb=bdOf(sp.r0,c1v), bd={};
+        if(tl.t) bd.t=tl.t; if(tl.l) bd.l=tl.l; if(blb.b||tl.b) bd.b=blb.b||tl.b; if(trb.r||tl.r) bd.r=trb.r||tl.r; s.bd=bd; }
+      else s.bd=Object.assign({},bdOf(r,c));
       // on a page of the PDF, the table is closed at the page's last row
       if(rowsList&&(sp?sp.rl:r)===rs[rs.length-1]){ var b2=Object.assign({},s.bd||{}); if((b2.l||b2.r||b2.t)&&!b2.b){ b2.b=['thin','000000']; s.bd=b2; } }
       var txt=cell.inp&&editable?pmInput(cell,s):esc(pmFmt(cell.v,s.nf));
@@ -7121,6 +7124,8 @@ function pmBorderMap(inst,rs){
     if(heavy(a.t)&&rp!=null&&inT(rp,c,'b')){ a.t=thin(a.t); var y=getBd(rp,c); if(y.b) y.b=thin(y.b); }
     if(heavy(a.r)&&cn!=null&&inT(r,cn,'l')){ a.r=thin(a.r); var z=getBd(r,cn); if(z.l) z.l=thin(z.l); }
     if(heavy(a.l)&&cp!=null&&inT(r,cp,'r')){ a.l=thin(a.l); var w=getBd(r,cp); if(w.r) w.r=thin(w.r); } }); });
+  /* the columns Excel hides keep no thick lines (so none can show through at a hidden column) */
+  for(var hc0=0;hc0<inst.cols.length;hc0++) if(inst.hc[hc0]) rs.forEach(function(r){ var b=getBd(r,hc0); ['l','r','t','b'].forEach(function(k){ if(heavy(b[k])) b[k]=thin(b[k]); }); });
   /* the outside edge of a table: one medium line all around (a grid cell's side that faces outside the table) */
   var grid=function(r,c){ var b=getBd(r,c); return !!((b.l||b.r)&&(b.t||b.b)); }, med=function(x){ return ['medium',(x&&x[1])||'000000']; };
   var edgeOut=function(r,c,side){ var i0=rs.indexOf(r), j0=visC.indexOf(c), nr=side==='t'?rs[i0-1]:side==='b'?rs[i0+1]:r, nc=side==='l'?visC[j0-1]:side==='r'?visC[j0+1]:c;
@@ -7129,8 +7134,9 @@ function pmBorderMap(inst,rs){
     ['t','b','l','r'].forEach(function(k){ if(a[k]&&a[k][0]==='thin'&&edgeOut(r,c,k)) a[k]=med(a[k]); }); }); });
   /* a table that starts in the first column (or ends in the last) is closed on that side too */
   rs.forEach(function(r){ var c0=visC[0], c1=visC[visC.length-1], a0=getBd(r,c0), a1=getBd(r,c1);
-    if(!a0.l&&(a0.r||mIn[r+','+c0])&&(a0.t||a0.b||mIn[r+','+c0])&&inst.cells[r+','+c0]) a0.l=med(a0.r);
-    if(!a1.r&&(a1.l||mIn[r+','+c1])&&(a1.t||a1.b||mIn[r+','+c1])&&inst.cells[r+','+c1]) a1.r=med(a1.l); });
+    /* only a real table cell (its own side line and a top or bottom line) — never a signature line or a label under it */
+    if(!a0.l&&a0.r&&(a0.t||a0.b||mIn[r+','+c0])&&inst.cells[r+','+c0]) a0.l=med(a0.r);
+    if(!a1.r&&a1.l&&(a1.t||a1.b||mIn[r+','+c1])&&inst.cells[r+','+c1]) a1.r=med(a1.l); });
   return BD;
 }
 async function pmXlsx(insts,name,foot,asBlob){
