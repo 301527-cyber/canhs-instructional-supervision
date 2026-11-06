@@ -659,7 +659,7 @@ table.rate .finds li{margin:2px 0}
     <button role="tab" aria-selected="false" data-panel="help">How It Works</button>
     <button role="tab" aria-selected="false" data-panel="settings">Connection</button>
   </nav>
-  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.04-b</span></div>
+  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.06</span></div>
 </aside>
 
 <main class="wrap">
@@ -5096,8 +5096,10 @@ function acctEmail(){ var c=String(API.code||''), k=c.lastIndexOf('|'); return k
 function acctFirst(n){ n=String(n||'').trim(); if(!n) return ''; var w=n.split(/\s+/)[0].replace(/[.,]$/,''); return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }
 function acctUI(){
   var em=acctEmail(), signed=S.mode==='shared', nm=S.myName||(S.role==='admin'?'School Head':'')||(em?em.split('@')[0]:'');
-  $('#acct-hi').textContent=signed?'Hi, '+(acctFirst(S.myName)||nm||'there')+'!':(S.mode==='local'?'This browser only':'Not signed in');
-  $('#acct-name').textContent=signed?(nm||'Signed in'):(S.mode==='local'?'Working in this browser':'Not signed in');
+  /* the School Head's sign-in is the school's own account: it is greeted as CANHS */
+  var adm=signed&&S.role==='admin';
+  $('#acct-hi').textContent=signed?'Hi, '+(adm?'CANHS':(acctFirst(S.myName)||nm||'there'))+'!':(S.mode==='local'?'This browser only':'Not signed in');
+  $('#acct-name').textContent=signed?(adm?'CANHS':(nm||'Signed in')):(S.mode==='local'?'Working in this browser':'Not signed in');
   $('#acct-email').textContent=signed?em:'';
   $('#acct-access').textContent=signed?({admin:'Full access, including Personnel & Departments and sign-ins',edit:'Can see and edit every department',dept:(S.myDept||'Department')+' Department'+(S.myDepts.length>1?'s':'')+' only',view:'Read only'}[S.role]||''):(S.mode==='local'?'Records are kept in this browser only.':'Sign in to open the shared supervision record.');
   $('#acct-out-t').textContent=signed?'Log out':'Sign in';
