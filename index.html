@@ -6800,6 +6800,9 @@ function pmPart1(rec,phase){
     pmCell(inst,r,cS).fx={k:'fn',f:function(X){ var a=X.a(r,cA), d=X.a(r,3); return a&&d?'IF('+a+'="","",ROUND('+a+'*'+d+',3))':''; }};
     (inst.scRows=inst.scRows||[]).push(r);
   });
+  /* the objectives table is closed by a thick line under its last row (the template leaves some columns open) */
+  var lastR=B.end-1; for(var cz=0;cz<inst.cols.length;cz++){ if(inst.hc[cz]) continue; var cl=inst.cells[lastR+','+cz]; if(!cl) continue; var bz=(cl.s&&cl.s.bd)||{};
+    if(bz.l||bz.r||inst.merges.some(function(m){ return m[2]===lastR&&m[1]<=cz&&m[3]>=cz&&m[0]<lastR; })) cl.s=Object.assign({},cl.s,{bd:Object.assign({},bz,{b:['medium','000000']})}); }
   var fo=B.end-foot;
   for(var r=foot;r<lay.rows.length;r++){ if(lay.hr[r]) continue; pmCopyRows(inst,lay,r,r+1,r+fo,{skipMerge:function(){return true}}); }
   lay.merges.forEach(function(m){ if(m[0]>=foot) inst.merges.push([m[0]+fo,m[1],m[2]+fo,m[3]]); });
@@ -7035,7 +7038,9 @@ function pmTable(inst,rowsList,editable){
         if(tl.t) bd.t=tl.t; if(tl.l) bd.l=tl.l; if(blb.b||tl.b) bd.b=blb.b||tl.b; if(trb.r||tl.r) bd.r=trb.r||tl.r; s.bd=bd; }
       else s.bd=Object.assign({},bdOf(r,c));
       // on a page of the PDF, the table is closed at the page's last row
-      if(rowsList&&(sp?sp.rl:r)===rs[rs.length-1]){ var b2=Object.assign({},s.bd||{}); if((b2.l||b2.r||b2.t)&&!b2.b){ b2.b=['thin','000000']; s.bd=b2; } }
+      if(rowsList&&(sp?sp.rl:r)===rs[rs.length-1]){ var b2=Object.assign({},s.bd||{}); if((b2.l||b2.r)&&(!b2.b||b2.b[0]==='thin')&&rowsList.cutBelow){ b2.b=['medium','000000']; s.bd=b2; } }
+      /* a table that continues from the previous page starts with a thick line too (when its headings are not repeated) */
+      if(rowsList&&r===rs[0]&&rowsList.cutAbove){ var b3=Object.assign({},s.bd||{}); if((b3.l||b3.r)&&(!b3.t||b3.t[0]==='thin')){ b3.t=['medium','000000']; s.bd=b3; } }
       var txt=cell.inp&&editable?pmInput(cell,s):esc(pmFmt(cell.v,s.nf));
       // text that runs past its cell is lifted above the neighbouring cells, so their fill does not hide it in the PDF
       if(!(cell.inp&&editable)&&!s.w&&txt) txt='<span style="position:relative;z-index:1">'+txt+'</span>';
@@ -7063,16 +7068,25 @@ function pmPages(inst,box){
   var trs=tmp.querySelectorAll('tr'), rs=pmRowsVisible(inst), hh={}; rs.forEach(function(r,i){ hh[r]=trs[i]?trs[i].getBoundingClientRect().height:20; }); tmp.remove();
   var scale=Math.min(1,(pw-2*m)/(t.w*0.75)), avail=(ph-2*m)/0.75/scale;
   var titles=inst.titleRows?rs.filter(function(r){return r>=inst.titleRows[0]&&r<=inst.titleRows[1]}):[], th=titles.reduce(function(a,r){return a+hh[r]},0);
-  var breakOk=function(r){ return !inst.merges.some(function(mm){ return mm[1]!==0&&mm[0]<r&&mm[2]>=r; }); };
+  var tset={}; titles.forEach(function(r){ tset[r]=1; });
+  var filled=function(r){ for(var c=0;c<inst.cols.length;c++){ if(inst.hc[c]) continue; var x=inst.cells[r+','+c]; if(x&&x.v!==''&&x.v!=null) return true; } return false; };
+  var txt=function(r){ var a=''; for(var c=0;c<inst.cols.length;c++){ var x=inst.cells[r+','+c]; if(x&&typeof x.v==='string') a+=' '+x.v; } return a; };
+  /* a small table such as ADJECTIVAL RATING EQUIVALENCES is never cut: all its rows go to the same page */
+  var keep={}; rs.forEach(function(r,i){ if(/ADJECTIVAL RATING EQUIVALENCES/i.test(txt(r))){ for(var j=i+1;j<rs.length&&filled(rs[j]);j++) keep[rs[j]]=1; } });
+  /* the end of the objectives table: the headings repeat only on pages that still hold rows of it */
+  var tEnd=-1; rs.forEach(function(r){ if(tEnd<0&&/RATING FOR PART I|PART I\. PROFESSIONAL STANDARDS RATING/i.test(txt(r))) tEnd=r; });
+  var breakOk=function(r){ return !keep[r]&&!inst.merges.some(function(mm){ return mm[1]!==0&&mm[0]<r&&mm[2]>=r; }); };
   var pages=[], cur=[], used=0, lastOk=-1;
   rs.forEach(function(r,i){ var hgt=hh[r];
     if(used+hgt>avail&&cur.length){ var cut=lastOk>0&&lastOk<cur.length?lastOk:cur.length; var carry=cur.slice(cut); pages.push(cur.slice(0,cut)); cur=(titles.length?titles.slice():[]).concat(carry); used=(titles.length?th:0)+carry.reduce(function(a,x){return a+hh[x]},0); lastOk=-1; }
     if(breakOk(r)) lastOk=cur.length; cur.push(r); used+=hgt; });
   if(cur.length) pages.push(cur);
   // a page that would hold only the repeated headings and blank rows is left out
-  var tset={}; titles.forEach(function(r){ tset[r]=1; });
-  var filled=function(r){ for(var c=0;c<inst.cols.length;c++){ if(inst.hc[c]) continue; var x=inst.cells[r+','+c]; if(x&&x.v!==''&&x.v!=null) return true; } return false; };
   pages=pages.filter(function(list,i){ return i===0||list.some(function(r){ return !tset[r]&&filled(r); }); });
+  // past the end of the objectives table, a page does not repeat its headings
+  if(tEnd>=0&&titles.length) pages=pages.map(function(list,i){ if(!i) return list; var body=list.filter(function(r){ return !tset[r]; }); return body.length&&body[0]>tEnd?body:list; });
+  // where a table is cut between pages, each part is closed with the thick outside line
+  pages.forEach(function(list,i){ var nx=pages[i+1]; list.cutBelow=!!(nx&&(tEnd<0||list[list.length-1]<tEnd)); list.cutAbove=!!(i&&(tEnd<0||list[0]<=tEnd)&&!tset[list[0]]); });
   return pages.map(function(list){ var tt=pmTable(inst,list,false), img=list.indexOf(rs[0])>=0?pmImgs(inst):'';
     return {land:land,html:'<div class="pmpage" style="width:'+pw+'pt;height:'+ph+'pt;background:#fff;position:relative;overflow:hidden"><div style="position:absolute;left:'+m+'pt;top:'+m+'pt;transform:scale('+scale+');transform-origin:0 0"><div class="pms" style="position:relative;width:'+tt.w+'px">'+tt.html+img+'</div></div></div>'}; });
 }
@@ -7101,14 +7115,14 @@ function pmColL(c){ var s=''; c++; while(c>0){ var m=(c-1)%26; s=String.fromChar
    only on the outside of a table, every line inside a table is an ordinary thin line */
 function pmBorderMap(inst,rs){
     var BD={}, getBd=function(r,c){ var k=r+','+c; if(BD[k]) return BD[k]; var cl=inst.cells[k]; return BD[k]=Object.assign({},(cl&&cl.s&&cl.s.bd)||{}); };
-    var mIn={};
+    var mIn={}, mV={};
     inst.merges.forEach(function(m){ if(m[2]===m[0]&&m[3]===m[1]) return; var rr=rs.filter(function(r){return r>=m[0]&&r<=m[2];}); if(!rr.length) return; var top=rr[0], bot=rr[rr.length-1];
       var cs=[]; for(var c=m[1];c<=m[3];c++) if(!inst.hc[c]) cs.push(c); if(!cs.length) return; var lc=cs[0], rc=cs[cs.length-1], tl=getBd(m[0],m[1]);
       var pick=function(list,side,fb){ for(var q=0;q<list.length;q++){ var b=getBd(list[q][0],list[q][1])[side]; if(b) return b; } return fb||null; };
       var T=tl.t||pick(cs.map(function(c){return [top,c];}),'t'), B=pick([[bot,lc]].concat(cs.map(function(c){return [bot,c];})),'b',tl.b),
           L=tl.l||pick(rr.map(function(r){return [r,lc];}),'l'), Rt=pick(rr.map(function(r){return [r,rc];}).filter(function(x){return !(x[0]===m[0]&&rc===m[1]&&cs.length>1);}),'r',cs.length===1?tl.r:null);
       var tcell=inst.cells[m[0]+','+m[1]], ts=(tcell&&tcell.s)||{};
-      rr.forEach(function(r){ cs.forEach(function(c){ var k=r+','+c, b={}; if(r===top&&T) b.t=T; if(r===bot&&B) b.b=B; if(c===lc&&L) b.l=L; if(c===rc&&Rt) b.r=Rt; BD[k]=b; mIn[k]=1;
+      rr.forEach(function(r){ cs.forEach(function(c){ var k=r+','+c, b={}; if(r===top&&T) b.t=T; if(r===bot&&B) b.b=B; if(c===lc&&L) b.l=L; if(c===rc&&Rt) b.r=Rt; BD[k]=b; mIn[k]=1; if(L&&Rt) mV[k]=1;
         if(!inst.cells[k]) inst.cells[k]={s:Object.assign({},ts),v:''}; }); }); });
     var visC=[]; for(var vc=0;vc<inst.cols.length;vc++) if(!inst.hc[vc]) visC.push(vc);
     rs.forEach(function(r,i){ var rn=rs[i+1]; visC.forEach(function(c,j){ var cn=visC[j+1], a=getBd(r,c);
@@ -7118,7 +7132,7 @@ function pmBorderMap(inst,rs){
   var heavy=function(x){ return x&&x[0]&&x[0]!=='thin'&&x[0]!=='hair'&&!/dash|dot/i.test(x[0]); }, thin=function(x){ return ['thin',x[1]||'000000']; };
   /* a neighbour is inside the table when it has a line of its own on another side (or is part of a merged block) */
   /* (a cell above or below is in the table when it has side lines; a cell left or right of it, when it has top or bottom lines) */
-  var inT=function(r,c,skip){ if(mIn[r+','+c]) return true; var b=getBd(r,c); return skip==='t'||skip==='b'?!!(b.l||b.r):!!(b.t||b.b); };
+  var inT=function(r,c,skip){ var k=r+','+c, b=getBd(r,c); return skip==='t'||skip==='b'?!!(b.l||b.r||mV[k]):!!(b.t||b.b||mIn[k]); };
   rs.forEach(function(r,i){ var rp=rs[i-1], rn=rs[i+1]; visC.forEach(function(c,j){ var cp=visC[j-1], cn=visC[j+1], a=getBd(r,c);
     if(heavy(a.b)&&rn!=null&&inT(rn,c,'t')){ a.b=thin(a.b); var x=getBd(rn,c); if(x.t) x.t=thin(x.t); }
     if(heavy(a.t)&&rp!=null&&inT(rp,c,'b')){ a.t=thin(a.t); var y=getBd(rp,c); if(y.b) y.b=thin(y.b); }
