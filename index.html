@@ -14,46 +14,46 @@
    a teal banner over the working area, white ruled cards below. Same instrument family
    as the CANHS M&E Tools Portal, retitled for Instructional Supervision. */
 :root{
-  /* theme: Warm Umber #2B150D, Cream #F1E6D2, Galaxy Cyan #22D3F0 */
-  --umber:#2B150D; --cream:#F1E6D2; --cyan:#22D3F0; --fbar:#B9AB95; --fbar-rule:#9E8D74; --fdate:#22D3F0;
-  --paper:#F1E6D2; --surface:#FBF6EC; --surface-2:#F6EDDD;
-  --ink:#2B150D; --ink-2:#5C4335; --ink-3:#86705F;
-  --rule:#D9C7AA; --rule-soft:#E8DCC7; --rule-strong:#B39A7A;
+  /* theme: Deep Teal #072F37, Mist #EEF1F5, Gold #E8B93B */
+  --umber:#072F37; --cream:#EEF1F5; --cyan:#E8B93B; --fbar:#DDE3EA; --fbar-rule:#C3CDD6; --fdate:#072F37;
+  --paper:#EEF1F5; --surface:#FFFFFF; --surface-2:#F5F7FA;
+  --ink:#072F37; --ink-2:#3B5560; --ink-3:#687D85;
+  --rule:#D3DBE2; --rule-soft:#E4E9EE; --rule-strong:#A7B5BF;
   --seal:#0A6F82; --seal-soft:#D6F3F8;
-  --gold:#8A5A12; --gold-soft:#F6E9CF; --gold-mark:#22D3F0;
+  --gold:#8A6510; --gold-soft:#FBF1D6; --gold-mark:#E8B93B;
   --stamp:#A8202A; --stamp-soft:#F8E3DF;
   --good:#2F6B3F; --good-soft:#E3EDDC;
-  --btn-bg:#22D3F0; --btn-fg:#2B150D; --field:#FFFBF4;
-  --side-bg:#2B150D; --side-fg:#F1E6D2; --side-dim:#BFA88E; --side-lede:#D9C9B0;
+  --btn-bg:#E8B93B; --btn-fg:#072F37; --field:#FFFFFF;
+  --side-bg:#072F37; --side-fg:#EEF1F5; --side-dim:#9DB4BA; --side-lede:#C7D6DA;
   --teal:#0A6F82; --mast-h:76px;
-  --sheet:#ffffff; --sheet-ink:#000000; --sheet-rule:#808080; --sheet-head:#D9D9D9; --desk:#7A6658;
-  --shadow:0 1px 2px rgba(43,21,13,.08),0 8px 24px -12px rgba(43,21,13,.28);
+  --sheet:#ffffff; --sheet-ink:#000000; --sheet-rule:#808080; --sheet-head:#D9D9D9; --desk:#5B6E75;
+  --shadow:0 1px 2px rgba(7,47,55,.08),0 8px 24px -12px rgba(7,47,55,.28);
   --sans:"Century Gothic","CenturyGothic","Jost","URW Gothic",Futura,"Trebuchet MS",sans-serif;
   --geo:"Century Gothic","CenturyGothic","Jost","URW Gothic",Futura,"Trebuchet MS",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#1A0D08; --surface:#2B150D; --surface-2:#35201A;
-  --ink:#F1E6D2; --ink-2:#D3C2A8; --ink-3:#A8937C;
-  --rule:#4A3328; --rule-soft:#3A261D; --rule-strong:#6B5143;
-  --seal:#22D3F0; --seal-soft:#0F3A42;
-  --gold:#E8BC66; --gold-soft:#3A2A12; --gold-mark:#22D3F0;
+  --paper:#041C22; --surface:#072F37; --surface-2:#0D3A44;
+  --ink:#EEF1F5; --ink-2:#C3D0D5; --ink-3:#91A6AD;
+  --rule:#1F4B55; --rule-soft:#123E48; --rule-strong:#3A6670;
+  --seal:#E8B93B; --seal-soft:#0F3A42;
+  --gold:#E8BC66; --gold-soft:#3A3112; --gold-mark:#E8B93B;
   --stamp:#F2959A; --stamp-soft:#3B1D22;
   --good:#86CC98; --good-soft:#173324;
-  --btn-bg:#22D3F0; --btn-fg:#2B150D; --field:#22110B;
-  --side-bg:#140805; --teal:#22D3F0; --desk:#120906; --fbar:#3A261D; --fbar-rule:#5A4033; --fdate:#22D3F0;
+  --btn-bg:#E8B93B; --btn-fg:#072F37; --field:#062830;
+  --side-bg:#031A1F; --teal:#E8B93B; --desk:#02151A; --fbar:#123E48; --fbar-rule:#2A5560; --fdate:#072F37;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
   color-scheme:dark}}
 :root[data-theme="dark"]{
-  --paper:#1A0D08; --surface:#2B150D; --surface-2:#35201A;
-  --ink:#F1E6D2; --ink-2:#D3C2A8; --ink-3:#A8937C;
-  --rule:#4A3328; --rule-soft:#3A261D; --rule-strong:#6B5143;
-  --seal:#22D3F0; --seal-soft:#0F3A42;
-  --gold:#E8BC66; --gold-soft:#3A2A12; --gold-mark:#22D3F0;
+  --paper:#041C22; --surface:#072F37; --surface-2:#0D3A44;
+  --ink:#EEF1F5; --ink-2:#C3D0D5; --ink-3:#91A6AD;
+  --rule:#1F4B55; --rule-soft:#123E48; --rule-strong:#3A6670;
+  --seal:#E8B93B; --seal-soft:#0F3A42;
+  --gold:#E8BC66; --gold-soft:#3A3112; --gold-mark:#E8B93B;
   --stamp:#F2959A; --stamp-soft:#3B1D22;
   --good:#86CC98; --good-soft:#173324;
-  --btn-bg:#22D3F0; --btn-fg:#2B150D; --field:#22110B;
-  --side-bg:#140805; --teal:#22D3F0; --desk:#120906; --fbar:#3A261D; --fbar-rule:#5A4033; --fdate:#22D3F0;
+  --btn-bg:#E8B93B; --btn-fg:#072F37; --field:#062830;
+  --side-bg:#031A1F; --teal:#E8B93B; --desk:#02151A; --fbar:#123E48; --fbar-rule:#2A5560; --fdate:#072F37;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
   color-scheme:dark}
 *{box-sizing:border-box}
@@ -89,22 +89,22 @@ a{color:var(--seal)}
 .brand p{margin:4px 0 0;font-size:11.5px;color:var(--side-dim);line-height:1.35}
 .nav{display:flex;flex-direction:column;flex:1;padding:10px 0}
 .navhead.navsep{padding:0;margin:6px 0 4px}
-.navhead{padding:14px 20px 5px;margin-top:6px;border-top:1px solid rgba(34,211,240,.25);font-size:12.5px;letter-spacing:.06em;text-transform:none;font-weight:700;color:var(--gold-mark)}
+.navhead{padding:14px 20px 5px;margin-top:6px;border-top:1px solid rgba(232,185,59,.25);font-size:12.5px;letter-spacing:.06em;text-transform:none;font-weight:700;color:var(--gold-mark)}
 .nav button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:8px 20px;background:none;border:0;
   border-left:3px solid transparent;color:var(--side-fg);cursor:pointer;font-family:var(--sans);font-size:13.5px;line-height:1.3}
 .nav button span{width:19px;height:19px;flex:none;border-radius:2px;display:grid;place-items:center;font-family:var(--mono);
   font-size:10.5px;background:rgba(255,255,255,.08);color:var(--side-dim)}
 .nav button.navgrp,.nav button.navsolo{font-weight:600}
-.nav button.navgrp.subpar{color:#22D3F0}
+.nav button.navgrp.subpar{color:#E8B93B}
 .nav button.subnav{padding:6px 20px 6px 38px;font-size:12.8px}
 .nav button.subpar[aria-selected="true"]{background:none;font-weight:600;border-left-color:transparent}
 .nav button.subpar[aria-selected="true"] span{background:rgba(255,255,255,.08);color:var(--side-dim)}
 .nav button:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav button[aria-selected="true"]{background:rgba(255,255,255,.12);color:#fff;font-weight:600;border-left-color:var(--gold-mark)}
-.nav button[aria-selected="true"] span{background:var(--gold-mark);color:#2B150D}
+.nav button[aria-selected="true"] span{background:var(--gold-mark);color:#072F37}
 .sidefoot{padding:11px 20px;font-size:12px;color:var(--side-dim);border-top:1px solid rgba(255,255,255,.14)}
 .sidefoot .conn{display:flex;align-items:center;gap:7px;color:var(--side-fg);margin-bottom:6px}
-.sidefoot .conn i{width:8px;height:8px;border-radius:50%;background:#BFA88E;flex:none}
+.sidefoot .conn i{width:8px;height:8px;border-radius:50%;background:#9DB4BA;flex:none}
 .sidefoot .conn.live i{background:#6FD08C}
 .sidefoot .conn.local i{background:var(--gold-mark)}
 
@@ -130,10 +130,10 @@ a{color:var(--seal)}
 .topbar .spacer{flex:1}
 .topbar.compact{min-height:58px;padding:6px 30px}
 .topbar.compact .lede{display:none}
-.ctxchip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:#F1E6D2;border-radius:2px;padding:7px 12px;line-height:1.25}
+.ctxchip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:#EEF1F5;border-radius:2px;padding:7px 12px;line-height:1.25}
 .ctxchip .k{font-size:10.5px;color:#6E5446;letter-spacing:.05em;text-transform:uppercase}
-.ctxchip select{background:transparent;border:0;color:#2B150D;font-weight:600;font-size:14px;padding:0;cursor:pointer}
-.ctxchip select option{color:#2B150D}
+.ctxchip select{background:transparent;border:0;color:#072F37;font-weight:600;font-size:14px;padding:0;cursor:pointer}
+.ctxchip select option{color:#072F37}
 main.wrap{flex:1;min-width:0;padding:0 0 60px}
 main.wrap>.inner{max-width:1180px;margin:0 auto;padding:22px 26px 0}
 @media (max-width:900px){
@@ -152,8 +152,8 @@ main.wrap>.inner{max-width:1180px;margin:0 auto;padding:22px 26px 0}
   main.wrap>.inner{padding:16px 16px 0}
 }
 .nav button:not(.subnav){color:var(--gold-mark)}
-.nav button:not(.subnav):hover,.nav button:not(.subnav)[aria-selected="true"],.nav button.subpar[aria-selected="true"]{color:#22D3F0}
-.nav button.subnav{color:#F1E6D2!important;font-weight:500}
+.nav button:not(.subnav):hover,.nav button:not(.subnav)[aria-selected="true"],.nav button.subpar[aria-selected="true"]{color:#E8B93B}
+.nav button.subnav{color:#EEF1F5!important;font-weight:500}
 .nav button.subnav:hover{color:#fff!important}
 /* pure white sub-menu text: grey (not coloured ClearType) smoothing, so thin white letters show no yellow/blue fringes on the dark sidebar */
 .nav button.subnav{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;will-change:transform;backface-visibility:hidden}
@@ -173,7 +173,7 @@ main.wrap>.inner{max-width:1180px;margin:0 auto;padding:22px 26px 0}
 .btn[disabled]{opacity:.45;cursor:not-allowed;filter:none}
 .btn.ghost{background:transparent;color:var(--seal);border-color:var(--rule)}
 .btn.small{padding:5px 11px;font-size:12.5px}
-.btn.gold{background:var(--gold-mark);border-color:var(--gold-mark);color:#2B150D;font-weight:600}
+.btn.gold{background:var(--gold-mark);border-color:var(--gold-mark);color:#072F37;font-weight:600}
 .btn.danger{background:transparent;color:var(--stamp);border-color:var(--rule)}
 .btn.danger.armed{background:var(--stamp);color:#fff;border-color:var(--stamp)}
 input[type=text],input[type=number],select,textarea{background:var(--field);border:1px solid var(--rule-strong);border-radius:2px;padding:7px 9px;min-width:0}
@@ -311,7 +311,7 @@ table.rate td.lv label{display:grid;place-items:center;width:34px;height:30px;ma
 table.rate td.lv input{position:absolute;opacity:0;pointer-events:none}
 table.rate td.lv label:has(input:checked){background:var(--seal);border-color:var(--seal);color:var(--btn-fg);font-weight:600}
 table.rate td.lv label:has(input:focus-visible){outline:2px solid var(--seal);outline-offset:1px}
-table.rate td.lv.no label:has(input:checked){background:var(--gold-mark);border-color:var(--gold-mark);color:#2B150D}
+table.rate td.lv.no label:has(input:checked){background:var(--gold-mark);border-color:var(--gold-mark);color:#072F37}
 table.rate td.lv.na label:has(input:checked){background:var(--ink-3);border-color:var(--ink-3);color:var(--surface)}
 table.rate .code{font-family:var(--mono);font-size:11.5px;color:var(--seal)}
 table.plan{min-width:1080px}
@@ -584,24 +584,25 @@ table.rate .finds li{margin:2px 0}
 .dbar,.filters{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;background:var(--fbar);border:1px solid var(--fbar-rule);border-radius:2px;padding:14px 16px;box-shadow:none}
 .dbar{margin-top:18px}
 .dbar>label,.filters>label.f{position:relative;display:inline-flex;align-items:center;gap:6px;margin:0;font-size:0;letter-spacing:normal;text-transform:none;color:var(--ink)}
-.dbar select,.filters select{-webkit-appearance:none;appearance:none;font-size:15px;font-weight:600;line-height:1.2;color:#2B150D;background:#22D3F0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%232B150D'/%3E%3C/svg%3E") no-repeat right 13px center;border:1px solid #14B8D4;border-radius:4px;padding:9px 34px 9px 16px;cursor:pointer;box-shadow:0 1px 1px rgba(43,21,13,.18);text-transform:none;letter-spacing:normal;min-height:40px}
-.dbar select:hover,.filters select:hover{background-color:#4FDDF4}
-.dbar select:focus-visible,.filters select:focus-visible{outline:2px solid var(--umber);outline-offset:2px}
-.dbar select option,.filters select option{background:#fff;color:#2B150D;font-weight:400}
-.dbar input[type=search],.dbar input[type=text],.filters input[type=text],.filters input[type=search]{font-size:15px;background:#FFFBF4;color:var(--ink);border:1px solid var(--fbar-rule);border-radius:4px;padding:9px 12px;min-height:40px;text-transform:none;letter-spacing:normal}
+.dbar select,.filters select{-webkit-appearance:none;appearance:none;font-size:15px;font-weight:600;line-height:1.2;color:#FFFFFF;background:#072F37 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23FFFFFF'/%3E%3C/svg%3E") no-repeat right 13px center;border:1px solid #072F37;border-radius:4px;padding:9px 34px 9px 16px;cursor:pointer;box-shadow:0 1px 1px rgba(7,47,55,.18);text-transform:none;letter-spacing:normal;min-height:40px}
+.dbar select:hover,.filters select:hover{background-color:#0D4552}
+.dbar label>select,.filters label.f>select,.filters label>select{color:#FFFFFF}
+.dbar select:focus-visible,.filters select:focus-visible{outline:2px solid #E8B93B;outline-offset:2px}
+.dbar select option,.filters select option{background:#fff;color:#072F37;font-weight:400}
+.dbar input[type=search],.dbar input[type=text],.filters input[type=text],.filters input[type=search]{font-size:15px;background:#FFFFFF;color:var(--ink);border:1px solid var(--fbar-rule);border-radius:4px;padding:9px 12px;min-height:40px;text-transform:none;letter-spacing:normal}
 .dbar .mini{font-size:13px;color:var(--ink)}
 .dbar .dsearch{margin-left:auto}
 /* the date: right-aligned green button with a calendar mark and a double chevron at its end */
-.dbar>label.dwhen,.filters>label.dwhen{order:20;margin-left:auto;background-color:var(--fdate);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%232B150D' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%232B150D' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l6 6 6-6M6 13l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat,no-repeat;background-position:13px center,right 11px center;border:1px solid #14B8D4;border-radius:4px;padding:0 32px 0 38px;min-height:40px;box-shadow:0 1px 1px rgba(43,21,13,.18)}
+.dbar>label.dwhen,.filters>label.dwhen{order:20;margin-left:auto;background-color:var(--fdate);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l6 6 6-6M6 13l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat,no-repeat;background-position:13px center,right 11px center;border:1px solid #072F37;border-radius:4px;padding:0 32px 0 38px;min-height:40px;box-shadow:0 1px 1px rgba(7,47,55,.18)}
 .dbar .dsearch~label.dwhen{margin-left:0}
 /* Reports: month and year are two pickers joined into one green button */
-.filters>label.dwhen:has(+label.dwhen){border-radius:4px 0 0 4px;border-right:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%232B150D' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E");padding-right:2px}
-.filters>label.dwhen+label.dwhen{margin-left:-14px;border-radius:0 4px 4px 0;border-left:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%232B150D' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l6 6 6-6M6 13l6 6 6-6'/%3E%3C/svg%3E");background-position:right 11px center;padding-left:4px}
-.dbar label.dwhen select,.filters label.dwhen select,.dbar label.dwhen input{background:transparent;color:#2B150D;border:0;box-shadow:none;padding:9px 5px;min-height:0;width:auto;font-size:15px;font-weight:600}
-.dbar label.dwhen select:hover,.filters label.dwhen select:hover{background-color:rgba(255,255,255,.28)}
+.filters>label.dwhen:has(+label.dwhen){border-radius:4px 0 0 4px;border-right:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E");padding-right:2px}
+.filters>label.dwhen+label.dwhen{margin-left:-14px;border-radius:0 4px 4px 0;border-left:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l6 6 6-6M6 13l6 6 6-6'/%3E%3C/svg%3E");background-position:right 11px center;padding-left:4px}
+.dbar label.dwhen select,.filters label.dwhen select,.dbar label.dwhen input{background:transparent;color:#FFFFFF;border:0;box-shadow:none;padding:9px 5px;min-height:0;width:auto;font-size:15px;font-weight:600}
+.dbar label.dwhen select:hover,.filters label.dwhen select:hover{background-color:rgba(255,255,255,.12)}
 .dbar label.dwhen input[type=number]{width:60px!important;-moz-appearance:textfield;appearance:textfield}
 .dbar label.dwhen input[type=number]::-webkit-inner-spin-button,.dbar label.dwhen input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-.dbar label.dwhen select option,.filters label.dwhen select option{color:#2B150D}
+.dbar label.dwhen select option,.filters label.dwhen select option{color:#072F37}
 @media (max-width:760px){ .dbar>label.dwhen,.filters>label.dwhen,.dbar .dsearch{margin-left:0} .dbar .dsearch input{width:100%} }
 
 /* ---------- dashboard: overall view (one line chart of the school year) ---------- */
@@ -620,7 +621,7 @@ table.rate .finds li{margin:2px 0}
 .trend .ax{fill:var(--ink-3);font-size:12px}
 .trend .base{stroke:var(--rule);stroke-width:1}
 .trend .hair{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:3 3}
-.trend .tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:4px;box-shadow:0 6px 18px rgba(43,21,13,.22);padding:8px 10px;font-size:13px;line-height:1.45;white-space:nowrap;z-index:5}
+.trend .tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:4px;box-shadow:0 6px 18px rgba(7,47,55,.22);padding:8px 10px;font-size:13px;line-height:1.45;white-space:nowrap;z-index:5}
 .trend .tip b{display:block;margin-bottom:3px;font-size:13px}
 .trend .tip .r{display:flex;align-items:center;gap:8px}
 .trend .tip .r i{width:14px;height:2px;border-radius:1px;display:inline-block}
@@ -638,8 +639,8 @@ table.rate .finds li{margin:2px 0}
 .kopen:hover,.kopen:focus-visible{background:var(--seal);outline:none}
 .kpi .kl{padding-right:34px}
 .trend .th{padding-right:40px}
-dialog.kdlg{border:1px solid var(--rule);border-top:3px solid var(--gold-mark);border-radius:4px;padding:0;background:var(--surface);color:var(--ink);width:min(980px,calc(100vw - 32px));max-height:calc(100vh - 48px);box-shadow:0 24px 60px rgba(43,21,13,.35)}
-dialog.kdlg::backdrop{background:rgba(43,21,13,.45)}
+dialog.kdlg{border:1px solid var(--rule);border-top:3px solid var(--gold-mark);border-radius:4px;padding:0;background:var(--surface);color:var(--ink);width:min(980px,calc(100vw - 32px));max-height:calc(100vh - 48px);box-shadow:0 24px 60px rgba(7,47,55,.35)}
+dialog.kdlg::backdrop{background:rgba(7,47,55,.45)}
 .kdlg .kh{display:flex;align-items:flex-start;gap:12px;padding:16px 20px;border-bottom:1px solid var(--rule-soft);position:sticky;top:0;background:var(--surface);z-index:1}
 .kdlg .kh h3{font-size:18px;font-weight:700;margin:0}
 .kdlg .kh p{margin:3px 0 0;font-size:13px;color:var(--ink-3)}
@@ -660,18 +661,18 @@ dialog.kdlg::backdrop{background:rgba(43,21,13,.45)}
 .kdlg td.cell small{color:var(--ink-3);font-size:11.5px}
 
 /* ---------- side menu: accordion like the eMDS menu, and a « button that folds the whole menu ---------- */
-.nav button.navgrp,.nav button.navsolo,.nav>button[data-panel="home"]{color:#F1E6D2!important;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
+.nav button.navgrp,.nav button.navsolo,.nav>button[data-panel="home"]{color:#EEF1F5!important;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
 .nav button.navgrp::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .15s;opacity:.75;flex:none}
 .nav button.navgrp.open::after{transform:rotate(45deg)}
 .nav button.navgrp:hover,.nav button.navsolo:hover,.nav>button[data-panel="home"]:hover{background:rgba(255,255,255,.07)}
-.nav button.navgrp.open,.nav button.navgrp.subpar,.nav>button[data-panel="home"][aria-selected="true"]{color:#22D3F0!important;background:rgba(255,255,255,.09);border-left-color:#22D3F0}
-.nav button.subnav{background:#F1E6D2;color:#2B150D!important;font-weight:500;border-left:3px solid transparent;border-bottom:1px solid #E2D2B6;padding:8px 20px 8px 30px;-webkit-font-smoothing:auto}
+.nav button.navgrp.open,.nav button.navgrp.subpar,.nav>button[data-panel="home"][aria-selected="true"]{color:#E8B93B!important;background:rgba(255,255,255,.09);border-left-color:#E8B93B}
+.nav button.subnav{background:#EEF1F5;color:#072F37!important;font-weight:500;border-left:3px solid transparent;border-bottom:1px solid #DCE2E8;padding:8px 20px 8px 30px;-webkit-font-smoothing:auto}
 .nav button.subnav::before{content:"\00BB";flex:none;margin-right:6px;color:currentColor;font-weight:700;font-size:15px;line-height:1}
 .nav button.subnav{gap:0;padding-left:24px}
-.nav button.subnav:hover{background:#E8D9BF;color:#2B150D!important}
-.nav button.subnav[aria-selected="true"]{background:#FFFBF4;color:#0A6F82!important;font-weight:700;border-left-color:#22D3F0}
+.nav button.subnav:hover{background:#E0E6EC;color:#072F37!important}
+.nav button.subnav[aria-selected="true"]{background:#FFFFFF;color:#0A6F82!important;font-weight:700;border-left-color:#E8B93B}
 .nav button.subnav.shut{display:none}
-.sidetog{flex:none;width:36px;height:36px;margin-right:4px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.28);border-radius:3px;color:#22D3F0;font-size:22px;line-height:1;cursor:pointer;padding:0 0 3px}
+.sidetog{flex:none;width:36px;height:36px;margin-right:4px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.28);border-radius:3px;color:#E8B93B;font-size:22px;line-height:1;cursor:pointer;padding:0 0 3px}
 .sidetog:hover{background:rgba(255,255,255,.18)}
 body.side-off .side{display:none}
 @media (max-width:900px){ .sidetog{display:none} body.side-off .side{display:flex} }
@@ -687,7 +688,7 @@ body.side-off .side{display:none}
 #h-depts[data-hl="w1"] table.chk tr:not(.grp)>:nth-child(5),#h-depts[data-hl="w2"] table.chk tr:not(.grp)>:nth-child(6),
 #h-depts[data-hl="t1"] table.chk tr:not(.grp)>:nth-child(7),#h-depts[data-hl="t2"] table.chk tr:not(.grp)>:nth-child(8),
 #h-depts[data-hl="d1"] table.chk tr:not(.grp)>:nth-child(9),#h-depts[data-hl="d2"] table.chk tr:not(.grp)>:nth-child(10),
-#h-depts[data-hl="all"] table.chk tr:not(.grp)>:nth-child(11){background:color-mix(in srgb,#22D3F0 16%,transparent)!important}
+#h-depts[data-hl="all"] table.chk tr:not(.grp)>:nth-child(11){background:color-mix(in srgb,#E8B93B 16%,transparent)!important}
 </style>
 
 </head>
@@ -760,7 +761,7 @@ body.side-off .side{display:none}
     <button role="tab" aria-selected="false" data-panel="help">How It Works</button>
     <button role="tab" aria-selected="false" data-panel="settings">Connection</button>
   </nav>
-  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.22-q</span></div>
+  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.22-v</span></div>
 </aside>
 
 <main class="wrap">
@@ -1966,14 +1967,33 @@ function myDeptOk(d){ return !S.myDepts.length||S.myDepts.indexOf(String(d||''))
 var CFG=window.CANHS_IS||{};
 var API={url:String(CFG.apiUrl||ls('apiUrl')||'').trim(), code:ls('code')||''};
 var COLLS=['obs','coach','plans','config'];
+/* the browser's own database: holds far more than localStorage (about 5 MB), and a failed write is reported, never ignored */
+var LDB={ db:null,
+  open:function(){ var self=this; return new Promise(function(res,rej){ if(!window.indexedDB) return rej('noidb'); var r=indexedDB.open('canhs-is',1);
+    r.onupgradeneeded=function(){ r.result.createObjectStore('kv'); }; r.onsuccess=function(){ self.db=r.result; res(self.db); }; r.onerror=function(){ rej(r.error); }; r.onblocked=function(){ rej('blocked'); }; }); },
+  get:function(k){ var db=this.db; return new Promise(function(res,rej){ var t=db.transaction('kv','readonly'), q=t.objectStore('kv').get(k); q.onsuccess=function(){ res(q.result); }; q.onerror=function(){ rej(q.error); }; }); },
+  set:function(k,v){ var db=this.db; return new Promise(function(res,rej){ var t=db.transaction('kv','readwrite'); t.objectStore('kv').put(v,k); t.oncomplete=function(){ res(); }; t.onerror=function(){ rej(t.error); }; t.onabort=function(){ rej(t.error||'abort'); }; }); } };
 var Store={
-  subs:{}, cache:{}, ready:null, timer:null, lastErr:'',
+  subs:{}, cache:{}, ready:null, timer:null, lastErr:'', lmem:null, pend:{}, broken:[],
+  /* load this browser's records (moving any kept in the old 5 MB storage into the database) */
+  lload:async function(){ var self=this; self.lmem={};
+    try{ await LDB.open(); }catch(e){ LDB.db=null; }
+    for(var i=0;i<COLLS.length;i++){ var c=COLLS[i], v=null;
+      if(LDB.db){ try{ v=await LDB.get(c); }catch(e){ v=null; } }
+      var old=ls('local-'+c);
+      if(v==null){ v=old||{}; if(LDB.db&&old){ try{ await LDB.set(c,v); try{ localStorage.removeItem('canhs-is-local-'+c); }catch(e){} }catch(e){} } }
+      var rn=renameDeep(v); if(rn.changed){ v=rn.v; }
+      self.lmem[c]=v; } },
+  /* write one collection; throws when the browser refuses (full or blocked), so the app never says "saved" for a lost save */
+  lsave:async function(c){ var v=this.lmem[c]||{};
+    if(LDB.db){ await LDB.set(c,v); var back=await LDB.get(c); if(!back||Object.keys(back).length!==Object.keys(v).length) throw {code:'quota'}; return; }
+    var key='canhs-is-local-'+c, txt=JSON.stringify(v); try{ localStorage.setItem(key,txt); }catch(e){ throw {code:'quota'}; } if(localStorage.getItem(key)!==txt) throw {code:'quota'}; },
   shared:function(){ return S.mode==='shared'; },
   init:function(){ this.ready=this.connect(); return this.ready; },
   /* sign in and load the record; tried again a few times, and again every 30 seconds while it cannot be reached */
   connect:async function(){
     var self=this;
-    if(!API.url){ S.mode='local'; S.canWrite=true; S.canEdit=true; connUI(); return; }
+    if(!API.url){ if(!self.lmem) await self.lload(); S.mode='local'; S.canWrite=true; S.canEdit=true; connUI(); COLLS.forEach(function(k){ self._emit(k); }); return; }
     if(!API.code){ S.mode='locked'; S.canWrite=false; S.canEdit=false; connUI(); return; }
     var res=null, err=null;
     for(var t=0;t<3;t++){ try{ res=await self.get('all'); err=null; break; }catch(e){ err=e; await self.wait(1500*(t+1)); } }
@@ -1982,7 +2002,7 @@ var Store={
       if(res.error==='code'){ try{ var pg=await self.get('ping'); self.diag=pg&&pg.version?(pg.hasHead?'ok':'nohead'):'old'; self.diagSheet=pg&&pg.sheet||''; }catch(e){ self.diag='old'; } }
       connUI(); return; }
     S.mode='shared'; S.role=res.role; S.myDepts=res.role==='dept'?((res.depts&&res.depts.length)?res.depts.map(String):String(res.dept||'').split(/\s*[,;&\/]\s*/).filter(String)):[]; S.myDept=S.myDepts.join(' & '); S.srvDepts=!!(res.depts&&res.depts.length); S.srvVer=String(res.version||''); S.myName=String(res.name||''); S.canWrite=(res.role==='edit'||res.role==='admin'||res.role==='dept'); S.canEdit=(res.role==='admin');
-    self.apply(res.data); connUI();
+    self.broken=res.broken||[]; self.apply(res.data); connUI();
     clearInterval(self.timer); self.timer=setInterval(function(){ self.refresh(); },30000);
     if(!self.visBound){ self.visBound=true; document.addEventListener('visibilitychange',function(){ if(!document.hidden) self.refresh(); }); }
   },
@@ -2013,12 +2033,21 @@ var Store={
     throw last||{code:'network'};
   },
   refresh:async function(){
-    if(S.mode!=='shared') return;
-    try{ var res=await this.get('all'); if(res.ok) this.apply(res.data); }catch(e){}
+    if(S.mode!=='shared'||this.refreshing) return; var self=this, seq=self.saveSeq||0; self.refreshing=true;
+    try{ var res=await this.get('all');
+      /* a save finished while this refresh was on its way: its answer is older than the save, so wait for the next one */
+      if(res.ok&&(self.saveSeq||0)===seq){ self.broken=res.broken||[]; this.apply(res.data); } }catch(e){}
+    finally{ self.refreshing=false; }
   },
-  apply:function(data){ var self=this; S.syncAt=new Date();
+  /* a record saved in the last two minutes is kept even if the shared record's answer does not have it yet */
+  keepPending:function(data){ var self=this, now=Date.now();
+    Object.keys(self.pend).forEach(function(k){ var p=self.pend[k]; if(now-p.t>120000){ delete self.pend[k]; return; } if(!data) return;
+      var l=(data[p.coll]||[]).filter(function(x){ return x.id!==p.id; }); if(!p.del) l.push(p.o); data[p.coll]=l; }); },
+  /* the saved lists show one school year: say so when a record was saved under another one */
+  syNote:function(data){ if(data&&data.sy&&S.sy&&data.sy!==S.sy){ var y=data.sy; setTimeout(function(){ toast('Saved under SY '+y+'. To see it in the saved list, choose SY '+y+' at the top of the page.'); },2600); } },
+  apply:function(data){ var self=this; S.syncAt=new Date(); self.keepPending(data);
     var fix=[]; COLLS.forEach(function(c){ data&&data[c]&&(data[c]=data[c].map(function(o){ var r=renameDeep(o); if(r.changed){ r.v.id=o.id; fix.push([c,o.id,r.v]); } return r.changed?r.v:o; })); });
-    if(fix.length&&S.mode==='shared'&&S.role==='admin'&&!self.renaming) self.saveRenamed(fix); if(typeof acctUI==='function') setTimeout(acctUI,0); COLLS.forEach(function(c){ var l=(data&&data[c])||[]; if(S.myDept&&c!=='config') l=l.filter(function(o){ return myDeptOk(recDept(c,o)); }); if(mtHidden()&&c!=='config') l=l.filter(function(o){ return !recIsMT(c,o); }); self.cache[c]=l; self._emit(c); }); },
+    if(fix.length&&S.mode==='shared'&&S.role==='admin'&&!self.renaming) self.saveRenamed(fix); if(typeof acctUI==='function') setTimeout(acctUI,0); COLLS.forEach(function(c){ var l=(data&&data[c])||[]; if(S.myDept&&c!=='config') l=l.filter(function(o){ return myDeptOk(recDept(c,o)); }); if(mtHidden()&&c!=='config') l=l.filter(function(o){ return !recIsMT(c,o)||recOwnPlan(c,o); }); self.cache[c]=l; self._emit(c); }); },
   /* the School Head's sign-in rewrites the old names in the shared record itself, so every sign-in and the Google Sheet use the new names */
   saveRenamed:async function(fix){ var self=this; self.renaming=true; var n=0;
     try{ for(var i=0;i<fix.length;i++){ var d=Object.assign({},fix[i][2]); delete d.id; try{ await self.post({action:'put',coll:fix[i][0],id:fix[i][1],data:d}); n++; }catch(e){} } }
@@ -2028,7 +2057,7 @@ var Store={
   watch:function(coll,cb){
     this.subs[coll]=cb;
     if(S.mode==='shared'){ cb((this.cache[coll]||[]).slice()); return; }
-    var all=ls(this.lsKey(coll))||{}, rn=renameDeep(all); if(rn.changed){ all=rn.v; ls(this.lsKey(coll),all); }
+    var all=(this.lmem&&this.lmem[coll])||{};
     cb(Object.keys(all).map(function(k){var o=Object.assign({},all[k]);o.id=k;return o}));
   },
   put:async function(coll,id,data){
@@ -2042,32 +2071,43 @@ var Store={
     if(S.mode==='shared'){
       try{ await this.post({action:'put',coll:coll,id:id,data:data}); }
       catch(e){ if(e&&e.code==='dept'&&data){ e.rec=data.dept||''; e.who=(coll==='coach'?data.ratee:data.teacher)||''; } throw e; }
+      this.saveSeq=(this.saveSeq||0)+1; var po=Object.assign({},data); po.id=id; this.pend[coll+'|'+id]={coll:coll,id:id,o:po,t:Date.now()}; this.syNote(data);
       var list=(this.cache[coll]||[]).filter(function(x){return x.id!==id}); var o=Object.assign({},data); o.id=id; list.push(o); this.cache[coll]=list; this._emit(coll);
       return;
     }
     if(S.mode!=='local') throw {code:S.mode};
-    var all=ls(this.lsKey(coll))||{}; all[id]=data; ls(this.lsKey(coll),all); this._emit(coll);
+    if(!this.lmem) await this.lload();
+    var prev=this.lmem[coll]||{}, all=Object.assign({},prev); all[id]=data; this.lmem[coll]=all;
+    try{ await this.lsave(coll); }catch(e){ this.lmem[coll]=prev; this._emit(coll); throw {code:'quota'}; }
+    this._emit(coll); this.syNote(data);
   },
   del:async function(coll,id){
     await this.ready;
     if(S.mode==='offline'&&API.url&&API.code){ await this.connect(); }
-    if(S.mode==='shared'){ await this.post({action:'del',coll:coll,id:id}); this.cache[coll]=(this.cache[coll]||[]).filter(function(x){return x.id!==id}); this._emit(coll); return; }
+    if(S.mode==='shared'){ await this.post({action:'del',coll:coll,id:id}); this.saveSeq=(this.saveSeq||0)+1; this.pend[coll+'|'+id]={coll:coll,id:id,del:true,t:Date.now()}; this.cache[coll]=(this.cache[coll]||[]).filter(function(x){return x.id!==id}); this._emit(coll); return; }
     if(S.mode!=='local') throw {code:S.mode};
-    var all=ls(this.lsKey(coll))||{}; delete all[id]; ls(this.lsKey(coll),all); this._emit(coll);
+    if(!this.lmem) await this.lload();
+    var prev=this.lmem[coll]||{}, all=Object.assign({},prev); delete all[id]; this.lmem[coll]=all;
+    try{ await this.lsave(coll); }catch(e){ this.lmem[coll]=prev; this._emit(coll); throw {code:'quota'}; }
+    this._emit(coll);
   },
   _emit:function(coll){ var cb=this.subs[coll]; if(!cb) return;
     if(S.mode==='shared'){ cb((this.cache[coll]||[]).slice()); return; }
-    var all=ls(this.lsKey(coll))||{}; cb(Object.keys(all).map(function(k){var o=Object.assign({},all[k]);o.id=k;return o})); }
+    var all=(this.lmem&&this.lmem[coll])||{}; cb(Object.keys(all).map(function(k){var o=Object.assign({},all[k]);o.id=k;return o})); }
 };
 function isMTName(n){ var p=byName(n); return !!(p&&p.g==='mt')||(S.cfg.mts||[]).indexOf(n)>=0; }
 function mtHidden(){ return S.mode==='shared'&&S.role!=='admin'; }
 function recIsMT(coll,o){ var tp=coll==='plans'&&(o.kind==='tplan'||o.kind==='srep'), pos=tp?o.teacherPos:coll==='plans'?o.prepPos:coll==='coach'?o.rateePos:o.teacherPos, who=tp?o.teacher:coll==='plans'?o.prep:coll==='coach'?o.ratee:o.teacher; return /^\s*master\s+teacher/i.test(String(pos||''))||isMTName(who); }
+/* a supervisor's own supervisory plan (they prepared it) is theirs to see, even when the supervisor is a Master Teacher */
+function recOwnPlan(coll,o){ if(coll!=='plans'||!o||o.kind==='tplan'||o.kind==='srep') return false; var me=String(S.myName||'').trim().toUpperCase(); return !!me&&String(o.prep||'').trim().toUpperCase()===me; }
 function recDept(coll,o){ if(o&&o.dept) return String(o.dept); var n=coll==='coach'?o.ratee:o.teacher; return (n&&(S.cfg.assign||{})[n])||''; }
 /* a department head sees and picks only their own department */
 function lockDept(){
   var d=S.myDept, ds=S.myDepts;
   $$('#pl-dept,#o-dept,#c-dept,#ot-dept,#lp-dept,#rp-dept,#h-dept,#r-dept,#sc-dept,#ip-dp').forEach(function(sel){
-    if(d){ var have=[].map.call(sel.options,function(o){return o.value}).join('|'); if(have!==ds.join('|')){ var v=sel.value; sel.innerHTML=ds.map(function(x){return '<option value="'+esc(x)+'">'+esc(x)+'</option>'}).join(''); sel.value=ds.indexOf(v)>=0?v:ds[0]; } sel.disabled=ds.length<2; sel.title='You are signed in for the '+d+' Department'+(ds.length>1?'s':''); }
+    /* filters (Home, the saved lists, Reports) offer "All my departments" to a head of two departments; forms need one department */
+    var isFilter=/^(rp-dept|h-dept|r-dept)$/.test(sel.id), want=(isFilter&&ds.length>1?['']:[]).concat(ds);
+    if(d){ var have=[].map.call(sel.options,function(o){return o.value}).join('|'); if(have!==want.join('|')){ var v=sel.value; sel.innerHTML=want.map(function(x){return '<option value="'+esc(x)+'">'+esc(x||'All my departments')+'</option>'}).join(''); sel.value=want.indexOf(v)>=0?v:want[0]; } sel.disabled=want.length<2; sel.title='You are signed in for the '+d+' Department'+(ds.length>1?'s':''); }
     else if(sel.disabled&&sel.dataset.locked){ sel.disabled=false; }
     if(d) sel.dataset.locked='1';
   });
@@ -2082,6 +2122,7 @@ function connUI(){
   else if(S.mode==='locked') banner('<b>Sign in</b> with your email and 4-digit passcode to open the shared supervision record. '+(Store.lastErr==='locked_out'?'Too many wrong passcodes; wait 15 minutes. ':Store.lastErr==='code'?(Store.diag==='old'?'<br><b>The web app is still running the old Apps Script.</b> In Apps Script: Deploy &rsaquo; Manage deployments &rsaquo; pencil &rsaquo; Version: <b>New version</b> &rsaquo; Deploy. Then sign in again. ':Store.diag==='nohead'?'<br><b>The Google Sheet'+(Store.diagSheet?' &ldquo;'+esc(Store.diagSheet)+'&rdquo;':'')+' has no School Head sign-in yet.</b> In Apps Script, run <b>setMyLogin</b> with your email and passcode. ':'The email and passcode were not accepted; check them in the Access tab of the Google Sheet'+(Store.diagSheet?' &ldquo;'+esc(Store.diagSheet)+'&rdquo;':'')+'. '):'')+'<button class="btn small" type="button" data-go="settings">Sign in</button>','ask');
   else if(S.mode==='offline') banner('<b>The shared record could not be reached.</b> Check the internet connection, then reload the page.','warn');
   else if(S.mode==='shared' && (!S.srvVer || +String(S.srvVer).replace(/\D/g,'')<6) && (S.role==='admin'||S.myDepts.length>1)) banner('<b>The shared record is running an old Apps Script.</b> '+(S.role==='admin'?'Until it is updated, department heads with two departments cannot save, and records of a teacher\u2019s second department are refused. In the Google Sheet: Extensions &rsaquo; Apps Script &rsaquo; replace Code.gs with the newest one &rsaquo; Save &rsaquo; Deploy &rsaquo; Manage deployments &rsaquo; pencil &rsaquo; Version: <b>New version</b> &rsaquo; Deploy.':'Your saves for the '+esc(S.myDept)+' Departments will be refused until the School Head updates it (Deploy &rsaquo; Manage deployments &rsaquo; New version).'),'warn');
+  else if(S.mode==='shared' && S.role==='admin' && Store.broken && Store.broken.length) banner('<b>'+Store.broken.length+' saved record'+(Store.broken.length===1?'':'s')+' in the Google Sheet could not be read</b> (Records tab, row'+(Store.broken.length===1?' ':'s ')+Store.broken.slice(0,10).map(function(b){ return b.row; }).join(', ')+'). Open the Records tab of the Google Sheet and check those rows, or send them to the person who set up the app.','warn');
   else if(S.mode==='shared' && S.myDept) banner('<b>'+esc(S.myDept)+' Department'+(S.myDepts.length>1?'s':'')+'.</b> You see and save only the records of teachers in your department'+(S.myDepts.length>1?'s':'')+'.','info');
   else if(S.mode==='shared' && !S.canWrite) banner('<b>You can read the records but not save.</b> Ask the School Head for a department head sign-in.','ask');
   else banner('');
@@ -2105,6 +2146,8 @@ function saveErr(e){
     if(e.rec&&myDeptOk(e.rec)&&!e.local){ // the record is in the head's own department, yet the shared record refused it
       toast('Not saved: the shared record did not accept '+mine+' for this sign-in'+(S.myDepts.length>1?' (two departments)':'')+'. The School Head should update the Apps Script (Code.gs) to the newest version and deploy it: Deploy \u203a Manage deployments \u203a pencil \u203a Version: New version \u203a Deploy. Then sign in again.'); return; }
     toast('Not saved: '+(e.who?esc2(e.who)+' is':'this record is')+(e.rec?' in the '+e.rec+' Department':' not assigned to any of your departments')+'. You are signed in for '+mine+' only. '+(e.rec?'Choose a teacher from your department'+(S.myDepts.length>1?'s':'')+', or ask the School Head to correct the teacher\u2019s department.':'Ask the School Head to assign the teacher to your department under Personnel & Departments.')); return; }
+  if(c==='quota'){ toast('Not saved: this browser has no room left to keep the record. Download a backup under Connection, then connect the shared Google Sheet (or free some space) and save again. Nothing you typed was lost.'); return; }
+  if(c==='verify'){ toast('Not saved: the shared record could not store this entry correctly. Click Save again; if it keeps happening, tell the School Head.'); return; }
   if(c==='too_large'){ toast('Not saved: this entry is too long for the shared record. Update the Apps Script to the newest Code.gs (it saves long entries), or shorten the notes.'); return; }
   if(c==='locked'||c==='offline'){ toast('Not saved: the shared record is not connected.'); return; }
   if(c==='network'||c==='busy') { toast('Not saved: the shared record did not answer after 4 tries. Check the internet connection, then click Save again. Nothing you typed was lost.'); return; }
@@ -4375,9 +4418,13 @@ function openPMCF(ratee,month){
 function renderReports(){
   var ysel=$('#rp-year'), keep=ysel.value, ys=rpYears();
   ysel.innerHTML='<option value="">All years</option>'+ys.map(function(y){return '<option>'+y+'</option>'}).join('');
-  ysel.value=keep===undefined||keep===null?'':keep; if(ysel.dataset.init!=='1'){ ysel.value=String(+TODAY.slice(0,4)); ysel.dataset.init='1'; }
-  var sub=curSub.reports, fm=+$('#rp-month').value||0, fy=+ysel.value||0, fd=$('#rp-dept').value, q=$('#rp-q').value.trim().toUpperCase();
-  var okYM=function(y,m){ return (!fy||y===fy)&&(!fm||m===fm); };
+  ysel.innerHTML='<option value="sy">SY '+esc(S.sy)+'</option>'+ysel.innerHTML;
+  ysel.value=keep===undefined||keep===null||keep===''&&ysel.dataset.init!=='1'?'sy':keep; if(ysel.dataset.init!=='1'){ ysel.value='sy'; ysel.dataset.init='1'; }
+  var sub=curSub.reports, fm=+$('#rp-month').value||0, bySy=ysel.value==='sy', fy=bySy?0:(+ysel.value||0), fd=$('#rp-dept').value, q=$('#rp-q').value.trim().toUpperCase();
+  var sy0=+String(S.sy).slice(0,4);
+  if(bySy&&fm) fy=fm>=6?sy0:sy0+1;   /* a month of the school year: June–December of its first year, January–May of the next */
+  /* "SY 2026-2027": June 2026 to May 2027 */
+  var okYM=function(y,m){ if(bySy&&y){ var inSy=(y===sy0&&m>=6)||(y===sy0+1&&m<=5); if(!inSy) return false; } return (!fy||y===fy)&&(!fm||m===fm); };
   var okQ=function(){ if(!q) return true; for(var i=0;i<arguments.length;i++) if(String(arguments[i]||'').toUpperCase().indexOf(q)>=0) return true; return false; };
   var head, rows=[];
   if(sub==='ots'){
@@ -4533,7 +4580,7 @@ function renderHome(){
     $('#h-q').addEventListener('input',renderHome);
     $('#h-depts').addEventListener('toggle',function(e){ var d=e.target; if(d.dataset&&d.dataset.dk!=null){ dashOpen[d.dataset.dk]=d.open; ls('dash-open',dashOpen); } },true);
   }
-  if(S.myDept&&S.myDepts.indexOf($('#h-dept').value)<0) lockDept();
+  if(S.myDept&&$('#h-dept').value&&S.myDepts.indexOf($('#h-dept').value)<0) lockDept();
   var mk2=($('#h-year').value||TODAY.slice(0,4))+'-'+pad($('#h-month').value), fd=$('#h-dept').value, show=$('#h-show').value, q=$('#h-q').value.trim().toUpperCase(), sy=S.sy, map={};
   var mon=MONTHS[+$('#h-month').value-1], ml=mon+' '+$('#h-year').value;
   var blank=function(n,pos,dp){ var L=deptsOf(n); return {n:n,p:pos||'',dept:dp||L[0]||'',depts:L.length?L:(dp?[dp]:[]),o1:null,o2:null,w:[],t:[],d:[]}; };
@@ -5922,7 +5969,7 @@ $('#ot-print').addEventListener('click',function(){ $('#printarea').innerHTML=ot
 function renderOtsList(){
   var list=S.ots.filter(function(o){return o.sy===S.sy}).sort(byDateDesc);
   otCur();
-  $('#ot-list').innerHTML=list.length?list.slice(0,12).map(function(o){ return '<div class="listrow"><div class="what"><b>'+esc(o.teacher)+'</b> &middot; '+esc([o.subject,o.section].filter(Boolean).join(' – ')||'No learning area')+'<div>'+esc(longDate(o.date))+' &middot; MPS '+esc(fmt(o.mps||0))+'% ('+esc(masteryOf(o.mps||0)[1])+') &middot; monitored by '+esc(o.mon||'—')+'</div></div><button class="btn ghost small" type="button" data-open-ots="'+esc(o.id)+'">Open</button></div>'; }).join('')+(list.length>12?'<p class="mini" style="margin-top:8px">The rest are under Supervisory Reports &rsaquo; On-the-Spot Test Reports.</p>':'')
+  $('#ot-list').innerHTML=list.length?list.map(function(o){ return '<div class="listrow"><div class="what"><b>'+esc(o.teacher)+'</b> &middot; '+esc([o.subject,o.section].filter(Boolean).join(' – ')||'No learning area')+'<div>'+esc(longDate(o.date))+' &middot; MPS '+esc(fmt(o.mps||0))+'% ('+esc(masteryOf(o.mps||0)[1])+') &middot; monitored by '+esc(o.mon||'—')+'</div></div><button class="btn ghost small" type="button" data-open-ots="'+esc(o.id)+'">Open</button></div>'; }).join('')+''
     :'<div class="empty">No on-the-spot tests saved for SY '+esc(S.sy)+' yet.</div>';
 }
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-open-ots]'); if(b) openOts(b.dataset.openOts); });
@@ -6127,7 +6174,7 @@ $('#lp-print').addEventListener('click',function(){ $('#printarea').innerHTML=lp
 function renderLpList(){
   var list=S.lp.filter(function(o){return o.sy===S.sy}).sort(byDateDesc);
   lpCur();
-  $('#lp-list').innerHTML=list.length?list.slice(0,12).map(function(o){ return '<div class="listrow"><div class="what"><b>'+esc(o.teacher)+'</b> &middot; '+esc([o.subject,o.topic].filter(Boolean).join(' – ')||'No learning area')+'<div>'+esc(longDate(o.date))+' &middot; '+esc(String(o.yes||0))+' of '+LPC.length+' criteria met &middot; monitored by '+esc(o.mon||'—')+'</div></div><button class="btn ghost small" type="button" data-open-lp="'+esc(o.id)+'">Open</button></div>'; }).join('')+(list.length>12?'<p class="mini" style="margin-top:8px">The rest are under Supervisory Reports &rsaquo; Lesson Plan Monitoring Reports.</p>':'')
+  $('#lp-list').innerHTML=list.length?list.map(function(o){ return '<div class="listrow"><div class="what"><b>'+esc(o.teacher)+'</b> &middot; '+esc([o.subject,o.topic].filter(Boolean).join(' – ')||'No learning area')+'<div>'+esc(longDate(o.date))+' &middot; '+esc(String(o.yes||0))+' of '+LPC.length+' criteria met &middot; monitored by '+esc(o.mon||'—')+'</div></div><button class="btn ghost small" type="button" data-open-lp="'+esc(o.id)+'">Open</button></div>'; }).join('')+''
     :'<div class="empty">No lesson plan monitoring saved for SY '+esc(S.sy)+' yet.</div>';
 }
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-open-lp]'); if(b) openLp(b.dataset.openLp); });
@@ -7589,6 +7636,9 @@ Store.init().then(function(){
     var DEPT_NEW={'MARICAR PAGASPAS':'TLE'}, SPLIT_NEW={'MARICAR PAGASPAS':['Values Education']}, carried=false;
     Object.keys(DEPT_NEW).forEach(function(n){ if(!S.cfg.assign[n]){ S.cfg.assign[n]=DEPT_NEW[n]; carried=true; } });
     Object.keys(SPLIT_NEW).forEach(function(n){ if(!S.cfg.split[n]){ S.cfg.split=Object.assign({},S.cfg.split); S.cfg.split[n]=SPLIT_NEW[n].slice(); carried=true; } });
+    /* second supervisors (until the School Head changes them in Personnel & Departments) */
+    var SUP2_NEW={'Filipino':'RIO R. AVILA'};
+    Object.keys(SUP2_NEW).forEach(function(dp){ if(!S.cfg.sup2[dp]&&(S.cfg.heads||{})[dp]!==SUP2_NEW[dp]){ S.cfg.sup2=Object.assign({},S.cfg.sup2); S.cfg.sup2[dp]=SUP2_NEW[dp]; carried=true; } });
     if(carried&&S.mode==='shared'&&S.role==='admin') saveCfgSoon();
     applySys(S.cfg.sys); drawSySelect(); applyRoster(); refreshPeopleSelects(); if(S.mode==='shared'&&S.role==='admin'){ var mtl=PEOPLE.filter(function(p){return p.g==='mt'}).map(function(p){return p.n}).sort(); if(JSON.stringify(mtl)!==JSON.stringify((S.cfg.mts||[]).slice().sort())){ S.cfg.mts=mtl; saveCfgSoon(); } } $$('select[data-people="teach"]').forEach(function(x){ delete x.dataset.forDept; }); renderPeople(); renderAll(); });
 });
