@@ -18,7 +18,7 @@
  * Web app (Execute as: Me, Who has access: Anyone) ▸ copy the /exec address into the app's Connection page.
  * setup() writes a School Head code in the Access tab; change it to your own.
  */
-var VERSION = 'email-passcode-5';
+var VERSION = 'email-passcode-6';
 var SHEET_REC = 'Records', SHEET_ACC = 'Access';
 var COLLS = ['obs', 'coach', 'plans', 'config'];
 var CELL = 45000;            // characters per cell; a longer record continues in the next cells of its row (columns G, H, …)
@@ -205,7 +205,7 @@ function doPost(e) {
     if (COLLS.indexOf(coll) < 0 || !id) return json_({ ok: false, error: 'bad_request' });
     if (coll === 'config' && a.role !== 'admin') return json_({ ok: false, error: 'admin' });
     var sh = recSheet_(), srow = findRow_(sh, 'config', 'school'), school = (srow && rowObj_(sh, srow)) || {};
-    var assign = school.assign || {}, mts = {}; (school.mts || []).forEach(function (n) { mts[n] = 1; });
+    var assign = school.assign || {}, split = school.split || {}, mts = {}; (school.mts || []).forEach(function (n) { mts[n] = 1; });
     var row0 = findRow_(sh, coll, id), curO = row0 ? rowObj_(sh, row0) : null;
     if (a.role !== 'admin' && ((curO && isMT_(coll, curO, mts)) || (body.action === 'put' && isMT_(coll, body.data || {}, mts)))) return json_({ ok: false, error: 'mt' });
     if (a.role === 'dept' && curO && !inDept_(a, deptOf_(coll, curO, assign))) return deptErr_(a, 'existing', deptOf_(coll, curO, assign), coll === 'coach' ? curO.ratee : curO.teacher, '');
@@ -221,7 +221,9 @@ function doPost(e) {
       if (!dept && coll !== 'config' && a.depts.length) { dept = a.depts[0]; data.dept = dept; }
       var who = coll === 'coach' ? data.ratee : data.teacher;
       if (!inDept_(a, dept)) return deptErr_(a, 'record', dept, who, who ? assign[who] : '');
-      if (who && assign[who] && !inDept_(a, assign[who])) return deptErr_(a, 'teacher', dept, who, assign[who]);
+      // a teacher may also have classes in a second department (Personnel & Departments): either department is accepted
+      var tds = who ? [assign[who]].concat(split[who] || []).filter(String) : [];
+      if (tds.length && !tds.some(function (d) { return inDept_(a, d); })) return deptErr_(a, 'teacher', dept, who, tds.join(' / '));
     }
     var copy = {}; Object.keys(data).forEach(function (k) { if (k !== 'id') copy[k] = data[k]; });
     var txt = JSON.stringify(copy), parts = [];
