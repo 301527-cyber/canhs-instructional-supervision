@@ -15,7 +15,7 @@
    as the CANHS M&E Tools Portal, retitled for Instructional Supervision. */
 :root{
   /* theme: Warm Umber #2B150D, Cream #F1E6D2, Galaxy Cyan #22D3F0 */
-  --umber:#2B150D; --cream:#F1E6D2; --cyan:#22D3F0;
+  --umber:#2B150D; --cream:#F1E6D2; --cyan:#22D3F0; --fbar:#B9AB95; --fbar-rule:#9E8D74; --fdate:#22D3F0;
   --paper:#F1E6D2; --surface:#FBF6EC; --surface-2:#F6EDDD;
   --ink:#2B150D; --ink-2:#5C4335; --ink-3:#86705F;
   --rule:#D9C7AA; --rule-soft:#E8DCC7; --rule-strong:#B39A7A;
@@ -41,7 +41,7 @@
   --stamp:#F2959A; --stamp-soft:#3B1D22;
   --good:#86CC98; --good-soft:#173324;
   --btn-bg:#22D3F0; --btn-fg:#2B150D; --field:#22110B;
-  --side-bg:#140805; --teal:#22D3F0; --desk:#120906;
+  --side-bg:#140805; --teal:#22D3F0; --desk:#120906; --fbar:#3A261D; --fbar-rule:#5A4033; --fdate:#22D3F0;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
   color-scheme:dark}}
 :root[data-theme="dark"]{
@@ -53,7 +53,7 @@
   --stamp:#F2959A; --stamp-soft:#3B1D22;
   --good:#86CC98; --good-soft:#173324;
   --btn-bg:#22D3F0; --btn-fg:#2B150D; --field:#22110B;
-  --side-bg:#140805; --teal:#22D3F0; --desk:#120906;
+  --side-bg:#140805; --teal:#22D3F0; --desk:#120906; --fbar:#3A261D; --fbar-rule:#5A4033; --fdate:#22D3F0;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
   color-scheme:dark}
 *{box-sizing:border-box}
@@ -579,6 +579,115 @@ table.rate .finds li{margin:2px 0}
   body{background:#fff}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- filter bars: a band of solid drop-down buttons, the date on the right as a green button (Sapaad-style) ---------- */
+.dbar,.filters{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;background:var(--fbar);border:1px solid var(--fbar-rule);border-radius:2px;padding:14px 16px;box-shadow:none}
+.dbar{margin-top:18px}
+.dbar>label,.filters>label.f{position:relative;display:inline-flex;align-items:center;gap:6px;margin:0;font-size:0;letter-spacing:normal;text-transform:none;color:var(--ink)}
+.dbar select,.filters select{-webkit-appearance:none;appearance:none;font-size:15px;font-weight:600;line-height:1.2;color:#2B150D;background:#22D3F0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%232B150D'/%3E%3C/svg%3E") no-repeat right 13px center;border:1px solid #14B8D4;border-radius:4px;padding:9px 34px 9px 16px;cursor:pointer;box-shadow:0 1px 1px rgba(43,21,13,.18);text-transform:none;letter-spacing:normal;min-height:40px}
+.dbar select:hover,.filters select:hover{background-color:#4FDDF4}
+.dbar select:focus-visible,.filters select:focus-visible{outline:2px solid var(--umber);outline-offset:2px}
+.dbar select option,.filters select option{background:#fff;color:#2B150D;font-weight:400}
+.dbar input[type=search],.dbar input[type=text],.filters input[type=text],.filters input[type=search]{font-size:15px;background:#FFFBF4;color:var(--ink);border:1px solid var(--fbar-rule);border-radius:4px;padding:9px 12px;min-height:40px;text-transform:none;letter-spacing:normal}
+.dbar .mini{font-size:13px;color:var(--ink)}
+.dbar .dsearch{margin-left:auto}
+/* the date: right-aligned green button with a calendar mark and a double chevron at its end */
+.dbar>label.dwhen,.filters>label.dwhen{order:20;margin-left:auto;background-color:var(--fdate);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%232B150D' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%232B150D' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l6 6 6-6M6 13l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat,no-repeat;background-position:13px center,right 11px center;border:1px solid #14B8D4;border-radius:4px;padding:0 32px 0 38px;min-height:40px;box-shadow:0 1px 1px rgba(43,21,13,.18)}
+.dbar .dsearch~label.dwhen{margin-left:0}
+/* Reports: month and year are two pickers joined into one green button */
+.filters>label.dwhen:has(+label.dwhen){border-radius:4px 0 0 4px;border-right:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%232B150D' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E");padding-right:2px}
+.filters>label.dwhen+label.dwhen{margin-left:-14px;border-radius:0 4px 4px 0;border-left:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%232B150D' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l6 6 6-6M6 13l6 6 6-6'/%3E%3C/svg%3E");background-position:right 11px center;padding-left:4px}
+.dbar label.dwhen select,.filters label.dwhen select,.dbar label.dwhen input{background:transparent;color:#2B150D;border:0;box-shadow:none;padding:9px 5px;min-height:0;width:auto;font-size:15px;font-weight:600}
+.dbar label.dwhen select:hover,.filters label.dwhen select:hover{background-color:rgba(255,255,255,.28)}
+.dbar label.dwhen input[type=number]{width:60px!important;-moz-appearance:textfield;appearance:textfield}
+.dbar label.dwhen input[type=number]::-webkit-inner-spin-button,.dbar label.dwhen input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.dbar label.dwhen select option,.filters label.dwhen select option{color:#2B150D}
+@media (max-width:760px){ .dbar>label.dwhen,.filters>label.dwhen,.dbar .dsearch{margin-left:0} .dbar .dsearch input{width:100%} }
+
+/* ---------- dashboard: overall view (one line chart of the school year) ---------- */
+.trend{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;margin-top:16px;background:var(--surface);border:1px solid var(--rule);border-radius:2px;padding:16px 20px 12px;box-shadow:var(--shadow);position:relative}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .trend{--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181}}
+:root[data-theme="dark"] .trend{--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181}
+.trend .th{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:6px}
+.trend .th h3{font-size:16px;font-weight:700;color:var(--ink);margin:0}
+.trend .th .sub{font-size:13px;color:var(--ink-3)}
+.trend .lg{display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:center;margin:8px 0 2px;font-size:14px;color:var(--ink)}
+.trend .lg span{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.trend .lg i{position:relative;width:24px;height:2px;border-radius:1px;background:currentColor;display:inline-block}
+.trend .lg i::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:50%;background:currentColor;transform:translate(-50%,-50%)}
+.trend svg{display:block;width:100%;height:auto;overflow:visible}
+.trend .gl{stroke:var(--rule-soft);stroke-width:1}
+.trend .ax{fill:var(--ink-3);font-size:12px}
+.trend .base{stroke:var(--rule);stroke-width:1}
+.trend .hair{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:3 3}
+.trend .tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:4px;box-shadow:0 6px 18px rgba(43,21,13,.22);padding:8px 10px;font-size:13px;line-height:1.45;white-space:nowrap;z-index:5}
+.trend .tip b{display:block;margin-bottom:3px;font-size:13px}
+.trend .tip .r{display:flex;align-items:center;gap:8px}
+.trend .tip .r i{width:14px;height:2px;border-radius:1px;display:inline-block}
+.trend .tip .r strong{min-width:40px;text-align:right;font-variant-numeric:tabular-nums}
+.trend .tip .r em{font-style:normal;color:var(--ink-3)}
+.trend details{margin-top:6px;font-size:13px}
+.trend details summary{cursor:pointer;color:var(--seal)}
+.trend table{border-collapse:collapse;margin-top:8px;width:100%;font-size:13px}
+.trend th,.trend td{border-bottom:1px solid var(--rule-soft);padding:4px 8px;text-align:right;font-variant-numeric:tabular-nums}
+.trend th:first-child,.trend td:first-child{text-align:left}
+
+/* ---------- the open-by-department button on dashboard cards (top right, like Sapaad's) and its window ---------- */
+.kpi{position:relative}
+.kopen{position:absolute;top:0;right:0;width:36px;height:30px;display:grid;place-items:center;background:var(--rule-strong);color:#fff;border:0;border-radius:0 0 0 3px;cursor:pointer;padding:0;z-index:2}
+.kopen:hover,.kopen:focus-visible{background:var(--seal);outline:none}
+.kpi .kl{padding-right:34px}
+.trend .th{padding-right:40px}
+dialog.kdlg{border:1px solid var(--rule);border-top:3px solid var(--gold-mark);border-radius:4px;padding:0;background:var(--surface);color:var(--ink);width:min(980px,calc(100vw - 32px));max-height:calc(100vh - 48px);box-shadow:0 24px 60px rgba(43,21,13,.35)}
+dialog.kdlg::backdrop{background:rgba(43,21,13,.45)}
+.kdlg .kh{display:flex;align-items:flex-start;gap:12px;padding:16px 20px;border-bottom:1px solid var(--rule-soft);position:sticky;top:0;background:var(--surface);z-index:1}
+.kdlg .kh h3{font-size:18px;font-weight:700;margin:0}
+.kdlg .kh p{margin:3px 0 0;font-size:13px;color:var(--ink-3)}
+.kdlg .kh .x{margin-left:auto;background:none;border:1px solid var(--rule);border-radius:3px;color:var(--ink-2);cursor:pointer;font-size:18px;line-height:1;width:34px;height:32px}
+.kdlg .kb{padding:12px 20px 20px;overflow:auto}
+.kdlg table{width:100%;border-collapse:collapse;font-size:14px}
+.kdlg th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule)}
+.kdlg td{padding:9px 10px;border-bottom:1px solid var(--rule-soft);vertical-align:middle;font-variant-numeric:tabular-nums}
+.kdlg td.n,.kdlg th.n{text-align:right;white-space:nowrap}
+.kdlg tr.tot td{font-weight:700;border-top:1px solid var(--rule);border-bottom:0}
+.kdlg .bar{height:10px;background:var(--rule-soft);border-radius:0 3px 3px 0;min-width:120px;overflow:hidden}
+.kdlg .bar i{display:block;height:100%;background:var(--good);border-radius:0 3px 3px 0}
+.kdlg .pc{display:inline-block;min-width:48px;text-align:right;font-weight:600}
+.kdlg .go{background:none;border:1px solid var(--rule);border-radius:3px;color:var(--seal);cursor:pointer;font-size:12.5px;padding:5px 10px;white-space:nowrap}
+.kdlg .go:hover{background:var(--seal-soft)}
+.kdlg td.cell{text-align:center;white-space:nowrap}
+.kdlg td.cell b{display:block;font-size:14px}
+.kdlg td.cell small{color:var(--ink-3);font-size:11.5px}
+
+/* ---------- side menu: accordion like the eMDS menu, and a « button that folds the whole menu ---------- */
+.nav button.navgrp,.nav button.navsolo,.nav>button[data-panel="home"]{color:#F1E6D2!important;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
+.nav button.navgrp::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .15s;opacity:.75;flex:none}
+.nav button.navgrp.open::after{transform:rotate(45deg)}
+.nav button.navgrp:hover,.nav button.navsolo:hover,.nav>button[data-panel="home"]:hover{background:rgba(255,255,255,.07)}
+.nav button.navgrp.open,.nav button.navgrp.subpar,.nav>button[data-panel="home"][aria-selected="true"]{color:#22D3F0!important;background:rgba(255,255,255,.09);border-left-color:#22D3F0}
+.nav button.subnav{background:#F1E6D2;color:#2B150D!important;font-weight:500;border-left:3px solid transparent;border-bottom:1px solid #E2D2B6;padding:8px 20px 8px 30px;-webkit-font-smoothing:auto}
+.nav button.subnav::before{content:"\00BB";flex:none;margin-right:6px;color:currentColor;font-weight:700;font-size:15px;line-height:1}
+.nav button.subnav{gap:0;padding-left:24px}
+.nav button.subnav:hover{background:#E8D9BF;color:#2B150D!important}
+.nav button.subnav[aria-selected="true"]{background:#FFFBF4;color:#0A6F82!important;font-weight:700;border-left-color:#22D3F0}
+.nav button.subnav.shut{display:none}
+.sidetog{flex:none;width:36px;height:36px;margin-right:4px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.28);border-radius:3px;color:#22D3F0;font-size:22px;line-height:1;cursor:pointer;padding:0 0 3px}
+.sidetog:hover{background:rgba(255,255,255,.18)}
+body.side-off .side{display:none}
+@media (max-width:900px){ .sidetog{display:none} body.side-off .side{display:flex} }
+
+/* ---------- dashboard: the department tables, opened from a card's link ---------- */
+#h-depts .dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin:26px 0 10px;scroll-margin-top:calc(var(--mast-h) + 70px)}
+#h-depts{scroll-margin-top:calc(var(--mast-h) + 70px)}
+#h-depts .dhead h3{font-size:17px;font-weight:700;margin:0}
+#h-depts .dhead h3 span{color:var(--seal);font-weight:600}
+#h-depts .dhead .btn{margin-left:auto}
+/* the activity whose link was clicked is highlighted in every department's table */
+#h-depts[data-hl="o1"] table.chk tr:not(.grp)>:nth-child(3),#h-depts[data-hl="o2"] table.chk tr:not(.grp)>:nth-child(4),
+#h-depts[data-hl="w1"] table.chk tr:not(.grp)>:nth-child(5),#h-depts[data-hl="w2"] table.chk tr:not(.grp)>:nth-child(6),
+#h-depts[data-hl="t1"] table.chk tr:not(.grp)>:nth-child(7),#h-depts[data-hl="t2"] table.chk tr:not(.grp)>:nth-child(8),
+#h-depts[data-hl="d1"] table.chk tr:not(.grp)>:nth-child(9),#h-depts[data-hl="d2"] table.chk tr:not(.grp)>:nth-child(10),
+#h-depts[data-hl="all"] table.chk tr:not(.grp)>:nth-child(11){background:color-mix(in srgb,#22D3F0 16%,transparent)!important}
 </style>
 
 </head>
@@ -598,11 +707,8 @@ table.rate .finds li{margin:2px 0}
 
 <div class="shell">
 <aside class="side">
-  <div class="brand">
-    <h1>Instructional Supervision</h1>
-  </div>
   <nav class="nav" role="tablist" aria-label="Sections">
-    <button role="tab" aria-selected="true" data-panel="home">Dashboard</button>
+    <button role="tab" aria-selected="true" data-panel="home">Home</button>
     <div class="navhead navsep" aria-hidden="true"></div>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="plan" data-sub="monthly" data-grp="plan">Supervisory Plan</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="plan" data-sub="monthly" data-grp="plan">Saved Monthly Supervisory Plans</button>
@@ -654,13 +760,13 @@ table.rate .finds li{margin:2px 0}
     <button role="tab" aria-selected="false" data-panel="help">How It Works</button>
     <button role="tab" aria-selected="false" data-panel="settings">Connection</button>
   </nav>
-  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.22-e</span></div>
+  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.22-o</span></div>
 </aside>
 
 <main class="wrap">
 <div class="topbar compact">
   <div>
-    <h2 id="secname">Dashboard</h2>
+    <h2 id="secname">Home</h2>
     <p class="lede" id="seclede"></p>
   </div>
   <div class="spacer"></div>
@@ -676,11 +782,12 @@ table.rate .finds li{margin:2px 0}
 <!-- ============ HOME ============ -->
 <section class="panel on" id="p-home">
   <div class="dbar">
-    <label>Month <select id="h-month"></select><input type="number" id="h-year" min="2024" max="2035"></label>
+    <label class="dwhen">Month <select id="h-month"></select><input type="number" id="h-year" min="2024" max="2035"></label>
     <label>Department <select id="h-dept"></select></label>
     <label>Show <select id="h-show"><option value="all">All teachers</option><option value="pending">Pending only</option><option value="done">Complete only</option></select></label>
     <label class="dsearch"><input type="search" id="h-q" placeholder="Search a teacher"></label>
   </div>
+  <div class="trend" id="h-trend"></div>
   <div class="kpis" id="h-kpis"></div>
   <div id="h-depts"></div>
 </section>
@@ -688,7 +795,7 @@ table.rate .finds li{margin:2px 0}
 <!-- ============ SUPERVISORY SCHEDULE ============ -->
 <section class="panel" id="p-sched">
   <div class="dbar">
-    <label>Month <select id="sc-month"></select><input type="number" id="sc-year" min="2024" max="2035" style="width:84px"></label>
+    <label class="dwhen">Month <select id="sc-month"></select><input type="number" id="sc-year" min="2024" max="2035" style="width:84px"></label>
     <label>Department <select id="sc-dept"></select></label>
     <label id="sc-type-l">Activity <select id="sc-type"><option value="all">All activities</option><option value="walk">Walk-through Observation</option><option value="ots">On-the-Spot Test</option><option value="dll">DLL Checking</option><option value="cot">Classroom Observation (COT)</option></select></label>
     <label hidden>Days without classes <input type="text" id="sc-off" placeholder="e.g. 1, 2, 30" style="width:120px" autocomplete="off"></label>
@@ -724,7 +831,7 @@ table.rate .finds li{margin:2px 0}
 <!-- ============ LEARNING ACTION CELL: SCHEDULE, SLNA, ANNUAL PLAN, SLSM ============ -->
 <section class="panel" id="p-lac">
   <div class="dbar">
-    <label>School Year <select id="lc-sy"></select></label>
+    <label class="dwhen">School Year <select id="lc-sy"></select></label>
     <label>Scope <select id="lc-dp"></select></label>
     <label id="lc-sess-l" hidden>LAC session <select id="lc-sess"></select></label>
   </div>
@@ -748,7 +855,7 @@ table.rate .finds li{margin:2px 0}
 <!-- ============ SUGGESTED LAC PLAN AND FGD GUIDE ============ -->
 <section class="panel" id="p-pd">
   <div class="dbar">
-    <label>School Year <select id="pd-sy"></select></label>
+    <label class="dwhen">School Year <select id="pd-sy"></select></label>
     <label>Learning Area <select id="pd-dp"></select></label>
     <label id="pd-mol" hidden>Month <select id="pd-mo"></select></label>
   </div>
@@ -792,7 +899,7 @@ table.rate .finds li{margin:2px 0}
 <!-- ============ SUPERVISORY REPORT ============ -->
 <section class="panel" id="p-srep">
   <div class="dbar">
-    <label>Month <select id="sr-month"></select><input type="number" id="sr-year" min="2024" max="2035" style="width:84px"></label>
+    <label class="dwhen">Month <select id="sr-month"></select><input type="number" id="sr-year" min="2024" max="2035" style="width:84px"></label>
     <label>Department <select id="sr-dept"></select></label>
   </div>
   <div class="card" data-sv="add">
@@ -1185,8 +1292,8 @@ table.rate .finds li{margin:2px 0}
   <div class="card">
     <h2>Filter</h2>
     <div class="filters">
-      <label class="f">Month<select id="rp-month"></select></label>
-      <label class="f">Year<select id="rp-year"></select></label>
+      <label class="f dwhen">Month<select id="rp-month"></select></label>
+      <label class="f dwhen">Year<select id="rp-year"></select></label>
       <label class="f">Department<select id="rp-dept"></select></label>
       <label class="f">Search name<input type="text" id="rp-q" placeholder="Teacher, observer or rater"></label>
     </div>
@@ -1714,7 +1821,22 @@ var SYS=['2025-2026','2026-2027','2027-2028','2028-2029','2029-2030','2030-2031'
 /* the COT indicators and the e-IPCRF objectives follow the 3-year cycle of DM 089, s. 2025 (SY 2025-2026 to 2027-2028);
    until DepEd issues new ones, a later school year uses the same year of the cycle (2028-2029 = 2025-2026, and so on) */
 var SY_BASE=['2025-2026','2026-2027','2027-2028'];
-function syBase(sy){ var i=SYS.indexOf(sy); return i<0?sy:SY_BASE[i%3]; }
+/* the step of the 3-year cycle of a school year, counted from SY 2025-2026 (0, 1 or 2), e.g. 2031-2032 = 0 = like 2025-2026 */
+function syCyc(sy){ var y=+String(sy||'').slice(0,4); if(!y) return 1; return ((y-2025)%3+3)%3; }
+function syBase(sy){ return /^\d{4}-\d{4}$/.test(String(sy||''))?SY_BASE[syCyc(sy)]:sy; }
+/* school years the School Head adds are kept in the shared record (config) and appear for everyone */
+var SYS_BUILT=SYS.slice();
+function syValid(x){ var m=/^(\d{4})-(\d{4})$/.exec(String(x||'')); return !!m&&+m[2]===+m[1]+1; }
+function applySys(extra){ var all=SYS_BUILT.concat((extra||[]).filter(syValid)), seen={}; all=all.filter(function(x){ if(seen[x]) return false; seen[x]=1; return true; }).sort();
+  SYS.length=0; all.forEach(function(x){ SYS.push(x); }); }
+function syCanAdd(){ return S.mode==='local'||(S.mode==='shared'&&S.role==='admin'); }
+function syNext(){ var y=+SYS[SYS.length-1].slice(0,4)+1; return y+'-'+(y+1); }
+function drawSySelect(){ var el=$('#g-sy'); if(!el) return; var list=SYS.slice(); if(S.sy&&list.indexOf(S.sy)<0) list.push(S.sy);
+  el.innerHTML=list.map(function(x){ return '<option value="'+x+'"'+(x===S.sy?' selected':'')+'>SY '+x+'</option>'; }).join('')+(syCanAdd()?'<option value="__add">+ Add SY '+syNext()+'</option>':''); el.value=S.sy; }
+async function syAdd(){ var nx=syNext(), extra=((S.cfg&&S.cfg.sys)||[]).concat([nx]);
+  try{ var data=JSON.parse(JSON.stringify(S.cfg||{})); data.sys=extra; await Store.put('config','school',data); S.cfg.sys=extra; applySys(extra);
+    S.sy=nx; ls('sy',S.sy); drawSySelect(); renderAll(); toast('SY '+nx+' added'+(S.mode==='shared'?'. Everyone now sees it in the school year list.':'.')); }
+  catch(e){ drawSySelect(); saveErr(e); } }
 var STAGES={
   b:{label:'Beginning towards Proficient (Teacher I\u2013III)',short:'TEACHER I-III',scale:[2,3,4,5,6],col:'#00B050',foot:['Proficient Teacher A','(TI-TIII)']},
   p:{label:'Proficient (Teacher IV\u2013VII)',short:'TEACHER IV-VII',scale:[3,4,5,6,7],col:'#00B050',foot:['Proficient Teacher B','(TIV-TVII)']},
@@ -2046,7 +2168,7 @@ function sheetHead(){ return '<div class="hd"><div>Republic of the Philippines</
 
 /* ------------------------------------------------------------------ nav */
 var LEDES={
-  home:['Dashboard',''],
+  home:['Home',''],
   pmes:['PMES',''],
   pd:['Professional Development',''],
   lac:['Learning Action Cell',''],
@@ -2109,6 +2231,7 @@ function go(p,sub){
   var here=function(b){ return b.dataset.panel===p&&(SUBS[p]?(b.dataset.sub||'')===(p==='plan'&&curSub[p]==='form'?(plan.id?'monthly':'create'):curSub[p]):!b.dataset.sub); }, grp='';
   $$('.nav button[role=tab]:not(.navgrp)').forEach(function(b){ var on=here(b); b.setAttribute('aria-selected',String(on)); if(on&&b.dataset.grp) grp=b.dataset.grp; });
   $$('.nav button.navgrp').forEach(function(b){ b.setAttribute('aria-selected','false'); b.classList.toggle('subpar',b.dataset.grp===grp); });
+  NAV_OPEN=grp; navApply();
   $$('.panel').forEach(function(s){s.classList.toggle('on',s.id==='p-'+p)});
   $('#secname').dataset.base=SUBS[p]?SUBS[p][curSub[p]]:LEDES[p][0]; bannerWhen(); $('#seclede').textContent=''; $('.topbar').classList.add('compact');
   if(p==='srep'&&typeof renderSrep==='function') renderSrep();
@@ -2117,7 +2240,19 @@ function go(p,sub){
   if(p==='lac'&&typeof renderLac==='function') renderLac();
   ls('tab',p); window.scrollTo(0,0); if(typeof fitSoon==='function') fitSoon();
 }
-$$('.nav button[role=tab]').forEach(function(b){b.addEventListener('click',function(){go(b.dataset.panel,b.dataset.sub)})});
+/* the side menu works like an accordion: only the main menu that is open shows its sub-menus;
+   clicking the open main menu again folds it */
+var NAV_OPEN='';
+function navApply(){ $$('.nav button.subnav').forEach(function(b){ b.classList.toggle('shut',b.dataset.grp!==NAV_OPEN); });
+  $$('.nav button.navgrp').forEach(function(b){ var o=b.dataset.grp===NAV_OPEN; b.classList.toggle('open',o); b.setAttribute('aria-expanded',String(o)); }); }
+$$('.nav button[role=tab]').forEach(function(b){b.addEventListener('click',function(){
+  if(b.classList.contains('navgrp')&&NAV_OPEN===b.dataset.grp){ NAV_OPEN=''; navApply(); return; }
+  go(b.dataset.panel,b.dataset.sub); })});
+(function(){ var cur=$('.nav button.subnav[aria-selected="true"]'); NAV_OPEN=cur?cur.dataset.grp:''; navApply(); })();
+/* the whole side menu folds away with the « button (and comes back with ») */
+(function(){ var tb=document.createElement('button'); tb.type='button'; tb.id='side-tog'; tb.className='sidetog';
+  var set=function(off){ document.body.classList.toggle('side-off',off); tb.innerHTML=off?'&raquo;':'&laquo;'; tb.title=off?'Show the menu':'Hide the menu'; tb.setAttribute('aria-label',tb.title); tb.setAttribute('aria-expanded',String(!off)); ls('side-off',off?1:0); };
+  var top=$('.topbar'); if(top) top.insertBefore(tb,top.firstChild); tb.addEventListener('click',function(){ set(!document.body.classList.contains('side-off')); }); set(!!ls('side-off')); })();
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-go]'); if(b) go(b.dataset.go); });
 
 /* ------------------------------------------------------------------ helpers */
@@ -2401,7 +2536,7 @@ $('#pg-out').addEventListener('click',function(e){ var b=e.target.closest('[data
 function pgPlanRows(){
   var mo=+$('#pl-month').value, yr=+$('#pl-year').value, last=new Date(yr,mo,0).getDate(), tf=MONTHS[mo-1]+' 1, '+yr+' \u2013 '+MONTHS[mo-1]+' '+last+', '+yr;
   var need={}; // rubric topic -> {n, code, teachers:[{t,from,to,why}]}
-  PG.forEach(function(r){ var ind=cotSet(r.sy), k=SYS.indexOf(r.sy), st=STAGES[r.stage], sc=st?st.scale:[1,2,3,4,5,6,7,8,9], a=r.notes?analyzeNotes(r.notes,r.sy,r.stage):null;
+  PG.forEach(function(r){ var ind=cotSet(r.sy), k=syCyc(r.sy), st=STAGES[r.stage], sc=st?st.scale:[1,2,3,4,5,6,7,8,9], a=r.notes?analyzeNotes(r.notes,r.sy,r.stage):null;
     var nums=r.ratings.map(function(v){ return v==='NO'?sc[0]:(+v||0); }), rated=nums.filter(Boolean), avg=rated.length?rated.reduce(function(x,y){return x+y},0)/rated.length:0;
     ind.forEach(function(t,i){ var p=splitInd(t), n=RUB.M[k<0?1:k%3][i], v=r.ratings[i], num=nums[i], it=a&&a.items[i], why='';
       if(v==='NO') why='Not observed during the lesson';
@@ -2957,9 +3092,9 @@ function annualRows(rows,sy){
 /* ================================================================== CLASSROOM OBSERVATION */
 var obs={id:'',ratings:[],finds:[]};
 var STAGE_FILE={b:'TI-TIII',p:'TIV-TVII',h:'MTI-MTII',d:'MTIII-MTV'};
-function cotSet(sy){ var i=SYS.indexOf(sy); return COT[i<0?1:i%3]; }
+function cotSet(sy){ return COT[syCyc(sy)]; }
 function obsSy(){ return obs.sy||S.sy; }
-function rubricFor(i){ var k=SYS.indexOf(obsSy()), n=RUB.M[k<0?1:k%3][i]; return RUB.R.filter(function(r){return r.n===n})[0]; }
+function rubricFor(i){ var k=syCyc(obsSy()), n=RUB.M[k<0?1:k%3][i]; return RUB.R.filter(function(r){return r.n===n})[0]; }
 function splitInd(txt){ var m=/\(([\d.]+)\)\s*$/.exec(txt); return {code:m?m[1]:'',body:txt.replace(/\s*\([\d.]+\)\s*$/,'')}; }
 function findText(i,key){ var r=rubricFor(i); if(!r) return ''; var a=key.split('.'); return ((r.f[+a[0]-1]||[])[+a[1]]||''); }
 var WALK='Walk-through Observation', obsLoading=false;
@@ -3093,7 +3228,7 @@ function shortText(s,n){ s=String(s||'').replace(/\s+/g,' ').trim(); return s.le
 var LESSON_PARTS=[['opening prayer and greetings',/prayer|greet/i],['checking of attendance',/attendance/i],['review or recall',/review|recall/i],['motivation',/motivat/i],['activity',/activit|game|group work/i],['analysis and discussion',/discuss|analy/i],['abstraction or generalization',/generaliz|abstraction|summar/i],['application',/applica/i],['evaluation',/quiz|evaluat|assess|test\b/i],['assignment',/assignment|homework/i]];
 function analyzeNotes(notes,sy,stage){
   notes=plainNotes(notes);
-  var L=noteLines(notes), ind=cotSet(sy), k=SYS.indexOf(sy), st=STAGES[stage];
+  var L=noteLines(notes), ind=cotSet(sy), k=syCyc(sy), st=STAGES[stage];
   var items=ind.map(function(txt,i){
     var n=RUB.M[k<0?1:k%3][i], rx=EV_RX[n]||[], ev=L.filter(function(l){ var x=l.x.replace(/["\u201c\u2018']([A-Z]{2,})["\u201d\u2019']/g,' '); return rx.some(function(r){return r.test(x)}); });
     var c=ev.length, joined=ev.map(function(e){return e.x}).join(' '), pos=POS_CUE.test(joined), neg=NEG_CUE.test(joined), raw=null, lv='';
@@ -4295,6 +4430,97 @@ function coverage(){
 function lastFirst(name){ var p=byName(name); if(p&&p.s) return p.s; var n=String(name||'').trim().split(/\s+/); if(n.length<2) return name; var last=n.pop(); return last+', '+n.join(' '); }
 function hasCOT(o){ return (o.ratings||[]).some(function(r){return r!==''&&r!=null}); }
 var dashOpen=ls('dash-open')||{};
+
+/* ---------- dashboard: overall view — each month of the school year, the share of teachers covered by each activity ---------- */
+var TREND_SERIES=[{k:'w',n:'Walk-through',c:'var(--s1)'},{k:'d',n:'DLL Checking',c:'var(--s2)'},{k:'t',n:'On-the-Spot Test',c:'var(--s3)'},{k:'o1',n:'1st Classroom Observation (to date)',c:'var(--s4)'},{k:'o2',n:'2nd Classroom Observation (to date)',c:'var(--s5)'}];
+function renderTrend(fd){
+  var box=$('#h-trend'); if(!box) return;
+  var sy=S.sy, y0=+String(sy).slice(0,4); if(!y0){ box.innerHTML=''; return; }
+  /* the teachers counted: the same list as the dashboard cards, for the department chosen */
+  var T={}; PEOPLE.filter(function(p){return p.g==='t'||(p.g==='mt'&&!mtHidden())}).forEach(function(p){ var dp=deptOf(p.n); if(!fd||dp===fd) T[p.n]=1; });
+  var N=Object.keys(T).length;
+  /* the months of the school year (June to May), up to this month for the current year */
+  var months=[]; for(var i=0;i<12;i++){ var m=6+i, y=y0+(m>12?1:0); m=m>12?m-12:m; months.push(y+'-'+pad(m)); }
+  var nowK=TODAY.slice(0,7); months=months.filter(function(k){ return k<=nowK; }); if(!months.length) months=[y0+'-06'];
+  var sets={}; months.forEach(function(k){ sets[k]={w:{},d:{},t:{}}; });
+  var add=function(kind,who,date){ var k=String(date||'').slice(0,7); if(sets[k]&&T[who]) sets[k][kind][who]=1; };
+  S.obs.forEach(function(o){ if(isWalk(o)) add('w',o.teacher,o.date); });
+  S.coach.forEach(function(c){ if(c.source!=='walk'&&(c.mech||[]).some(function(x){return /walk/i.test(x)})) add('w',c.ratee,c.date); });
+  (S.ots||[]).forEach(function(o){ add('t',o.teacher,o.date); });
+  (S.lp||[]).forEach(function(o){ add('d',o.teacher,o.date); });
+  var cot=S.obs.filter(function(o){ return o.sy===sy&&o.no!==3&&hasCOT(o)&&T[o.teacher]; });
+  var rows=months.map(function(k){ var end=k+'-31', r={k:k};
+    ['w','d','t'].forEach(function(x){ r[x]=Object.keys(sets[k][x]).length; });
+    var c1={},c2={}; cot.forEach(function(o){ if(String(o.date||'')<=end){ if(o.no===2) c2[o.teacher]=1; else c1[o.teacher]=1; } }); r.o1=Object.keys(c1).length; r.o2=Object.keys(c2).length; return r; });
+  var pc=function(v){ return N?Math.round(1000*v/N)/10:0; };
+  var mLab=function(k){ return MONTHS[+k.slice(5)-1].slice(0,3)+' '+k.slice(0,4); };
+  /* the chart: one axis, 0–100% of the teachers */
+  var W=1000,H=300,L=56,R=24,Tp=14,B=34,pw=W-L-R,ph=H-Tp-B, n=rows.length, xs=function(i){ return L+(n<2?pw/2:i*pw/(n-1)); }, ys=function(v){ return Tp+ph-ph*v/100; };
+  var g=''; [0,25,50,75,100].forEach(function(v){ g+='<line class="'+(v?'gl':'base')+'" x1="'+L+'" x2="'+(W-R)+'" y1="'+ys(v)+'" y2="'+ys(v)+'"/><text class="ax" x="'+(L-10)+'" y="'+(ys(v)+4)+'" text-anchor="end">'+v+'%</text>'; });
+  var step=Math.max(1,Math.ceil(n/12)); rows.forEach(function(r,i){ if(i%step===0) g+='<text class="ax" x="'+xs(i)+'" y="'+(H-10)+'" text-anchor="middle">'+mLab(r.k)+'</text>'; });
+  var lines=TREND_SERIES.map(function(sr){ var pts=rows.map(function(r,i){ return xs(i)+','+ys(pc(r[sr.k])); }).join(' ');
+    return '<g style="color:'+sr.c+'"><polyline points="'+pts+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+rows.map(function(r,i){ return '<circle cx="'+xs(i)+'" cy="'+ys(pc(r[sr.k]))+'" r="4.5" fill="currentColor" stroke="var(--surface)" stroke-width="2"/>'; }).join('')+'</g>'; }).join('');
+  var hits=rows.map(function(r,i){ var w=n<2?pw:pw/(n-1); return '<rect data-i="'+i+'" x="'+(xs(i)-w/2)+'" y="'+Tp+'" width="'+w+'" height="'+ph+'" fill="transparent"/>'; }).join('');
+  var who=(fd?fd+' Department':'all departments')+' · '+N+' teacher'+(N===1?'':'s');
+  box.innerHTML='<button type="button" class="kopen" data-kpi="matrix" title="Open by department" aria-label="Open the overall view by department"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></button><div class="th"><h3>Overall view · SY '+esc(sy)+'</h3><span class="sub">Share of teachers covered each month — '+esc(who)+'</span></div>'+
+    '<div class="lg">'+TREND_SERIES.map(function(sr){ return '<span><i style="color:'+sr.c+'"></i>'+esc(sr.n)+'</span>'; }).join('')+'</div>'+
+    '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Line chart: share of teachers covered each month of SY '+esc(sy)+' by walk-through, DLL checking, on-the-spot test and classroom observation">'+g+'<line class="hair" id="tr-hair" x1="0" x2="0" y1="'+Tp+'" y2="'+(Tp+ph)+'" visibility="hidden"/>'+lines+'<g class="hits">'+hits+'</g></svg>'+
+    '<div class="tip" id="tr-tip" hidden></div>'+
+    '<details><summary>Show the numbers</summary><div class="scroll"><table><thead><tr><th>Month</th>'+TREND_SERIES.map(function(sr){ return '<th>'+esc(sr.n)+'</th>'; }).join('')+'</tr></thead><tbody>'+
+    rows.map(function(r){ return '<tr><td>'+mLab(r.k)+'</td>'+TREND_SERIES.map(function(sr){ return '<td>'+r[sr.k]+' / '+N+' ('+pc(r[sr.k])+'%)</td>'; }).join('')+'</tr>'; }).join('')+'</tbody></table></div></details>';
+  /* hover: a hairline at the month and one readout for every activity */
+  var svg=box.querySelector('svg'), tip=$('#tr-tip'), hair=$('#tr-hair');
+  var show=function(i){ var r=rows[i]; if(!r) return; hair.setAttribute('x1',xs(i)); hair.setAttribute('x2',xs(i)); hair.setAttribute('visibility','visible');
+    tip.textContent=''; var b=document.createElement('b'); b.textContent=MONTHS[+r.k.slice(5)-1]+' '+r.k.slice(0,4); tip.appendChild(b);
+    TREND_SERIES.forEach(function(sr){ var d=document.createElement('div'); d.className='r'; var k=document.createElement('i'); k.style.background=sr.c; var st=document.createElement('strong'); st.textContent=pc(r[sr.k])+'%'; var em=document.createElement('em'); em.textContent=r[sr.k]+' / '+N+' · '+sr.n; d.appendChild(k); d.appendChild(st); d.appendChild(em); tip.appendChild(d); });
+    tip.hidden=false; var bb=svg.getBoundingClientRect(), pb=box.getBoundingClientRect(), x=bb.left-pb.left+xs(i)*bb.width/W, tw=tip.offsetWidth;
+    tip.style.left=Math.max(8,Math.min(pb.width-tw-8,x+14>pb.width-tw-8?x-tw-14:x+14))+'px'; tip.style.top=(bb.top-pb.top+12)+'px'; };
+  var hide=function(){ tip.hidden=true; hair.setAttribute('visibility','hidden'); };
+  [].forEach.call(svg.querySelectorAll('.hits rect'),function(rc){ rc.addEventListener('pointerenter',function(){ show(+rc.dataset.i); }); });
+  svg.addEventListener('pointerleave',hide);
+}
+
+/* ---------- open by department: one activity (from a card), or every activity side by side (from the overall view) ---------- */
+var HOME_LAST=null;
+var KPI_LABEL={o1:'1st Classroom Observation',o2:'2nd Classroom Observation',w1:'1st Walk-through',w2:'2nd Walk-through',d1:'1st DLL Checking',d2:'2nd DLL Checking',t1:'1st On-the-Spot Test',t2:'2nd On-the-Spot Test',all:'Complete (all eight)'};
+function deptOpen(key){
+  var H=HOME_LAST; if(!H) return;
+  var dlg=$('#kdlg'); if(!dlg){ dlg=document.createElement('dialog'); dlg.id='kdlg'; dlg.className='kdlg'; document.body.appendChild(dlg);
+    dlg.addEventListener('click',function(e){ if(e.target===dlg||e.target.closest('.x')){ dlg.close(); return; } var g=e.target.closest('[data-godept]'); if(g){ deptGo(g.dataset.godept); } }); }
+  var isDone=function(t){ return H.KEYS.every(function(k){ return !!t[k]; }); }, has=function(t,k){ return k==='all'?isDone(t):!!t[k]; };
+  var depts=(S.myDept?S.myDepts:DEPTS).slice(); if(!S.myDept&&H.list.some(function(t){ return !t.dept; })) depts.push('');
+  var of=function(dp){ return H.list.filter(function(t){ return (t.dept||'')===dp; }); }, pc=function(a,b){ return b?Math.round(100*a/b):0; };
+  var name=function(dp){ return dp||'Unassigned teachers'; }, when=function(k){ return k==='o1'||k==='o2'?'SY '+H.sy:H.ml; };
+  var everyone=H.list.filter(function(t){ return depts.indexOf(t.dept||'')>=0; }), body='', title, sub;
+  if(key!=='matrix'){
+    title=KPI_LABEL[key]+' · by department'; sub=when(key)+' · share of each department\u2019s teachers';
+    body='<table><thead><tr><th>Department</th><th class="n">Done</th><th style="width:40%">Progress</th><th></th></tr></thead><tbody>'+
+      depts.map(function(dp){ var L=of(dp), a=L.filter(function(t){ return has(t,key); }).length; if(!L.length) return '';
+        return '<tr><td>'+esc(name(dp))+'</td><td class="n">'+a+' / '+L.length+'</td><td><div style="display:flex;align-items:center;gap:10px"><div class="bar" style="flex:1"><i style="width:'+pc(a,L.length)+'%"></i></div><span class="pc">'+pc(a,L.length)+'%</span></div></td><td class="n"><button type="button" class="go" data-godept="'+esc(dp)+'">Open department</button></td></tr>'; }).join('')+
+      (function(){ var a=everyone.filter(function(t){ return has(t,key); }).length; return '<tr class="tot"><td>All departments</td><td class="n">'+a+' / '+everyone.length+'</td><td><div style="display:flex;align-items:center;gap:10px"><div class="bar" style="flex:1"><i style="width:'+pc(a,everyone.length)+'%"></i></div><span class="pc">'+pc(a,everyone.length)+'%</span></div></td><td></td></tr>'; })()+'</tbody></table>';
+  } else {
+    var cols=['o1','o2','w1','w2','d1','d2','t1','t2','all'], short={o1:'1st CO',o2:'2nd CO',w1:'1st WT',w2:'2nd WT',d1:'1st DLL',d2:'2nd DLL',t1:'1st OTS',t2:'2nd OTS',all:'Complete'};
+    title='Overall view · by department'; sub='Classroom Observation: SY '+H.sy+' · Walk-through, DLL Checking and On-the-Spot Test: '+H.ml;
+    var cell=function(L,k){ var a=L.filter(function(t){ return has(t,k); }).length; return '<td class="cell" title="'+KPI_LABEL[k]+': '+a+' of '+L.length+'"><b>'+pc(a,L.length)+'%</b><small>'+a+'/'+L.length+'</small></td>'; };
+    body='<div class="scroll"><table><thead><tr><th>Department</th>'+cols.map(function(k){ return '<th class="n" title="'+KPI_LABEL[k]+'">'+short[k]+'</th>'; }).join('')+'<th></th></tr></thead><tbody>'+
+      depts.map(function(dp){ var L=of(dp); if(!L.length) return ''; return '<tr><td>'+esc(name(dp))+'</td>'+cols.map(function(k){ return cell(L,k); }).join('')+'<td class="n"><button type="button" class="go" data-godept="'+esc(dp)+'">Open</button></td></tr>'; }).join('')+
+      '<tr class="tot"><td>All departments</td>'+cols.map(function(k){ return cell(everyone,k); }).join('')+'<td></td></tr></tbody></table></div>';
+  }
+  dlg.innerHTML='<div class="kh"><div><h3>'+esc(title)+'</h3><p>'+esc(sub)+'</p></div><button type="button" class="x" aria-label="Close">\u00d7</button></div><div class="kb">'+body+'</div>';
+  if(!dlg.open) dlg.showModal();
+}
+/* "Open department": the dashboard shows that department, its section opened */
+function deptGo(dp){
+  var dlg=$('#kdlg'); if(dlg&&dlg.open) dlg.close();
+  var sel=$('#h-dept'); if(sel&&[].some.call(sel.options,function(o){ return o.value===dp; })) sel.value=dp;
+  var key=dp||'_none'; dashOpen[key]=true; renderHome();
+  setTimeout(function(){ var d=document.querySelector('#h-depts details[data-dk="'+key.replace(/"/g,'\\"')+'"]'); if(d){ d.open=true; d.scrollIntoView({behavior:'smooth',block:'start'}); } },60);
+}
+var HOME_DEPTS=false, HOME_HL='';
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.kopen[data-kpi]'); if(b){ e.preventDefault(); HOME_DEPTS=true; HOME_HL=b.dataset.kpi; renderHome();
+    setTimeout(function(){ var d=$('#h-depts'); if(d) d.scrollIntoView({behavior:'smooth',block:'start'}); },40); return; }
+  if(e.target.closest('#h-depts-hide')){ HOME_DEPTS=false; HOME_HL=''; var sh=$('#h-show'), qq=$('#h-q'); if(sh) sh.value='all'; if(qq) qq.value=''; renderHome(); window.scrollTo({top:0,behavior:'smooth'}); } });
 function renderHome(){
   if(!$('#h-month').options.length){
     $('#h-month').innerHTML=MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join('');
@@ -4320,17 +4546,20 @@ function renderHome(){
   var byDate=function(a,b){ return String(a.date||'').localeCompare(String(b.date||'')); };
   Object.keys(map).forEach(function(k){ var m=map[k]; m.w.sort(byDate); m.t.sort(byDate); m.d.sort(byDate); m.w1=m.w[0]; m.w2=m.w[1]; m.t1=m.t[0]; m.t2=m.t[1]; m.d1=m.d[0]; m.d2=m.d[1]; });
   var all=Object.keys(map).map(function(k){return map[k]}).filter(function(t){return !fd||t.dept===fd});
+  renderTrend(fd);
   var KEYS=['o1','o2','w1','w2','t1','t2','d1','d2'];
   var done=function(t){ return KEYS.every(function(k){ return !!t[k]; }); };
   var cnt=function(k){return all.filter(function(t){return t[k]}).length};
   var N=all.length;
+  HOME_LAST={list:Object.keys(map).map(function(k){return map[k]}),KEYS:KEYS,ml:ml,sy:sy};
   var pct=function(a,b){return b?Math.round(100*a/b):0};
-  var kpi=function(lab,when,a){ return '<div class="kpi"><div class="kl">'+lab+'</div><div class="kw">'+esc(when||'')+'</div><div class="kbody"><div class="kv">'+a+'<small> / '+N+'</small></div><div class="kcol" title="'+pct(a,N)+'%"><span class="kp">'+pct(a,N)+'%</span><div class="kbar"><i style="height:'+pct(a,N)+'%"></i></div></div></div></div>'; };
+  var kpi=function(lab,when,a,k){ return '<div class="kpi">'+(k?'<button type="button" class="kopen" data-kpi="'+k+'" title="Open by department" aria-label="Open '+lab+' by department"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></button>':'')+'<div class="kl">'+lab+'</div><div class="kw">'+esc(when||'')+'</div><div class="kbody"><div class="kv">'+a+'<small> / '+N+'</small></div><div class="kcol" title="'+pct(a,N)+'%"><span class="kp">'+pct(a,N)+'%</span><div class="kbar"><i style="height:'+pct(a,N)+'%"></i></div></div></div></div>'; };
   var grp=function(t,cards){ return '<section class="kgrp"><h3>'+t+'</h3><div class="kpis">'+cards+'</div></section>'; };
-  $('#h-kpis').innerHTML=grp('Classroom Observation (COT) and Walk-through Observation',kpi('1st Classroom Observation','SY '+sy,cnt('o1'))+kpi('2nd Classroom Observation','SY '+sy,cnt('o2'))+kpi('1st Walk-through',ml,cnt('w1'))+kpi('2nd Walk-through',ml,cnt('w2')))+
-    grp('DLL Monitoring',kpi('1st DLL Checking',ml,cnt('d1'))+kpi('2nd DLL Checking',ml,cnt('d2')))+
-    grp('On-the-Spot Test',kpi('1st On-the-Spot Test',ml,cnt('t1'))+kpi('2nd On-the-Spot Test',ml,cnt('t2')))+
-    grp('All Activities',kpi('Complete (all eight)',ml,all.filter(done).length));
+  $('#h-kpis').innerHTML=grp('Classroom Observation (COT)',kpi('1st Classroom Observation','SY '+sy,cnt('o1'),'o1')+kpi('2nd Classroom Observation','SY '+sy,cnt('o2'),'o2'))+
+    grp('Walk-through Observation',kpi('1st Walk-through',ml,cnt('w1'),'w1')+kpi('2nd Walk-through',ml,cnt('w2'),'w2'))+
+    grp('DLL Monitoring',kpi('1st DLL Checking',ml,cnt('d1'),'d1')+kpi('2nd DLL Checking',ml,cnt('d2'),'d2'))+
+    grp('On-the-Spot Test',kpi('1st On-the-Spot Test',ml,cnt('t1'),'t1')+kpi('2nd On-the-Spot Test',ml,cnt('t2'),'t2'))+
+    grp('All Activities',kpi('Complete (all eight)',ml,all.filter(done).length,'all'));
   var no='<span class="dot no" title="Not yet" aria-label="Not yet"></span>';
   var dot=function(o,lab){ return o?'<button class="dot ok" type="button" data-open-cot="'+esc(o.id)+'" title="'+lab+' · '+esc(longDate(o.date))+'" aria-label="'+lab+' done, '+esc(longDate(o.date))+'">&#10003;</button>':no; };
   var tdot=function(o,lab){ return o?'<button class="dot ok" type="button" data-open-ots="'+esc(o.id)+'" title="'+lab+' · '+esc(longDate(o.date))+'" aria-label="'+lab+' done, '+esc(longDate(o.date))+'">&#10003;</button>':no; };
@@ -4357,7 +4586,10 @@ function renderHome(){
         '<td class="c">'+(done(t)?'<span class="st ok">Complete</span>':'<span class="st wait">Pending</span>')+'</td></tr>'; }).join(''):'<tr><td colspan="11" class="c mini" style="padding:16px">No teacher matches.</td></tr>')+
       '</tbody></table></div></details>';
   }).join('');
-  $('#h-depts').innerHTML=html||'<div class="empty">No teacher matches these filters.</div>';
+  /* the teacher-by-teacher tables of each department are shown only when asked for (a card's link, a search, or a Show filter) */
+  var showT=HOME_DEPTS||!!q||show!=='all', hk=HOME_HL&&HOME_HL!=='matrix'?HOME_HL:'';
+  $('#h-depts').hidden=!showT; $('#h-depts').dataset.hl=hk;
+  $('#h-depts').innerHTML=showT?('<div class="dhead"><h3>Monitoring by department'+(hk&&KPI_LABEL[hk]?' <span>· '+esc(KPI_LABEL[hk])+'</span>':'')+'</h3><span class="mini">'+esc(fd?fd+' Department':'All departments')+' · '+esc(ml)+'</span><button type="button" class="btn ghost small" id="h-depts-hide">Hide</button></div>'+(html||'<div class="empty">No teacher matches these filters.</div>')):'';
 }
 document.addEventListener('click',function(e){
   var b=e.target.closest('[data-open-cot]'); if(b){ openObs(b.dataset.openCot,'cot'); return; }
@@ -5091,6 +5323,7 @@ function acctEmail(){ var c=String(API.code||''), k=c.lastIndexOf('|'); return k
 function acctFirst(n){ n=String(n||'').trim(); if(!n) return ''; var w=n.split(/\s+/)[0].replace(/[.,]$/,''); return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }
 function acctUI(){
   var em=acctEmail(), signed=S.mode==='shared', nm=S.myName||(S.role==='admin'?'School Head':'')||(em?em.split('@')[0]:'');
+  if(typeof drawSySelect==='function') drawSySelect();
   /* the School Head's sign-in is the school's own account: it is greeted as CANHS */
   var adm=signed&&S.role==='admin';
   $('#acct-hi').textContent=signed?'Hi, '+(adm?'CANHS':(acctFirst(S.myName)||nm||'there'))+'!':(S.mode==='local'?'This browser only':'Not signed in');
@@ -5107,6 +5340,7 @@ $('#sync-btn').addEventListener('click',async function(){ var b=this;
   var before=S.syncAt; try{ await Store.refresh(); }catch(e){}
   b.disabled=false; b.textContent='Refresh'; acctUI(); toast(S.syncAt!==before?'Records updated':'Could not reach the shared record. Check the internet connection.'); });
 setInterval(acctUI,60000);
+$$('.dbar>label,.filters>label.f').forEach(function(l){ var t=[].filter.call(l.childNodes,function(n){ return n.nodeType===3; }).map(function(n){ return n.textContent.trim(); }).join(' ').trim(); if(t){ l.title=t; var f=l.querySelector('select,input'); if(f&&!f.getAttribute('aria-label')) f.setAttribute('aria-label',t); } });
 /* the date, day and time under the title, e.g. "Sunday, November 22, 2026 07:47:12 AM", updated every second */
 (function(){ var el=$('#clock'); if(!el) return;
   var tick=function(){ var d=new Date(), dd=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}), t=d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}); el.textContent=dd+' '+t; };
@@ -7323,8 +7557,8 @@ function pmInit(){
 
 function renderAll(){ lockDept(); if(typeof pdRender==='function'&&$('#p-pd').classList.contains('on')) pdRender(); if(typeof renderPmes==='function'&&$('#p-pmes').classList.contains('on')&&!(PMR&&PMR.dirty)) renderPmes(); if(typeof cotFromNotes==='function') cotFromNotes(); if(typeof renderSrep==='function'&&$('#p-srep').classList.contains('on')) renderSrep(); if(typeof planLeafSoon==='function'&&$('#p-plan').classList.contains('on')) planLeafSoon(); if(typeof renderSched==='function') renderSched(); if(typeof pgSavedList==='function') pgSavedList(); if(typeof ipRender==='function') ipRender(); if(typeof renderOtsList==='function') renderOtsList(); if(typeof renderLpList==='function') renderLpList(); if($('#p-reports').classList.contains('on')) renderReports(); renderHome(); renderRecords(); renderPlanList(); renderCoachLog();  bannerWhen(); }
 function initSelects(){
-  $('#g-sy').innerHTML=SYS.map(function(s){return '<option value="'+s+'"'+(s===S.sy?' selected':'')+'>SY '+s+'</option>'}).join('');
-  $('#g-sy').addEventListener('change',function(){ S.sy=this.value; ls('sy',S.sy); if(!obs.id){ drawRate(); obsLeafSoon(); } if(!coach.id) renderCoachLog(); renderAll(); });
+  drawSySelect();
+  $('#g-sy').addEventListener('change',function(){ if(this.value==='__add'){ this.value=S.sy; syAdd(); return; } S.sy=this.value; ls('sy',S.sy); if(!obs.id){ drawRate(); obsLeafSoon(); } if(!coach.id) renderCoachLog(); renderAll(); });
   $('#pl-month').innerHTML=MONTHS.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join('');
   $('#c-month').innerHTML=$('#pl-month').innerHTML;
   $$('#pl-dept,#o-dept,#c-dept,#ot-dept,#lp-dept').forEach(function(s){ s.innerHTML=optList(DEPTS,'Choose&hellip;'); });
@@ -7343,7 +7577,7 @@ Store.init().then(function(){
   Store.watch('obs',function(l){ S.obs=l.filter(function(x){return x.kind!=='ots'&&x.kind!=='lp'}); S.ots=l.filter(function(x){return x.kind==='ots'}); S.lp=l.filter(function(x){return x.kind==='lp'}); renderAll(); });
   Store.watch('coach',function(l){ l.forEach(function(c){ if(c.mech) c.mech=c.mech.map(mechNorm).filter(function(m,i,a){return a.indexOf(m)===i}); }); S.coach=l; renderAll(); });
   Store.watch('plans',function(l){ S.plans=l.filter(function(x){return x.kind!=='tplan'&&x.kind!=='sched'&&x.kind!=='srep'&&x.kind!=='gplan'&&x.kind!=='pmes'&&x.kind!=='lac'&&x.kind!=='fgd'}); S.fgds=l.filter(function(x){return x.kind==='fgd'}); S.pmes=l.filter(function(x){return x.kind==='pmes'}); S.gplans=l.filter(function(x){return x.kind==='gplan'}); S.lacs=l.filter(function(x){return x.kind==='lac'}); S.sreps=l.filter(function(x){return x.kind==='srep'}); S.tplans=l.filter(function(x){return x.kind==='tplan'}); S.scheds=l.filter(function(x){return x.kind==='sched'}); renderAll(); if(curSub.pd==='fgdsaved'&&$('#p-pd').classList.contains('on')&&typeof pdRender==='function') pdRender(); });
-  Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{},mts:(d&&d.mts)||[],roster:(d&&d.roster)||{},sup2:(d&&d.sup2)||{},split:(d&&d.split)||{}}; applyRoster(); refreshPeopleSelects(); if(S.mode==='shared'&&S.role==='admin'){ var mtl=PEOPLE.filter(function(p){return p.g==='mt'}).map(function(p){return p.n}).sort(); if(JSON.stringify(mtl)!==JSON.stringify((S.cfg.mts||[]).slice().sort())){ S.cfg.mts=mtl; saveCfgSoon(); } } $$('select[data-people="teach"]').forEach(function(x){ delete x.dataset.forDept; }); renderPeople(); renderAll(); });
+  Store.watch('config',function(l){ var d=l.filter(function(x){return x.id==='school'})[0]; S.cfg={heads:(d&&d.heads)||{},assign:(d&&d.assign)||{},mts:(d&&d.mts)||[],roster:(d&&d.roster)||{},sup2:(d&&d.sup2)||{},split:(d&&d.split)||{},sys:(d&&d.sys)||[]}; applySys(S.cfg.sys); drawSySelect(); applyRoster(); refreshPeopleSelects(); if(S.mode==='shared'&&S.role==='admin'){ var mtl=PEOPLE.filter(function(p){return p.g==='mt'}).map(function(p){return p.n}).sort(); if(JSON.stringify(mtl)!==JSON.stringify((S.cfg.mts||[]).slice().sort())){ S.cfg.mts=mtl; saveCfgSoon(); } } $$('select[data-people="teach"]').forEach(function(x){ delete x.dataset.forDept; }); renderPeople(); renderAll(); });
 });
 })();
 </script>
