@@ -654,7 +654,7 @@ table.rate .finds li{margin:2px 0}
     <button role="tab" aria-selected="false" data-panel="help">How It Works</button>
     <button role="tab" aria-selected="false" data-panel="settings">Connection</button>
   </nav>
-  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.22-d</span></div>
+  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.22-e</span></div>
 </aside>
 
 <main class="wrap">
@@ -1710,7 +1710,11 @@ function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slic
 
 var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var DEPTS=['English','Filipino','Mathematics','Science','Araling Panlipunan','MAPEH','TLE','Values Education'];
-var SYS=['2025-2026','2026-2027','2027-2028'];
+var SYS=['2025-2026','2026-2027','2027-2028','2028-2029','2029-2030','2030-2031'];
+/* the COT indicators and the e-IPCRF objectives follow the 3-year cycle of DM 089, s. 2025 (SY 2025-2026 to 2027-2028);
+   until DepEd issues new ones, a later school year uses the same year of the cycle (2028-2029 = 2025-2026, and so on) */
+var SY_BASE=['2025-2026','2026-2027','2027-2028'];
+function syBase(sy){ var i=SYS.indexOf(sy); return i<0?sy:SY_BASE[i%3]; }
 var STAGES={
   b:{label:'Beginning towards Proficient (Teacher I\u2013III)',short:'TEACHER I-III',scale:[2,3,4,5,6],col:'#00B050',foot:['Proficient Teacher A','(TI-TIII)']},
   p:{label:'Proficient (Teacher IV\u2013VII)',short:'TEACHER IV-VII',scale:[3,4,5,6,7],col:'#00B050',foot:['Proficient Teacher B','(TIV-TVII)']},
@@ -2399,7 +2403,7 @@ function pgPlanRows(){
   var need={}; // rubric topic -> {n, code, teachers:[{t,from,to,why}]}
   PG.forEach(function(r){ var ind=cotSet(r.sy), k=SYS.indexOf(r.sy), st=STAGES[r.stage], sc=st?st.scale:[1,2,3,4,5,6,7,8,9], a=r.notes?analyzeNotes(r.notes,r.sy,r.stage):null;
     var nums=r.ratings.map(function(v){ return v==='NO'?sc[0]:(+v||0); }), rated=nums.filter(Boolean), avg=rated.length?rated.reduce(function(x,y){return x+y},0)/rated.length:0;
-    ind.forEach(function(t,i){ var p=splitInd(t), n=RUB.M[k<0?1:k][i], v=r.ratings[i], num=nums[i], it=a&&a.items[i], why='';
+    ind.forEach(function(t,i){ var p=splitInd(t), n=RUB.M[k<0?1:k%3][i], v=r.ratings[i], num=nums[i], it=a&&a.items[i], why='';
       if(v==='NO') why='Not observed during the lesson';
       else if(num&&num<=sc[1]) why='Rated Level '+num+' (low on the '+(st?st.short:'COT')+' scale)';
       else if(num&&rated.length>3&&num<avg-0.5&&num<sc[3]) why='Rated Level '+num+', below the teacher\u2019s other indicators';
@@ -2953,9 +2957,9 @@ function annualRows(rows,sy){
 /* ================================================================== CLASSROOM OBSERVATION */
 var obs={id:'',ratings:[],finds:[]};
 var STAGE_FILE={b:'TI-TIII',p:'TIV-TVII',h:'MTI-MTII',d:'MTIII-MTV'};
-function cotSet(sy){ var i=SYS.indexOf(sy); return COT[i<0?1:i]; }
+function cotSet(sy){ var i=SYS.indexOf(sy); return COT[i<0?1:i%3]; }
 function obsSy(){ return obs.sy||S.sy; }
-function rubricFor(i){ var k=SYS.indexOf(obsSy()), n=RUB.M[k<0?1:k][i]; return RUB.R.filter(function(r){return r.n===n})[0]; }
+function rubricFor(i){ var k=SYS.indexOf(obsSy()), n=RUB.M[k<0?1:k%3][i]; return RUB.R.filter(function(r){return r.n===n})[0]; }
 function splitInd(txt){ var m=/\(([\d.]+)\)\s*$/.exec(txt); return {code:m?m[1]:'',body:txt.replace(/\s*\([\d.]+\)\s*$/,'')}; }
 function findText(i,key){ var r=rubricFor(i); if(!r) return ''; var a=key.split('.'); return ((r.f[+a[0]-1]||[])[+a[1]]||''); }
 var WALK='Walk-through Observation', obsLoading=false;
@@ -3091,7 +3095,7 @@ function analyzeNotes(notes,sy,stage){
   notes=plainNotes(notes);
   var L=noteLines(notes), ind=cotSet(sy), k=SYS.indexOf(sy), st=STAGES[stage];
   var items=ind.map(function(txt,i){
-    var n=RUB.M[k<0?1:k][i], rx=EV_RX[n]||[], ev=L.filter(function(l){ var x=l.x.replace(/["\u201c\u2018']([A-Z]{2,})["\u201d\u2019']/g,' '); return rx.some(function(r){return r.test(x)}); });
+    var n=RUB.M[k<0?1:k%3][i], rx=EV_RX[n]||[], ev=L.filter(function(l){ var x=l.x.replace(/["\u201c\u2018']([A-Z]{2,})["\u201d\u2019']/g,' '); return rx.some(function(r){return r.test(x)}); });
     var c=ev.length, joined=ev.map(function(e){return e.x}).join(' '), pos=POS_CUE.test(joined), neg=NEG_CUE.test(joined), raw=null, lv='';
     if(c){ raw=c===1?3:c===2?4:5; if(pos) raw++; if(neg) raw--; raw=Math.max(1,Math.min(9,raw)); }
     if(st){ lv=c?String(Math.max(st.scale[0],Math.min(st.scale[4],raw))):'NO'; } else if(c) lv=String(raw);
@@ -6655,7 +6659,7 @@ function pmGenRows(kind,stage,text){
   return {NQ:NQ,E:E,T:T};
 }
 function pmContent(sy,st){
-  var D=PM, lv=PM_LV[st];
+  sy=syBase(sy); var D=PM, lv=PM_LV[st];
   if(sy==='2025-2026'||!PM_SETS[sy]) return D.obj25[st].map(function(o,i){ var m=(D.mov25[st]||[])[i]||{mov:[],h:[]};
     return {n:i+1,code:o.code,base:o.code.split('.').slice(0,2).join('.'),dom:+o.code.charAt(0),k:o.k,text:o.text,rows:o.rows.map(function(r){return {lab:r.lab,r:r.r.slice(),h:r.h}}),mov:m.mov.slice(),mh:m.h.slice()}; });
   // another school year: the indicators of DM 089, s. 2025; the rubrics follow the 2025-2026 forms
@@ -7262,7 +7266,7 @@ async function renderPmes(){
     PMR=sv?JSON.parse(JSON.stringify(sv)):{kind:'pmes',phase:ph,sy:S.sy,teacher:t,teacherPos:p.p||'',dept:deptOf(t),stage:pmStageOf(p.p),v:{}}; PMR.v=PMR.v||{};
     if(!sv) pmPrefill(PMR); PMR.dirty=false; }
   $('#pm-stage').value=PMR.stage;
-  $('#pm-state').textContent=sv?(PMR.dirty?'Changes not yet saved.':'Saved '+longDate(sv.savedDay||String(sv.savedAt||'').slice(0,10))+'.'):(PMR.dirty?'Not yet saved.':'New form, not yet saved.')+(PMR.sy!=='2025-2026'?' The NCOI rubrics of SY '+PMR.sy+' follow the 2025-2026 e-IPCRF until DepEd releases the official file.':'');
+  $('#pm-state').textContent=sv?(PMR.dirty?'Changes not yet saved.':'Saved '+longDate(sv.savedDay||String(sv.savedAt||'').slice(0,10))+'.'):(PMR.dirty?'Not yet saved.':'New form, not yet saved.')+(syBase(PMR.sy)!=='2025-2026'?' The NCOI rubrics of SY '+PMR.sy+' follow the 2025-2026 e-IPCRF until DepEd releases the official file.':'');
   pmDraw();
 }
 function pmDraw(){
