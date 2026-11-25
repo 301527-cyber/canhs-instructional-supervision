@@ -742,6 +742,10 @@ body.side-off .side{display:none}
 .side .nav button.subnav{font-size:15px!important;padding:9px 14px!important}
 .side .nav button.subnav::before{font-size:15px!important}
 .topbar h2,.topbar.compact h2,#secname{font-size:15px!important;line-height:1.4}
+/* menu text in the size of the date and time at the upper right (13.5px) */
+.side .nav button:not(.subnav),.side .nav button.subnav,.side .nav button.subnav::before{font-size:13.5px!important}
+.side .nav button:not(.subnav){padding:9px 14px!important}
+.side .nav button.subnav{padding:8px 14px!important}
 </style>
 
 </head>
@@ -771,23 +775,25 @@ body.side-off .side{display:none}
     <button role="tab" aria-selected="false" class="navgrp" data-panel="srep" data-sub="saved" data-grp="srep">Supervisory Report</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="srep" data-sub="saved" data-grp="srep">Saved Supervisory Reports</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="srep" data-sub="add" data-grp="srep">New Supervisory Report Entry</button>
+    <button role="tab" aria-selected="false" class="navgrp" data-panel="sched" data-sub="cot" data-grp="schedg">Schedule</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="cot" data-grp="schedg">CO with COT</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="walk" data-grp="schedg">CO - Walkthrough</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="dll" data-grp="schedg">DLL Checking</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="ots" data-grp="schedg">On-the-Spot Test</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="sched" data-grp="schedg">Learning Action Cell (LAC)</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="obs" data-sub="notes" data-grp="obs">CO with COT - Notes</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="cot" data-grp="obs">COT Schedule</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="notes" data-grp="obs">Saved Classroom Observation Notes Forms</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="notes" data-grp="obs">New Classroom Observation Notes</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="reports" data-sub="cot" data-grp="cotr">CO with COT - Rating</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="cot" data-grp="cotr">Saved COT Rating Sheets</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="cot" data-grp="cotr">New COT Rating</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="obs" data-sub="walk" data-grp="walk">CO - Walkthrough</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="walk" data-grp="walk">Walk-through Schedule</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="walk" data-grp="walk">Saved Walk-through Observations</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="obs" data-sub="walk" data-grp="walk">Walk-through Notes Form</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="lp" data-grp="lp">Lesson Plan Monitoring</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="dll" data-grp="lp">DLL Checking Schedule</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="lp" data-grp="lp">Saved DLL Monitoring</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="lp" data-grp="lp">Lesson Plan Monitoring Tool</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="ots" data-grp="ots">On-the-Spot Test</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="sched" data-sub="ots" data-grp="ots">On-the-Spot Test Schedule</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="reports" data-sub="ots" data-grp="ots">Saved On-the-Spot Tests</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="ots" data-grp="ots">New On-the-Spot Test</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="coach" data-grp="coach">Performance Monitoring and Coaching</button>
@@ -795,7 +801,6 @@ body.side-off .side{display:none}
     <button role="tab" aria-selected="false" class="subnav" data-panel="coach" data-grp="coach">New PMCF Entry</button>
     <button role="tab" aria-selected="false" class="navgrp" data-panel="pd" data-sub="lac" data-grp="lac">Learning Action Cell (LAC)</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="pd" data-sub="lac" data-grp="lac">Suggested LAC Plan</button>
-    <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="sched" data-grp="lac">LAC Schedule</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="slna" data-grp="lac">LAC SLNA</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="plan" data-grp="lac">LAC Annual Plan</button>
     <button role="tab" aria-selected="false" class="subnav" data-panel="lac" data-sub="slsm" data-grp="lac">SLSM</button>
@@ -818,7 +823,7 @@ body.side-off .side{display:none}
     <button role="tab" aria-selected="false" data-panel="help">How It Works</button>
     <button role="tab" aria-selected="false" data-panel="settings">Connection</button>
   </nav>
-  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.25-c</span></div>
+  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.25-e</span></div>
 </aside>
 
 <main class="wrap">
