@@ -731,6 +731,17 @@ body.side-off .side{display:none}
 .side .navhead.navsep{display:none}
 .side .sidefoot{color:var(--mn-head);border-top:1px solid #C9D3DB}
 .side .sidefoot .conn{color:var(--mn-subtx)}
+/* section header with its saving button at the upper right */
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-bottom:12px}
+.cardhead h2{font-size:16px;margin:0}
+.cardhead .acts{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#p-people > .card.ppoff{display:none!important}
+.side .nav button.subnav.noperm{display:none!important}
+/* the menu and the banner title in the same size as the page body (15px) */
+.side .nav button:not(.subnav){font-size:15px!important;padding:10px 14px!important;min-height:0!important}
+.side .nav button.subnav{font-size:15px!important;padding:9px 14px!important}
+.side .nav button.subnav::before{font-size:15px!important}
+.topbar h2,.topbar.compact h2,#secname{font-size:15px!important;line-height:1.4}
 </style>
 
 </head>
@@ -798,12 +809,16 @@ body.side-off .side{display:none}
     <button role="tab" aria-selected="false" data-panel="library">Annex Files A&ndash;F</button>
     <div class="navhead">Records</div>
     <button role="tab" aria-selected="false" data-panel="records">Supervision Records</button>
-    <button role="tab" aria-selected="false" data-panel="people">Personnel &amp; Departments</button>
+    <button role="tab" aria-selected="false" class="navgrp" data-panel="people" data-sub="heads" data-grp="people">Personnel &amp; Departments</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="people" data-sub="heads" data-grp="people">Department Heads</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="people" data-sub="codes" data-grp="people">Supervisor Sign-ins</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="people" data-sub="add" data-grp="people">Add a Teacher</button>
+    <button role="tab" aria-selected="false" class="subnav" data-panel="people" data-sub="roster" data-grp="people">Personnel Roster</button>
     <div class="navhead">Reference</div>
     <button role="tab" aria-selected="false" data-panel="help">How It Works</button>
     <button role="tab" aria-selected="false" data-panel="settings">Connection</button>
   </nav>
-  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.25-a</span></div>
+  <div class="sidefoot"><div class="conn" id="conn"><i></i><span id="conntext">Connecting&hellip;</span></div>Schools Division of Calamba City<br>School ID 301527<br><span style="opacity:.75">App version 2026.11.25-c</span></div>
 </aside>
 
 <main class="wrap">
@@ -1379,26 +1394,24 @@ body.side-off .side{display:none}
 
 <!-- ============ PERSONNEL ============ -->
 <section class="panel" id="p-people">
-  <div class="card">
+  <div class="card" data-ppv="heads">
     <h2>Department heads</h2>
     <p class="hint" id="pp-hint" hidden></p>    <div class="scroll"><table class="ind" id="pp-heads" style="min-width:620px"></table></div>
   </div>
-  <div class="card" id="pp-codes-card" hidden>
-    <h2>Supervisor sign-ins</h2>
+  <div class="card" id="pp-codes-card" data-ppv="codes" hidden>
+    <div class="cardhead"><h2>Supervisor sign-ins</h2><div class="acts"><span class="mini" id="pp-codes-state"></span><button class="btn gold" id="pp-codes-save" type="button">Save sign-ins</button></div></div>
         <div class="scroll"><table class="ind" id="pp-codes" style="min-width:560px"></table></div>
-    <div class="row" style="margin-top:12px"><button class="btn gold" id="pp-codes-save" type="button">Save sign-ins</button><span class="mini" id="pp-codes-state"></span></div>
   </div>
-  <div class="card" id="pp-add-card" hidden>
-    <h2>Add a teacher</h2>
+  <div class="card" id="pp-add-card" data-ppv="add" hidden>
+    <div class="cardhead"><h2>Add a teacher</h2><div class="acts"><button class="btn gold" id="pp-new-add" type="button">Add teacher</button></div></div>
         <div class="lines" style="max-width:none">
       <label class="fline"><span class="lk">Last name</span><span class="lv"><input type="text" id="pp-new-last" placeholder="DELA CRUZ" autocomplete="off"></span></label>
       <label class="fline"><span class="lk">First name and middle initial</span><span class="lv"><input type="text" id="pp-new-first" placeholder="JUAN P." autocomplete="off"></span></label>
       <label class="fline"><span class="lk">Position</span><span class="lv"><select id="pp-new-pos"></select></span></label>
       <label class="fline"><span class="lk">Department</span><span class="lv"><select id="pp-new-dept"></select></span></label>
     </div>
-    <div class="row" style="margin-top:12px"><button class="btn gold" id="pp-new-add" type="button">Add teacher</button></div>
   </div>
-  <div class="card">
+  <div class="card" data-ppv="roster">
     <h2>Personnel roster <span class="tag">PSIPOP as of October 6, 2026</span></h2>
     <div class="row" style="margin:6px 0 10px"><input type="search" id="pp-q" placeholder="Search a name" style="max-width:260px" autocomplete="off"><span class="mini" id="pp-edit-hint"></span></div>
         <div class="scroll"><table class="ind" id="pp-roster" style="min-width:640px"></table></div>
@@ -2274,9 +2287,9 @@ var LEDES={
   help:['How It Works','How the shared record works and how the forms are filled.'],
   settings:['Connection','The shared Google Sheet record, your sign-in, and backups.']
 };
-var SUBS={lac:{sched:'LAC Schedule',slna:'LAC SLNA',plan:'LAC Annual Plan',slsm:'School LAC Session Matrix (SLSM)'},pd:{lac:'Suggested LAC Plan',fgd:'Suggested FGD Plan',fgdsaved:'Saved FGD Plans'},pmes:{begin:'IPCRF-Beginning',mid:'Mid-Year Review',final:'IPCRF-Final Rating'},sched:{all:'Supervisory Schedule',cot:'COT Schedule',walk:'Walk-through Schedule',dll:'DLL Checking Schedule',ots:'On-the-Spot Test Schedule'},srep:{saved:'Saved Supervisory Reports',add:'New Supervisory Report Entry'},plan:{form:'Monthly Supervisory Plan',create:'New Supervisory Plan',monthly:'Saved Monthly Supervisory Plans',annual:'Saved Annual Supervisory Plans'},obs:{notes:'New Classroom Observation Notes',cot:'New COT Rating',walk:'Walk-through Observation'},
+var SUBS={people:{heads:'Department Heads',codes:'Supervisor Sign-ins',add:'Add a Teacher',roster:'Personnel Roster'},lac:{sched:'LAC Schedule',slna:'LAC SLNA',plan:'LAC Annual Plan',slsm:'School LAC Session Matrix (SLSM)'},pd:{lac:'Suggested LAC Plan',fgd:'Suggested FGD Plan',fgdsaved:'Saved FGD Plans'},pmes:{begin:'IPCRF-Beginning',mid:'Mid-Year Review',final:'IPCRF-Final Rating'},sched:{all:'Supervisory Schedule',cot:'COT Schedule',walk:'Walk-through Schedule',dll:'DLL Checking Schedule',ots:'On-the-Spot Test Schedule'},srep:{saved:'Saved Supervisory Reports',add:'New Supervisory Report Entry'},plan:{form:'Monthly Supervisory Plan',create:'New Supervisory Plan',monthly:'Saved Monthly Supervisory Plans',annual:'Saved Annual Supervisory Plans'},obs:{notes:'New Classroom Observation Notes',cot:'New COT Rating',walk:'Walk-through Observation'},
   reports:{plans:'Supervisory Plans',notes:'Saved Classroom Observation Notes Forms',cot:'Saved COT Rating Sheets',walk:'Saved Walk-through Observations',lp:'Saved DLL Monitoring',ots:'Saved On-the-Spot Tests',pmcf:'Saved PMCFs',monthly:'Monthly Supervisory Report'}};
-var curSub={lac:['sched','slna','plan','slsm'].indexOf(ls('sub-lac'))>=0?ls('sub-lac'):'sched',pd:['fgd','fgdsaved'].indexOf(ls('sub-pd'))>=0?ls('sub-pd'):'lac',pmes:['begin','mid','final'].indexOf(ls('sub-pmes'))>=0?ls('sub-pmes'):'begin',srep:ls('sub-srep')==='add'?'add':'saved',sched:['cot','walk','dll','ots'].indexOf(ls('sub-sched'))>=0?ls('sub-sched'):'cot',plan:['form','create','monthly','annual'].indexOf(ls('sub-plan'))>=0?ls('sub-plan'):'create',obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
+var curSub={people:['heads','codes','add','roster'].indexOf(ls('sub-people'))>=0?ls('sub-people'):'heads',lac:['sched','slna','plan','slsm'].indexOf(ls('sub-lac'))>=0?ls('sub-lac'):'sched',pd:['fgd','fgdsaved'].indexOf(ls('sub-pd'))>=0?ls('sub-pd'):'lac',pmes:['begin','mid','final'].indexOf(ls('sub-pmes'))>=0?ls('sub-pmes'):'begin',srep:ls('sub-srep')==='add'?'add':'saved',sched:['cot','walk','dll','ots'].indexOf(ls('sub-sched'))>=0?ls('sub-sched'):'cot',plan:['form','create','monthly','annual'].indexOf(ls('sub-plan'))>=0?ls('sub-plan'):'create',obs:ls('sub-obs')||'notes',reports:ls('sub-reports')||'plans'}, obsSub=curSub.obs;
 /* the banner title shows the period of what is on the page: "Month Year" or "School Year …" */
 function bannerWhen(){
   var el=$('#secname'), base=el.dataset.base||(el.dataset.base=el.textContent.split(' \u00b7 ')[0]), on=$('.panel.on'), p=on?on.id.slice(2):'', v=function(id){ var e=$('#'+id); return e?e.value:''; };
@@ -2323,6 +2336,7 @@ function go(p,sub){
   $$('.panel').forEach(function(s){s.classList.toggle('on',s.id==='p-'+p)});
   $('#secname').dataset.base=SUBS[p]?SUBS[p][curSub[p]]:LEDES[p][0]; bannerWhen(); $('#seclede').textContent=''; $('.topbar').classList.add('compact');
   if(p==='srep'&&typeof renderSrep==='function') renderSrep();
+  if(p==='people') ppView();
   if(p==='pmes'&&typeof renderPmes==='function') renderPmes();
   if(p==='pd'&&typeof pdRender==='function') pdRender();
   if(p==='lac'&&typeof renderLac==='function') renderLac();
@@ -2331,6 +2345,16 @@ function go(p,sub){
 /* the side menu works like an accordion: only the main menu that is open shows its sub-menus;
    clicking the open main menu again folds it */
 var NAV_OPEN='';
+/* Personnel & Departments: one section per sub-menu; a section the person may not use (sign-ins, adding a teacher) has no sub-menu */
+function ppView(){
+  var cards=$$('#p-people > .card[data-ppv]'), ok={};
+  cards.forEach(function(c){ ok[c.dataset.ppv]=!c.hidden; });
+  $$('.nav button.subnav[data-panel="people"]').forEach(function(b){ b.classList.toggle('noperm',ok[b.dataset.sub]===false); });
+  if(ok[curSub.people]===false){ curSub.people='heads'; if($('#p-people').classList.contains('on')){ go('people','heads'); return; } }
+  cards.forEach(function(c){ c.classList.toggle('ppoff',c.dataset.ppv!==curSub.people); });
+}
+if(window.MutationObserver) ['#pp-codes-card','#pp-add-card'].forEach(function(sel){ var c=$(sel); if(c) new MutationObserver(ppView).observe(c,{attributes:true,attributeFilter:['hidden']}); });
+ppView();
 function navApply(){ $$('.nav button.subnav').forEach(function(b){ b.classList.toggle('shut',b.dataset.grp!==NAV_OPEN); });
   $$('.nav button.navgrp').forEach(function(b){ var o=b.dataset.grp===NAV_OPEN; b.classList.toggle('open',o); b.setAttribute('aria-expanded',String(o)); }); }
 $$('.nav button[role=tab]').forEach(function(b){b.addEventListener('click',function(){
